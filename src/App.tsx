@@ -1,26 +1,23 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { observer } from "mobx-react-lite";
+import "./App.css";
+import { BuilderProcess } from "./components/BuilderProcess";
+import { CharacterViewModel } from "./models/CharacterViewModel";
+import { DumpObject } from "./components/DumpObject";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const model = new CharacterViewModel();
+
+const App = observer(() => {
+	return (
+		<>
+			<div>
+				<BuilderProcess characterModel={model} />
+			</div>
+			<div>
+				<h2>Debug</h2>
+				<DumpObject object={model} />
+			</div>
+		</>
+	);
+});
 
 export default App;

@@ -1,0 +1,14 @@
+.debug-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.debug-table tr td {
+    border: 1px solid #000;
+    padding: 1em;
+}
+
+.debug-table tr td pre {
+    max-height: 200px;
+    overflow: auto;
+}

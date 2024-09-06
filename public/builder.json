@@ -1,0 +1,35 @@
+{
+	"CharacterTemplates": [
+		{
+			"Name": "Standard",
+			"StartingAbilityScoreFilter": ["Average", "Standard", "Specialized"]
+		},
+		{
+			"Name": "Koneko Goblin (Holiday 2015)",
+			"StartingAbilityScoreFilter": ["Koneko Goblin"]
+		}
+	],
+	"StartingAbilityScores": [
+		{
+			"Name": "Average",
+			"Dice": [{ "Value": 6 }, { "Value": 6 }, { "Value": 6 }, { "Value": 6 }]
+		},
+		{
+			"Name": "Standard",
+			"Dice": [{ "Value": 4 }, { "Value": 6 }, { "Value": 6 }, { "Value": 8 }]
+		},
+		{
+			"Name": "Specialized",
+			"Dice": [{ "Value": 4 }, { "Value": 4 }, { "Value": 8 }, { "Value": 8 }]
+		},
+		{
+			"Name": "Koneko Goblin",
+			"Dice": [
+				{ "Value": 4, "Attribute": "STR" },
+				{ "Value": 8, "Attribute": "DEX" },
+				{ "Value": 4 },
+				{ "Value": 6 }
+			]
+		}
+	]
+}
