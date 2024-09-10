@@ -21,3 +21,15 @@ export interface StartingDice {
 	Value: number;
 	Attribute?: string | undefined;
 }
+
+export interface CharacterClass {
+	Name: string;
+	Description: string;
+	Skills: string[];
+}
+
+export interface ClassSkill {
+	Name: string;
+	Description: string;
+	RelevantRoll: string | null;
+}

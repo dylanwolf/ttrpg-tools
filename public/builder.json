@@ -31,5 +31,49 @@
 				{ "Value": 6 }
 			]
 		}
+	],
+	"Classes": [
+		{
+			"Name": "Minstrel",
+			"Description": "*A traveler among travelers, who roams from town to town performing songs or dances. The Minstrel has a wide array of skills that can help the party in a variety of situations",
+			"Skills": ["Well-Traveled", "Knowledge of Tradition", "Music"]
+		},
+		{
+			"Name": "Merchant",
+			"Description": "*A traveling tradesman who exchanges goods from various locales for gold and jewels. The Merchant has skills that allow them to buy goods cheaply and sell them for a higher price. They are also good at negotiations using conversational skills.*",
+			"Skills": ["Well-Spoken", "Animal Owner", "Trader"]
+		}
+	],
+	"Skills": [
+		{
+			"Name": "Well-Traveled",
+			"Description": "+1 to Journey Checks",
+			"RelevantRoll": null
+		},
+		{
+			"Name": "Knowledge of Tradition",
+			"Description": "You can get more information about the things you see and hear.",
+			"RelevantRoll": "[INT + INT]"
+		},
+		{
+			"Name": "Music",
+			"Description": "You can get more information about the things you see and hear.",
+			"RelevantRoll": "[INT + INT]"
+		},
+		{
+			"Name": "Well-Spoken",
+			"Description": "+1 to negotiation checks",
+			"RelevantRoll": "[INT + SPI]"
+		},
+		{
+			"Name": "Animal Owner",
+			"Description": "You can keep 2 more animals for a total of 3 without paying their food and water.",
+			"RelevantRoll": null
+		},
+		{
+			"Name": "Trader",
+			"Description": "You may buy items at a reduced price or sell items at an increased price.",
+			"RelevantRoll": "[INT + SPI]"
+		}
 	]
 }
