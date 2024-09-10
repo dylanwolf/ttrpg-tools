@@ -1,11 +1,13 @@
 {
 	"CharacterTemplates": [
 		{
-			"Name": "Standard",
+			"Name": "Human / Humanoid",
+			"DisplayValue": null,
 			"StartingAbilityScoreFilter": ["Average", "Standard", "Specialized"]
 		},
 		{
 			"Name": "Koneko Goblin (Holiday 2015)",
+			"DisplayValue": "Koneko Goblin",
 			"StartingAbilityScoreFilter": ["Koneko Goblin"]
 		}
 	],
@@ -35,20 +37,24 @@
 	"Classes": [
 		{
 			"Name": "Minstrel",
-			"Description": "*A traveler among travelers, who roams from town to town performing songs or dances. The Minstrel has a wide array of skills that can help the party in a variety of situations",
+			"Description": "*A traveler among travelers, who roams from town to town performing songs or dances. The Minstrel has a wide array of skills that can help the party in a variety of situations*",
 			"Skills": ["Well-Traveled", "Knowledge of Tradition", "Music"]
 		},
 		{
 			"Name": "Merchant",
 			"Description": "*A traveling tradesman who exchanges goods from various locales for gold and jewels. The Merchant has skills that allow them to buy goods cheaply and sell them for a higher price. They are also good at negotiations using conversational skills.*",
 			"Skills": ["Well-Spoken", "Animal Owner", "Trader"]
+		},
+		{
+			"Name": "Farmer",
+			"Description": "*A worker who lives in harmony with the bounty of nature. In order to reap their harvest, they must set their hand to a number of different tasks, giving them practice with a single skill from another class.*",
+			"Skills": ["Robust", "Animal Owner", "Side-Job"]
 		}
 	],
 	"Skills": [
 		{
 			"Name": "Well-Traveled",
-			"Description": "+1 to Journey Checks",
-			"RelevantRoll": null
+			"Description": "+1 to Journey Checks"
 		},
 		{
 			"Name": "Knowledge of Tradition",
@@ -67,13 +73,70 @@
 		},
 		{
 			"Name": "Animal Owner",
-			"Description": "You can keep 2 more animals for a total of 3 without paying their food and water.",
-			"RelevantRoll": null
+			"Description": "You can keep 2 more animals for a total of 3 without paying their food and water."
 		},
 		{
 			"Name": "Trader",
 			"Description": "You may buy items at a reduced price or sell items at an increased price.",
 			"RelevantRoll": "[INT + SPI]"
+		},
+		{
+			"Name": "Robust",
+			"Description": "+1 to Condition checks. +3 to Carrying Capacity"
+		},
+		{
+			"Name": "Side-Job",
+			"Description": "Use a single skill from another class with a -1 penalty.",
+			"SelectSkill": true
+		},
+		{
+			"Name": "Weapon Grace",
+			"Description": "Gain an extra weapon mastery",
+			"ExtraMasteredWeapon": ["Blade", "Polearm", "Bow"]
+		}
+	],
+	"Weapons": [
+		{
+			"Name": "Light Blade",
+			"Description": "An accurate but weak weapon. 1-handed.",
+			"Examples": "dagger, short sword, wakizashi, etc.",
+			"Accuracy": "[DEX+INT]+1",
+			"Damage": "[INT]-1"
+		},
+		{
+			"Name": "Blade",
+			"Description": "A weapon with good balance between accuracy and damage. 1-handed.",
+			"Examples": "broadsword, rapier, katana, etc.",
+			"Accuracy": "[DEX+STR]",
+			"Damage": "[STR]"
+		},
+		{
+			"Name": "Polearm",
+			"Description": "A weapon with high damage. 2-handed.",
+			"Examples": "longspear, trident, lance, etc.",
+			"Accuracy": "[DEX+STR]",
+			"Damage": "[STR]+1"
+		},
+		{
+			"Name": "Axe",
+			"Description": "A weapon with poor accuracy, but which takes advantage of the bearer's strength.",
+			"Examples": "battleaxe, greataxe, etc.",
+			"Accuracy": "[STR+STR]-1",
+			"Damage": "[STR]"
+		},
+		{
+			"Name": "Bow",
+			"Description": "Can attack from long range, but has poor accuracy. 2-handed.",
+			"Examples": "shortbow, longbow, crossbow, etc.",
+			"Accuracy": "[INT+DEX]-2",
+			"Damage": "[DEX]"
+		},
+		{
+			"Name": "Unarmed",
+			"Description": "+1 to damage if using an improvised weapon.",
+			"Examples": "unarmed combat, using a stick, etc.",
+			"Accuracy": "[DEX+STR]",
+			"Damage": "[STR]-2"
 		}
 	]
 }

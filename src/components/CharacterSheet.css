@@ -1,0 +1,12 @@
+.character-sheet .stats {
+    display: flex;
+}
+
+.character-sheet .stats .stat {
+    border: 1px solid #000;
+    margin: 0 0.5em;
+}
+
+.character-sheet .stats .value {
+    text-align: center;
+}

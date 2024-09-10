@@ -5,10 +5,14 @@ export async function getBuilderData(): Promise<BuilderData> {
 export interface BuilderData {
 	CharacterTemplates: CharacterTemplate[];
 	StartingAbilityScores: StartingAbilityScore[];
+	Classes: CharacterClass[];
+	Skills: ClassSkill[];
+	Weapons: Weapon[];
 }
 
 export interface CharacterTemplate {
 	Name: string;
+	DisplayValue: string | undefined | null;
 	StartingAbilityScoreFilter: string[];
 }
 
@@ -32,4 +36,14 @@ export interface ClassSkill {
 	Name: string;
 	Description: string;
 	RelevantRoll: string | null;
+	SelectSkill: boolean;
+	ExtraMasteredWeapon: string[];
+}
+
+export interface Weapon {
+	Name: string;
+	Description: string;
+	Examples: string;
+	Accuracy: string;
+	Damage: string;
 }

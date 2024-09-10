@@ -4,13 +4,18 @@ export abstract class StepModel<TModel> {
 	Name: string;
 	Container: StepCollection<TModel> | undefined;
 
+	@computed get isVisible() {
+		var idx = this.Container?.ByIndex?.indexOf(this) || 0;
+		return idx <= (this.Container?.CurrentStep || -1);
+	}
+
 	constructor(name: string) {
 		this.Name = name;
 	}
 
 	abstract get isCompleted(): boolean;
-	abstract refresh(options: TModel, refreshingSelf: boolean): void;
-	abstract completed(options: TModel): void;
+	abstract refresh(model: TModel, refreshingSelf: boolean): void;
+	abstract completed(model: TModel): void;
 	abstract render(model: TModel, stepIdx: number): JSX.Element;
 }
 
@@ -42,17 +47,18 @@ export class StepCollection<TModel> {
 	}
 
 	@computed get CurrentStep(): number {
-		return !this.Initialized
-			? -1
-			: this.ByIndex.reduce((prev, current, idx) => {
-					if (current.isCompleted) return idx + 1;
-					return prev;
-			  }, 0);
+		if (!this.Initialized) return -1;
+
+		for (var i = 0; i < this.ByIndex.length; i++) {
+			if (!this.ByIndex[i].isCompleted) return i;
+		}
+		return this.ByIndex.length;
 	}
 
 	@action onStepProgression(changedStep: number) {
 		var startStep = changedStep + 1;
 		var endStep = this.CurrentStep + (changedStep === this.CurrentStep ? 1 : 0);
+
 		console.log(`onStepProgression(${changedStep}, ${startStep}, ${endStep})`);
 
 		if (this.ByIndex[changedStep] && this.ByIndex[changedStep].isCompleted)
@@ -64,6 +70,12 @@ export class StepCollection<TModel> {
 			step.refresh(this.Model, idx === changedStep);
 			if (!step.isCompleted) break;
 		}
+	}
+
+	getAs<TStep extends StepModel<TModel>>(name: string) {
+		var step = this.ByKey[name];
+		if (!step) return undefined;
+		return step as TStep;
 	}
 }
 

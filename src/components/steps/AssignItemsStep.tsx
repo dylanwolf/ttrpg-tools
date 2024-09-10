@@ -51,10 +51,7 @@ export class AssignItemsStepModel<TModel, TItem> extends StepModel<TModel> {
 	Buckets: BucketCollection<TItem> = new BucketCollection<TItem>();
 
 	@observable Label: string;
-	@observable.shallow _lastItemList: TItem[] = [];
-	@observable.shallow _lastBucketList: BucketDefinition[] = [];
-
-	@observable Values: { [name: string]: TItem[] } = {};
+	@observable.shallow Values: { [name: string]: TItem[] } = {};
 	DragAndDropState: DragAndDropLinkedState<TItem>;
 
 	_itemListFunc: (model: TModel) => TItem[];
@@ -96,27 +93,24 @@ export class AssignItemsStepModel<TModel, TItem> extends StepModel<TModel> {
 	}
 
 	@action.bound updateValues() {
-		// Remove nonexistent buckets from values
-		Object.keys(this.Values)
-			.filter(
-				(key) => this.Buckets.ByIndex.filter((b) => b.Name === key).length === 0
-			)
-			.forEach((key) => {
-				delete this.Values[key];
-			});
+		var newValues: { [name: string]: TItem[] } = {};
 
 		// Update bucket values
 		this.Buckets.ByIndex.forEach((b) => {
-			this.Values[b.Name] = b.Items;
+			newValues[b.Name] = b.Items;
 		});
 
-		console.log(this.isCompleted);
+		this.Values = newValues;
 		if (this.isCompleted)
 			this.Container?.onStepProgression(this.Container.ByIndex.indexOf(this));
 	}
 
-	@computed get isCompleted(): boolean {
-		return this.Available.length === 0 && this.Buckets.ByIndex.length > 0;
+	@computed get isCompleted() {
+		return (
+			this.Values &&
+			this.Available.length === 0 &&
+			this.Buckets.ByIndex.length > 0
+		);
 	}
 
 	@action.bound resetState(buckets: BucketDefinition[], items: TItem[]) {
@@ -155,16 +149,16 @@ export class AssignItemsStepModel<TModel, TItem> extends StepModel<TModel> {
 		this.updateValues();
 	}
 
-	@action.bound refresh(options: TModel, refreshingSelf: boolean): void {
+	@action.bound refresh(model: TModel, refreshingSelf: boolean): void {
 		if (refreshingSelf) return;
 
-		var itemList = this._itemListFunc(options);
-		var buckets = this._bucketsFunc(options);
+		var itemList = this._itemListFunc(model);
+		var buckets = this._bucketsFunc(model);
 
 		this.resetState(buckets, itemList);
 	}
 
-	@action completed(options: TModel): void {}
+	@action completed(model: TModel): void {}
 
 	render(model: TModel, stepIdx: number): JSX.Element {
 		return (

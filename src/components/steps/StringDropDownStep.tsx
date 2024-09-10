@@ -62,7 +62,7 @@ export class StringDropDownStepModel<TModel, TItem> extends StepModel<TModel> {
 		);
 	}
 
-	@action.bound completed(options: TModel): void {}
+	@action.bound completed(model: TModel): void {}
 
 	render(model: TModel, stepIdx: number) {
 		return (
@@ -75,11 +75,13 @@ export class StringDropDownStepModel<TModel, TItem> extends StepModel<TModel> {
 	}
 }
 
-export const StringDropDownStepControl = observer(
+const StringDropDownStepControl = observer(
 	<TModel, TItem>(
 		props: StepControlProps<TModel, StringDropDownStepModel<TModel, TItem>>
 	) => {
-		const [selectedValue, setSelectedValue] = useState<string>();
+		const [selectedValue, setSelectedValue] = useState<string>(
+			props.step.Value || ""
+		);
 
 		function onChange(evt: React.ChangeEvent<HTMLSelectElement>) {
 			var field = evt.currentTarget;
