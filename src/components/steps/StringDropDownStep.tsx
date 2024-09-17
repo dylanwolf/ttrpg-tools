@@ -1,109 +1,89 @@
-import { action, computed, makeObservable, observable } from "mobx";
-import { StepControlProps, StepModel } from "../../models/StepModel";
-import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import { StepModel, StepState } from "../../models/StepModel";
 
-export class StringDropDownStepModel<TModel, TItem> extends StepModel<TModel> {
-	@observable Value: string | undefined;
-	@observable.shallow SelectList: TItem[];
-	@observable Label: string;
-	_selectListFunc: (model: TModel) => TItem[];
-	_valueFunc: (item: TItem) => string;
-	_textFunc: (item: TItem) => string;
-	_defaultValueFunc: (model: TModel, selectList: TItem[]) => string;
+interface StringDropDownStepState<TItem> extends StepState {
+	SelectList: TItem[];
+	Value: string | undefined;
+}
+
+export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
+	TSource,
+	TData,
+	StringDropDownStepState<TItem>
+> {
+	Label: string;
+	GetSelectList: (src: TSource, data: TData) => TItem[];
+	GetValue: (item: TItem) => string;
+	GetText: (item: TItem) => string;
+	GetDefaultValue: (source: TSource, data: TData, lst: TItem[]) => string;
 
 	constructor(
 		name: string,
 		label: string,
-		selectListFunc: (model: TModel) => TItem[],
-		textFunc: (item: TItem) => string,
-		valueFunc: (item: TItem) => string,
-		_defaultValueFunc: (model: TModel, selectList: TItem[]) => string,
-		stepValue?: string | undefined
+		getSelectList: (src: TSource, data: TData) => TItem[],
+		getValue: (item: TItem) => string,
+		getText: (item: TItem) => string,
+		getDefaultValue: (source: TSource, data: TData, lst: TItem[]) => string,
+		updateCharacter: (
+			source: TSource,
+			state: StringDropDownStepState<TItem>,
+			newData: TData
+		) => void
 	) {
-		super(name);
+		super(name, updateCharacter);
 		this.Label = label;
-		this.Value = stepValue;
-		this._selectListFunc = selectListFunc;
-		this._textFunc = textFunc;
-		this._valueFunc = valueFunc;
-		this._defaultValueFunc = _defaultValueFunc;
-		this.SelectList = [];
-		makeObservable(this);
+		this.GetSelectList = getSelectList;
+		this.GetValue = getValue;
+		this.GetText = getText;
+		this.GetDefaultValue = getDefaultValue;
 	}
 
-	@computed get isCompleted(): boolean {
-		return this.Value ? true : false;
+	initializeState(): StringDropDownStepState<TItem> {
+		return { IsCompleted: false, IsVisible: false, SelectList: [], Value: "" };
 	}
 
-	@action.bound refresh(model: TModel, refreshingSelf: boolean) {
-		if (refreshingSelf) return;
+	updateState(
+		source: TSource,
+		data: TData,
+		newState: StringDropDownStepState<TItem>
+	) {
+		var selectList = this.GetSelectList(source, data);
+		newState.SelectList = selectList;
 
-		this.SelectList = this._selectListFunc(model);
 		if (
-			!this.Value ||
-			!this.SelectList.map((i) => this._valueFunc(i)).includes(this.Value)
-		)
-			this.setValue(this._defaultValueFunc(model, this.SelectList));
-	}
-
-	@action.bound setValue(value: string | undefined) {
-		var hasChanged = this.Value !== value;
-		this.Value = value;
-		if (hasChanged) {
-			this.Container?.onStepProgression(this.Container.ByIndex.indexOf(this));
+			newState.Value === undefined ||
+			!selectList.any((x) => this.GetValue(x) === newState.Value)
+		) {
+			newState.Value = this.GetDefaultValue(source, data, selectList);
 		}
+
+		newState.IsCompleted = newState.Value ? true : false;
+		newState.IsVisible = true;
 	}
 
-	@computed get getSelectedItem() {
-		return (
-			this.SelectList.filter((i) => this._valueFunc(i) === this.Value)[0] ||
-			undefined
-		);
-	}
-
-	@action.bound completed(model: TModel): void {}
-
-	render(model: TModel, stepIdx: number) {
-		return (
-			<StringDropDownStepControl
-				model={model}
-				step={this}
-				stepIndex={stepIdx}
-			/>
-		);
-	}
-}
-
-const StringDropDownStepControl = observer(
-	<TModel, TItem>(
-		props: StepControlProps<TModel, StringDropDownStepModel<TModel, TItem>>
-	) => {
-		const [selectedValue, setSelectedValue] = useState<string>(
-			props.step.Value || ""
-		);
+	render(
+		stepState: StringDropDownStepState<TItem>,
+		triggerUpdate: (index: number, stepUpdates: any) => void
+	) {
+		var index = this.Index;
 
 		function onChange(evt: React.ChangeEvent<HTMLSelectElement>) {
 			var field = evt.currentTarget;
 			var newValue = field.value;
 
-			setSelectedValue(newValue);
-			props.step.setValue(newValue);
+			triggerUpdate(index, { Value: newValue });
 		}
 
 		return (
-			<div className={`step step-dropdown step-${props.step.Name}`}>
+			<div className={`step step-dropdown step-${this.Name}`}>
 				<label>
-					{props.step.Label}:
-					<select value={selectedValue} onChange={onChange}>
-						{props.step.SelectList.map((i: TItem) => (
+					{this.Label ? `${this.Label}:` : ""}
+					<select value={stepState.Value} onChange={onChange}>
+						{stepState.SelectList.map((i: TItem) => (
 							<option
-								value={props.step._valueFunc(i)}
-								key={`StringDropDown-${props.step.Name}-${props.step._valueFunc(
-									i
-								)}`}
+								value={this.GetValue(i)}
+								key={`StringDropDown-${this.Name}-${this.GetValue(i)}`}
 							>
-								{props.step._textFunc(i)}
+								{this.GetText(i)}
 							</option>
 						))}
 					</select>
@@ -111,4 +91,4 @@ const StringDropDownStepControl = observer(
 			</div>
 		);
 	}
-);
+}

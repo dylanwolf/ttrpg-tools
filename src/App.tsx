@@ -1,23 +1,23 @@
-import { observer } from "mobx-react-lite";
+import { Provider } from "react-redux";
 import "./App.css";
 import { BuilderProcess } from "./components/BuilderProcess";
-import { CharacterViewModel } from "./models/CharacterViewModel";
-import { DumpObject } from "./components/DumpObject";
+import { store } from "./models/AppStore";
+import React from "react";
+import { renderCharacterSheet } from "./models/BuilderFactory";
+require("./data/RyuutamaSourceData");
 
-const model = new CharacterViewModel();
-
-const App = observer(() => {
+function App() {
 	return (
 		<>
 			<div>
-				<BuilderProcess characterModel={model} />
-			</div>
-			<div>
-				<h2>Debug</h2>
-				<DumpObject object={model} />
+				<React.StrictMode>
+					<Provider store={store} stabilityCheck="never">
+						<BuilderProcess sessionKey={"test"} />
+					</Provider>
+				</React.StrictMode>
 			</div>
 		</>
 	);
-});
+}
 
 export default App;

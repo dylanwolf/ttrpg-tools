@@ -1,4 +1,3 @@
-import { observer } from "mobx-react-lite";
 import "./DumpObject.css";
 
 function getProperty<T>(obj: T, key: string) {
@@ -24,7 +23,7 @@ function DumpObjectValue(props: { value: any }) {
 	return <>{jsonString}</>;
 }
 
-export const DumpObject = observer((props: { object: any }) => {
+export function DumpObject(props: { object: any }) {
 	return (
 		<table className="debug-table">
 			<tbody>
@@ -43,4 +42,4 @@ export const DumpObject = observer((props: { object: any }) => {
 			</tbody>
 		</table>
 	);
-});
+}

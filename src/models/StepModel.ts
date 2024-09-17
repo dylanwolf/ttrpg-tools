@@ -1,86 +1,144 @@
-import { action, computed, makeObservable, observable } from "mobx";
+import { mergeStateWithUpdates } from "./builderHelpers";
 
-export abstract class StepModel<TModel> {
-	Name: string;
-	Container: StepCollection<TModel> | undefined;
-
-	@computed get isVisible() {
-		var idx = this.Container?.ByIndex?.indexOf(this) || 0;
-		return idx <= (this.Container?.CurrentStep || -1);
-	}
-
-	constructor(name: string) {
-		this.Name = name;
-	}
-
-	abstract get isCompleted(): boolean;
-	abstract refresh(model: TModel, refreshingSelf: boolean): void;
-	abstract completed(model: TModel): void;
-	abstract render(model: TModel, stepIdx: number): JSX.Element;
+export interface StepCollectionState {
+	Key: string;
+	CurrentStep: number;
+	Steps: StepState[];
 }
 
-export class StepCollection<TModel> {
-	@observable ByIndex: StepModel<TModel>[];
-	@observable ByKey: { [key: string]: StepModel<TModel> };
-	Model: TModel;
+export interface StepState {
+	IsCompleted: boolean;
+	IsVisible: boolean;
+}
 
-	@observable Initialized = false;
+export abstract class StepModel<TSource, TData, TState extends StepState> {
+	Name: string;
+	Index: number = 0;
+	//Container: StepCollection<TSource, TData> | undefined;
+	UpdateCharacter: (source: TSource, state: TState, newData: TData) => void;
 
-	constructor(steps: StepModel<TModel>[], model: TModel) {
-		this.Model = model;
+	constructor(
+		name: string,
+		updateCharacter: (source: TSource, state: TState, newData: TData) => void
+	) {
+		this.Name = name;
+		this.UpdateCharacter = updateCharacter;
+	}
+
+	abstract initializeState(): TState;
+
+	abstract updateState(source: TSource, data: TData, newState: TState): void;
+
+	abstract render(
+		stepState: TState,
+		triggerUpdate: (index: number, stepUpdates: any) => void
+	): JSX.Element;
+}
+
+export class StepCollection<TSource, TData> {
+	BuilderKey: string;
+	ByIndex: StepModel<TSource, TData, any>[];
+	ByKey: { [key: string]: StepModel<TSource, TData, any> } = {};
+	GetInitialCharacterData: () => TData;
+
+	constructor(
+		builderKey: string,
+		steps: StepModel<TSource, TData, any>[],
+		getInitialCharacterData: () => TData
+	) {
+		this.BuilderKey = builderKey;
 		this.ByIndex = steps;
-		this.ByKey = {};
 
-		steps.forEach((step) => {
+		steps.forEach((step, idx) => {
 			this.ByKey[step.Name] = step;
-			step.Container = this;
+			step.Index = idx;
+			//step.Container = this;
 		});
 
-		makeObservable(this);
+		this.GetInitialCharacterData = getInitialCharacterData;
 	}
 
-	@action start() {
-		if (!this.Initialized) {
-			this.Initialized = true;
-			this.onStepProgression(-1);
-		}
+	initializeState(sessionKey: string): StepCollectionState {
+		return {
+			Key: sessionKey,
+			CurrentStep: -1,
+			Steps: this.ByIndex.map((s) => s.initializeState()),
+		};
 	}
 
-	@computed get CurrentStep(): number {
-		if (!this.Initialized) return -1;
-
-		for (var i = 0; i < this.ByIndex.length; i++) {
-			if (!this.ByIndex[i].isCompleted) return i;
+	getCurrentStep(state: StepCollectionState) {
+		for (var idx = 0; idx < state.Steps.length; idx++) {
+			if (!state.Steps[idx].IsCompleted) {
+				return idx;
+			}
 		}
 		return this.ByIndex.length;
 	}
 
-	@action onStepProgression(changedStep: number) {
-		var startStep = changedStep + 1;
-		var endStep = this.CurrentStep + (changedStep === this.CurrentStep ? 1 : 0);
+	onStepUpdated(
+		source: TSource,
+		data: TData,
+		state: StepCollectionState,
+		changedStep: number,
+		stepUpdates?: any
+	) {
+		var newState: StepCollectionState = {
+			Key: state.Key,
+			Steps: [],
+			CurrentStep: state.CurrentStep,
+		};
 
-		console.log(`onStepProgression(${changedStep}, ${startStep}, ${endStep})`);
+		var newData = structuredClone(data);
 
-		if (this.ByIndex[changedStep] && this.ByIndex[changedStep].isCompleted)
-			this.ByIndex[changedStep].completed(this.Model);
+		var startStep = changedStep;
+		var endStep = startStep + 1;
 
-		for (var idx = startStep; idx <= endStep; idx++) {
+		console.log(`onStepUpdated(${changedStep}, ${startStep}, ${endStep})`);
+		//console.log(newData);
+
+		var inCompleted = true;
+		for (var idx = 0; idx < state.Steps.length; idx++) {
 			var step = this.ByIndex[idx];
-			if (!step) continue;
-			step.refresh(this.Model, idx === changedStep);
-			if (!step.isCompleted) break;
+			//console.log(`Processing step ${idx} (${startStep} - ${endStep})`);
+
+			// If no matching step, continue
+			if (!step) {
+				newState.Steps.push(state.Steps[idx]);
+				continue;
+			}
+
+			var stepState = mergeStateWithUpdates(
+				state.Steps[idx],
+				(idx === changedStep && stepUpdates) || undefined
+			);
+
+			// Re-process steps that may be affected
+			if (idx >= startStep && idx <= endStep) {
+				step.updateState(source, newData, stepState);
+				//console.log(stepState);
+				//console.log(newData);
+			}
+			step.UpdateCharacter(source, stepState, newData);
+
+			newState.Steps.push(stepState);
+
+			if (inCompleted && !stepState.IsCompleted) {
+				newState.CurrentStep = idx;
+				inCompleted = false;
+			}
+
+			// If we finished this step, move on to the next
+			if (stepState.IsCompleted && endStep <= idx) {
+				endStep += 1;
+			}
 		}
-	}
 
-	getAs<TStep extends StepModel<TModel>>(name: string) {
-		var step = this.ByKey[name];
-		if (!step) return undefined;
-		return step as TStep;
-	}
-}
+		if (inCompleted) newState.CurrentStep = endStep;
 
-export interface StepControlProps<TModel, TStep extends StepModel<TModel>> {
-	model: TModel;
-	step: TStep;
-	stepIndex: number;
+		return {
+			Key: state.Key,
+			NewStepState: newState,
+			NewCharacterData: newData,
+		};
+	}
 }

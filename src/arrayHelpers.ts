@@ -2,6 +2,7 @@ declare global {
 	interface Array<T> {
 		groupBy(keyFunc: (obj: T) => string): GroupByResult<T>[];
 		any(predicate: (obj: T) => boolean): boolean;
+		all(predicate: (obj: T) => boolean): boolean;
 		distinct(): T[];
 		first(predicate?: (obj: T) => boolean | undefined): T | null;
 		last(predicate?: (obj: T) => boolean | undefined): T | null;
@@ -21,6 +22,19 @@ export function registerArrayHelpers() {
 		): boolean {
 			for (var i = 0; i < this.length; i++) {
 				if (predicate(this[i])) return true;
+			}
+			return false;
+		};
+	}
+
+	if (!Array.prototype.all) {
+		Array.prototype.all = function all<T>(
+			predicate: (obj: T) => boolean
+		): boolean {
+			if (this.length === 0) return false;
+
+			for (var i = 0; i < this.length; i++) {
+				if (!predicate(this[i])) return false;
 			}
 			return false;
 		};

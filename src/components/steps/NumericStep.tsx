@@ -1,95 +1,99 @@
-import { action, computed, makeObservable, observable } from "mobx";
-import { StepControlProps, StepModel } from "../../models/StepModel";
-import { observer } from "mobx-react-lite";
-import { useState } from "react";
+import { StepModel, StepState } from "../../models/StepModel";
 
-export class NumericStepModel<TModel> extends StepModel<TModel> {
-	@observable Value: number | undefined;
-	@observable Label: string;
+interface NumericStepState extends StepState {
+	MinValue?: number | undefined;
+	MaxValue?: number | undefined;
+	NumericStep?: number | undefined;
+	Value?: number | undefined;
+}
 
-	@observable MinValue: number | undefined;
-	@observable MaxValue: number | undefined;
-	@observable NumericStep: number | undefined;
-
-	_minValueFunc: ((model: TModel) => number) | undefined;
-	_maxValueFunc: ((model: TModel) => number) | undefined;
-	_stepValueFunc: ((model: TModel) => number) | undefined;
-	_defaultValueFunc: (model: TModel) => number;
+export class NumericStep<TSource, TData> extends StepModel<
+	TSource,
+	TData,
+	NumericStepState
+> {
+	Label: string;
+	GetMinValue: (src: TSource, data: TData) => number | undefined;
+	GetMaxValue: (src: TSource, data: TData) => number | undefined;
+	GetNumericStep: (src: TSource, data: TData) => number | undefined;
+	GetDefaultValue: (src: TSource, data: TData) => number | undefined;
 
 	constructor(
 		name: string,
 		label: string,
-		defaultValueFunc: (model: TModel) => number,
-		minValueFunc?: ((model: TModel) => number) | undefined,
-		maxValueFunc?: ((model: TModel) => number) | undefined,
-		stepValueFunc?: ((model: TModel) => number) | undefined
+		getMinValue: (src: TSource, data: TData) => number | undefined,
+		getMaxValue: (src: TSource, data: TData) => number | undefined,
+		getNumericStep: (src: TSource, data: TData) => number | undefined,
+		getDefaultValue: (src: TSource, data: TData) => number | undefined,
+		updateCharacter: (
+			source: TSource,
+			state: NumericStepState,
+			newData: TData
+		) => void
 	) {
-		super(name);
+		super(name, updateCharacter);
 		this.Label = label;
-		this._defaultValueFunc = defaultValueFunc;
-		this._minValueFunc = minValueFunc;
-		this._maxValueFunc = maxValueFunc;
-		this._stepValueFunc = stepValueFunc;
-
-		makeObservable(this);
+		this.GetMinValue = getMinValue;
+		this.GetMaxValue = getMaxValue;
+		this.GetNumericStep = getNumericStep;
+		this.GetDefaultValue = getDefaultValue;
 	}
 
-	@action.bound setValue(value: number) {
-		var hasChanged = this.Value !== value;
-		this.Value = value;
-		if (hasChanged) {
-			this.Container?.onStepProgression(this.Container.ByIndex.indexOf(this));
+	initializeState(): NumericStepState {
+		return {
+			IsCompleted: false,
+			IsVisible: true,
+		};
+	}
+
+	updateState(source: TSource, data: TData, newState: NumericStepState): void {
+		newState.MinValue = this.GetMinValue(source, data);
+		newState.MaxValue = this.GetMaxValue(source, data);
+		newState.NumericStep = this.GetNumericStep(source, data) || 1;
+
+		if (newState.Value === undefined)
+			newState.Value = this.GetDefaultValue(source, data);
+		if (newState.Value !== undefined) {
+			if (newState.MinValue !== undefined && newState.Value < newState.MinValue)
+				newState.Value = newState.MinValue;
+			if (newState.MaxValue !== undefined && newState.Value > newState.MaxValue)
+				newState.Value = newState.MaxValue;
 		}
+
+		newState.IsCompleted = newState.Value !== undefined;
+		newState.IsVisible = true;
 	}
-
-	@computed get isCompleted(): boolean {
-		return this.Value !== undefined;
-	}
-
-	@action.bound refresh(model: TModel, refreshingSelf: boolean): void {
-		if (refreshingSelf) return;
-
-		this.MinValue = this._minValueFunc ? this._minValueFunc(model) : undefined;
-		this.MaxValue = this._maxValueFunc ? this._maxValueFunc(model) : undefined;
-		this.NumericStep = this._stepValueFunc ? this._stepValueFunc(model) : 1;
-
-		if (this.Value === undefined) this.setValue(this._defaultValueFunc(model));
-	}
-	@action.bound completed(model: TModel): void {}
-
-	render(model: TModel, stepIdx: number): JSX.Element {
-		return <NumericStepControl model={model} step={this} stepIndex={stepIdx} />;
-	}
-}
-
-const NumericStepControl = observer(
-	<TModel,>(props: StepControlProps<TModel, NumericStepModel<TModel>>) => {
-		const [selectedValue, setSelectedValue] = useState<number>(
-			props.step.Value || 0
-		);
+	render(
+		stepState: NumericStepState,
+		triggerUpdate: (index: number, stepUpdates: any) => void
+	): JSX.Element {
+		var index = this.Index;
 
 		function onChange(evt: React.ChangeEvent<HTMLInputElement>) {
 			var field = evt.currentTarget;
 			var newValue = parseInt(field.value);
 
-			setSelectedValue(newValue);
-			props.step.setValue(newValue);
+			if (newValue !== undefined && !isNaN(newValue)) {
+				triggerUpdate(index, { Value: newValue });
+			} else {
+				evt.preventDefault();
+			}
 		}
 
 		return (
-			<div className={`step step-numeric step-${props.step.Name}`}>
+			<div className={`step step-numeric step-${this.Name}`}>
 				<label>
-					{props.step.Label}:
+					{this.Label ? `${this.Label}:` : ""}
 					<input
 						type="number"
-						value={selectedValue}
-						min={props.step.MinValue}
-						max={props.step.MaxValue}
-						step={props.step.NumericStep}
+						value={stepState.Value}
+						min={stepState.MinValue}
+						max={stepState.MaxValue}
+						step={stepState.NumericStep}
 						onChange={onChange}
 					/>
 				</label>
 			</div>
 		);
 	}
-);
+}

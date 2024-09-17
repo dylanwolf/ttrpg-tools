@@ -1,64 +1,67 @@
-import { BusyIcon } from "./BusyIcon";
-import { observer } from "mobx-react-lite";
-import { CharacterViewModel } from "../models/CharacterViewModel";
 import { Fragment } from "react/jsx-runtime";
-import { CharacterSheet } from "./CharacterSheet";
+import {
+	builderSessionUpdate,
+	builderStateSelector,
+	useAppDispatch,
+	useAppSelector,
+	useEnsureBuilderStateFor,
+} from "../models/AppStore";
+import { BusyIcon } from "./BusyIcon";
+import "./BuilderProcess.css";
+import { renderCharacterSheet } from "../models/BuilderFactory";
 
 export interface BuilderProcessProps {
-	characterModel: CharacterViewModel;
+	sessionKey: string;
 }
 
-export interface BuilderStepProps {
-	stepIndex: number;
-}
+export function BuilderProcess(props: BuilderProcessProps) {
+	const model = useAppSelector(builderStateSelector(props.sessionKey));
 
-export const BuilderProcess = observer((props: BuilderProcessProps) => {
-	return props.characterModel.Builder ? (
-		<div style={{ display: "flex" }}>
-			<div style={{ flex: "50%" }}>
-				<BuilderProcessInternal characterModel={props.characterModel} />
-			</div>
-			<div style={{ flex: "50%", paddingLeft: "1em" }}>
-				<CharacterSheet characterModel={props.characterModel} />
-			</div>
-		</div>
-	) : (
-		<div className="placeholder">
+	useEnsureBuilderStateFor(props.sessionKey, "ryuutama");
+
+	return !model ? (
+		<>
 			<BusyIcon />
+		</>
+	) : (
+		<div className="builder">
+			<div className="builder-process">
+				<BuilderProcessInternal sessionKey={props.sessionKey} />
+			</div>
+			<div className="builder-character-sheet">
+				{renderCharacterSheet(
+					model.Model.BuilderKey,
+					model.SourceData,
+					model.Character
+				)}
+			</div>
 		</div>
 	);
-});
+}
 
-const BuilderProcessInternal = observer((props: BuilderProcessProps) => {
+function BuilderProcessInternal(props: BuilderProcessProps) {
+	const model = useAppSelector(builderStateSelector(props.sessionKey));
+	const dispatch = useAppDispatch();
+
+	function triggerUpdate(index: number, stepUpdates: any) {
+		dispatch(builderSessionUpdate(props.sessionKey, index, stepUpdates));
+	}
+
 	return (
-		<div>
-			<div>{props.characterModel.Steps.CurrentStep}</div>
-			<div>
-				[
-				{props.characterModel.Steps.ByIndex.map((s) =>
-					s.isCompleted?.toString()
-				).join(", ")}
-				]
-			</div>
-			<div>
-				[
-				{props.characterModel.Steps.ByIndex.map((s) =>
-					s.isVisible?.toString()
-				).join(", ")}
-				]
-			</div>
-			<div>
-				{JSON.stringify(props.characterModel.getfirstClassExtraMasteredWeapons)}
-			</div>
-			{props.characterModel.Steps.ByIndex.filter((step) => step.isVisible).map(
-				(step, stepIdx) => (
-					<Fragment key={`Builder-Step${stepIdx}`}>
-						<hr />
-						<div>Step {stepIdx}</div>
-						{step.render(props.characterModel, stepIdx)}
-					</Fragment>
-				)
-			)}
+		<div className={`builder-${model?.Model.BuilderKey}`}>
+			<div>{JSON.stringify(model?.Character)}</div>
+			<hr />
+			<div>{JSON.stringify(model?.StepState)}</div>
+			<hr />
+			{model?.Model.ByIndex.filter(
+				(step) =>
+					step.Index <= model.StepState.CurrentStep &&
+					model.StepState.Steps[step.Index].IsVisible
+			).map((step) => (
+				<Fragment key={`Step-${props.sessionKey}-${step.Index}`}>
+					{step.render(model.StepState.Steps[step.Index], triggerUpdate)}
+				</Fragment>
+			))}
 		</div>
 	);
-});
+}

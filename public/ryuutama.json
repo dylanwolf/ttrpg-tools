@@ -46,9 +46,25 @@
 			"Skills": ["Well-Spoken", "Animal Owner", "Trader"]
 		},
 		{
+			"Name": "Hunter",
+			"Skills": ["Animal Tracking", "Trapping", "Hunting"]
+		},
+		{
+			"Name": "Healer",
+			"Skills": ["Healing", "First Aid", "Herb Gathering"]
+		},
+		{
 			"Name": "Farmer",
 			"Description": "*A worker who lives in harmony with the bounty of nature. In order to reap their harvest, they must set their hand to a number of different tasks, giving them practice with a single skill from another class.*",
 			"Skills": ["Robust", "Animal Owner", "Side-Job"]
+		},
+		{
+			"Name": "Artisan",
+			"Skills": ["Trapping", "Crafting", "Repair"]
+		},
+		{
+			"Name": "Noble",
+			"Skills": ["Weapon Grace"]
 		}
 	],
 	"Skills": [
@@ -81,6 +97,36 @@
 			"RelevantRoll": "[INT + SPI]"
 		},
 		{
+			"Name": "Animal Tracking",
+			"Description": "You can track certain types of monsters and gain +1 damage against a monster you have tracked.",
+			"RelevantRoll": "[STR+INT]"
+		},
+		{
+			"Name": "Trapping",
+			"Description": "Harvest materials from a defeated monster.",
+			"RelevantRoll": "[DEX+INT]"
+		},
+		{
+			"Name": "Hunting",
+			"Description": "Hunt in the evening instead of participating in the Camp check, gaining rations if successful.",
+			"RelevantRoll": "[DEX+INT]"
+		},
+		{
+			"Name": "Healing",
+			"Description": "Spend 1 healing herb and 1 day's water rations to restore HP to another character.",
+			"RelevantRoll": "[INT+SPI]"
+		},
+		{
+			"Name": "First Aid",
+			"Description": "Relieve a status effect for 1 hour.",
+			"RelevantRoll": "[INT+SPI]"
+		},
+		{
+			"Name": "Herb Gathering",
+			"Description": "Gather herbs in the wilderness, gaining a healing herb for the current terrain if successful.",
+			"RelevantRoll": "[STR+INT]"
+		},
+		{
 			"Name": "Robust",
 			"Description": "+1 to Condition checks. +3 to Carrying Capacity"
 		},
@@ -88,6 +134,39 @@
 			"Name": "Side-Job",
 			"Description": "Use a single skill from another class with a -1 penalty.",
 			"SelectSkill": true
+		},
+		{
+			"Name": "Crafting",
+			"Description": "Make an item from one of your specializations.",
+			"RelevantRoll": "[STR+DEX]",
+			"Specialization": [
+				"Weapons",
+				"Armor",
+				"Shoes",
+				"Capes",
+				"Staves",
+				"Hats",
+				"Accessories",
+				"Food",
+				"Sundries",
+				"Camping Equipment",
+				"Containers"
+			]
+		},
+		{
+			"Name": "Repair",
+			"Description": "Repair an item, returning it to full durability.",
+			"RelevantRoll": "[STR+DEX]"
+		},
+		{
+			"Name": "",
+			"Description": "",
+			"RelevantRoll": ""
+		},
+		{
+			"Name": "",
+			"Description": "",
+			"RelevantRoll": ""
 		},
 		{
 			"Name": "Weapon Grace",

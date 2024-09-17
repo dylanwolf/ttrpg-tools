@@ -1,203 +1,314 @@
-import { action, computed, makeObservable, observable } from "mobx";
-import { StepControlProps, StepModel } from "../../models/StepModel";
-import {
-	DragAndDropBucket,
-	DragAndDropLinkedState,
-} from "react-drag-drop-assignment";
-import { observer } from "mobx-react-lite";
+import { StepModel, StepState } from "../../models/StepModel";
+import "./AssignItemsStep.css";
 
-interface BucketDefinition {
+export interface BucketDefinition<TItem> {
 	Name: string;
 	Locked?: boolean | undefined;
 	MaxCount?: number | undefined;
+	FixedValues?: TItem[] | undefined;
 }
 
-class Bucket<TItem> {
-	Name: string;
-	Items: TItem[] = [];
-	Locked: boolean;
-	MaxCount: number | undefined;
-
-	constructor(def: BucketDefinition) {
-		this.Name = def.Name;
-		this.Locked = def.Locked || false;
-		this.MaxCount = def.MaxCount;
-	}
+export interface AssignItemsStepState<TItem> extends StepState {
+	Available: TItem[];
+	Value: { [name: string]: TItem[] } | undefined;
+	Buckets: BucketDefinition<TItem>[];
 }
 
-class BucketCollection<TItem> {
-	@observable.shallow ByIndex: Bucket<TItem>[] = [];
-	@observable.shallow ByName: { [name: string]: Bucket<TItem> } = {};
+interface DragState<TItem> {
+	dragging?: TItem | undefined;
+	draggingFromName?: string | null | undefined;
+	draggingToName?: string | null | undefined;
+}
 
-	constructor() {
-		makeObservable(this);
-	}
+function updateValue<TItem>(
+	oldValue: { [name: string]: TItem[] },
+	dragged: TItem,
+	draggedFromName: string | null,
+	draggedToName: string | null
+) {
+	var newValue: { [name: string]: TItem[] } = {};
 
-	@action setBuckets(buckets: Bucket<TItem>[]) {
-		this.ByIndex.splice(0, this.ByIndex.length);
-		Object.keys(this.ByName).forEach((key) => {
-			delete this.ByName[key];
+	var addedTo = false;
+
+	Object.keys(oldValue).forEach((name) => {
+		var items = [...oldValue[name]];
+
+		if (draggedFromName === name) {
+			items.splice(items.indexOf(dragged), 1);
+		}
+
+		if (draggedToName === name) {
+			items.push(dragged);
+			addedTo = true;
+		}
+
+		newValue[name] = items;
+	});
+
+	if (!addedTo && draggedToName) newValue[draggedToName] = [dragged];
+
+	return newValue;
+}
+
+function updateState<TItem>(
+	newState: AssignItemsStepState<TItem>,
+	equalityFunc: (us: TItem, them: TItem) => boolean,
+	items: TItem[],
+	buckets: BucketDefinition<TItem>[]
+) {
+	var remaining = [...items];
+	var newValue: { [name: string]: TItem[] } = {};
+
+	buckets.forEach((b) => {
+		var selectedItems: TItem[] = [];
+		var currentValue =
+			b.FixedValues ||
+			(newState && newState.Value && newState.Value[b.Name]) ||
+			[];
+
+		currentValue.forEach((v: TItem) => {
+			var match = remaining.filter((x) => equalityFunc(x, v))[0];
+			if (match) {
+				remaining.splice(remaining.indexOf(match), 1);
+				selectedItems.push(match);
+			}
 		});
 
-		buckets.forEach((bucket) => {
-			this.ByIndex.push(bucket);
-			this.ByName[bucket.Name] = bucket;
-		});
-	}
+		newValue[b.Name] = selectedItems;
+	});
+
+	newState.Available = remaining;
+	newState.Buckets = buckets;
+	newState.Value = newValue;
+	newState.IsCompleted = remaining.length === 0;
+	newState.IsVisible = true;
 }
 
-export class AssignItemsStepModel<TModel, TItem> extends StepModel<TModel> {
-	Available: TItem[] = [];
-	Buckets: BucketCollection<TItem> = new BucketCollection<TItem>();
+function isValidDrag<TItem>(item: TItem, isLocked: boolean, bucket: TItem[]) {
+	return !isLocked && bucket.includes(item);
+}
 
-	@observable Label: string;
-	@observable.shallow Values: { [name: string]: TItem[] } = {};
-	DragAndDropState: DragAndDropLinkedState<TItem>;
+function isValidDrop<TItem>(
+	item: TItem,
+	isLocked: boolean,
+	maxCount: number | undefined,
+	bucket: TItem[]
+) {
+	return (
+		!isLocked &&
+		(maxCount === undefined || maxCount > bucket.length) &&
+		!bucket.includes(item)
+	);
+}
 
-	_itemListFunc: (model: TModel) => TItem[];
-	_bucketsFunc: (model: TModel) => BucketDefinition[];
-	_equalityFunc: (us: TItem, them: TItem) => boolean;
-	_buildDefaultValue: (
-		items: TItem[],
-		oldValue: { [name: string]: TItem[] }
+export class AssignItemsStep<TSource, TData, TItem> extends StepModel<
+	TSource,
+	TData,
+	AssignItemsStepState<TItem>
+> {
+	GetItemsList: (source: TSource, data: TData) => TItem[];
+	ItemEquals: (us: TItem, them: TItem) => boolean;
+	GetBuckets: (
+		source: TSource,
+		data: TData,
+		lst: TItem[]
+	) => BucketDefinition<TItem>[];
+	GetDefaultValue: (
+		source: TSource,
+		data: TData,
+		lst: TItem[]
 	) => { [name: string]: TItem[] };
-	_itemRenderer: (item: TItem) => JSX.Element;
+	RenderItem: (item: TItem) => JSX.Element;
 
 	constructor(
 		name: string,
-		label: string,
-		itemListFunc: (model: TModel) => TItem[],
-		bucketsFunc: (model: TModel) => BucketDefinition[],
-		equalityFunc: (us: TItem, them: TItem) => boolean,
-		buildDefaultValue: (
-			items: TItem[],
-			oldValue: { [name: string]: TItem[] }
+		getItemsList: (source: TSource, data: TData) => TItem[],
+		itemEqualsFunc: (us: TItem, them: TItem) => boolean,
+		getBuckets: (
+			source: TSource,
+			data: TData,
+			lst: TItem[]
+		) => BucketDefinition<TItem>[],
+		getDefaultValue: (
+			source: TSource,
+			data: TData,
+			lst: TItem[]
 		) => { [name: string]: TItem[] },
-		itemRenderer: (item: TItem) => JSX.Element
+		renderItem: (item: TItem) => JSX.Element,
+		updateCharacter: (
+			source: TSource,
+			state: AssignItemsStepState<TItem>,
+			newData: TData
+		) => void
 	) {
-		super(name);
-
-		this.Label = label;
-
-		this._itemListFunc = itemListFunc;
-		this._bucketsFunc = bucketsFunc;
-		this._itemRenderer = itemRenderer;
-		this._equalityFunc = equalityFunc;
-		this._buildDefaultValue = buildDefaultValue;
-
-		this.DragAndDropState = new DragAndDropLinkedState<TItem>().addCallback(
-			() => this.updateValues()
-		);
-
-		makeObservable(this);
+		super(name, updateCharacter);
+		this.GetItemsList = getItemsList;
+		this.GetBuckets = getBuckets;
+		this.ItemEquals = itemEqualsFunc;
+		this.GetDefaultValue = getDefaultValue;
+		this.RenderItem = renderItem;
 	}
 
-	@action.bound updateValues() {
-		var newValues: { [name: string]: TItem[] } = {};
-
-		// Update bucket values
-		this.Buckets.ByIndex.forEach((b) => {
-			newValues[b.Name] = b.Items;
-		});
-
-		this.Values = newValues;
-		if (this.isCompleted)
-			this.Container?.onStepProgression(this.Container.ByIndex.indexOf(this));
+	initializeState(): AssignItemsStepState<TItem> {
+		return {
+			Available: [],
+			Buckets: [],
+			Value: undefined,
+			IsCompleted: false,
+			IsVisible: true,
+		};
 	}
 
-	@computed get isCompleted() {
+	updateState(
+		source: TSource,
+		data: TData,
+		newState: AssignItemsStepState<TItem>
+	): void {
+		var items = this.GetItemsList(source, data);
+		var buckets = this.GetBuckets(source, data, items);
+
+		if (newState.Value === undefined)
+			newState.Value = this.GetDefaultValue(source, data, items);
+
+		updateState(newState, this.ItemEquals, items, buckets);
+	}
+
+	render(
+		stepState: AssignItemsStepState<TItem>,
+		triggerUpdate: (index: number, stepUpdates: any) => void
+	): JSX.Element {
+		var index = this.Index;
+		var dragState: DragState<TItem> = {};
+
+		function onDragStart(
+			item: TItem,
+			bucket: TItem[],
+			bucketDef: BucketDefinition<TItem> | undefined,
+			e: React.DragEvent<HTMLSpanElement>
+		) {
+			if (!isValidDrag(item, bucketDef?.Locked || false, bucket)) {
+				e.preventDefault();
+				return;
+			}
+
+			dragState.dragging = item;
+			dragState.draggingFromName = bucketDef?.Name || null;
+		}
+
+		function onDragOver(
+			bucket: TItem[],
+			bucketDef: BucketDefinition<TItem> | undefined,
+			e: React.DragEvent<HTMLDivElement>
+		) {
+			if (
+				!isValidDrop(
+					dragState.dragging,
+					bucketDef?.Locked || false,
+					bucketDef?.MaxCount,
+					bucket
+				)
+			) {
+				return;
+			}
+
+			dragState.draggingToName = bucketDef?.Name || null;
+			e.preventDefault();
+		}
+
+		function onDragExit(bucket: BucketDefinition<TItem> | undefined) {
+			if (dragState.draggingToName === (bucket?.Name || null))
+				dragState.draggingToName = undefined;
+		}
+
+		function onDragEnd() {
+			if (
+				stepState.Value &&
+				dragState.dragging &&
+				dragState.draggingFromName !== undefined &&
+				dragState.draggingToName !== undefined
+			) {
+				var { dragging, draggingFromName, draggingToName } = dragState;
+				dragState = {};
+
+				triggerUpdate(index, {
+					Value: updateValue(
+						stepState.Value,
+						dragging,
+						draggingFromName,
+						draggingToName
+					),
+				});
+			}
+		}
+
+		var values = stepState.Value || {};
+
 		return (
-			this.Values &&
-			this.Available.length === 0 &&
-			this.Buckets.ByIndex.length > 0
-		);
-	}
-
-	@action.bound resetState(buckets: BucketDefinition[], items: TItem[]) {
-		// Clone available items list
-		var available = [...items];
-
-		// Clone values
-		var defaultValue = this._buildDefaultValue(items, this.Values);
-
-		// Clear the current available bucket
-		this.Available.splice(0, this.Available.length);
-
-		// Rebuild buckets, populating with items from the last value (if available)
-		var newBuckets: Bucket<TItem>[] = [];
-		buckets.forEach((b) => {
-			var bucket = new Bucket<TItem>(b);
-
-			(defaultValue[b.Name] || []).forEach((val) => {
-				var match =
-					available.filter((x) => this._equalityFunc(val, x))[0] || undefined;
-				if (match) {
-					bucket.Items.push(match);
-					available.splice(available.indexOf(match), 1);
-				}
-			});
-
-			newBuckets.push(bucket);
-		});
-		this.Buckets.setBuckets(newBuckets);
-
-		// Rebuild available list
-		available.forEach((i) => {
-			this.Available.push(i);
-		});
-
-		this.updateValues();
-	}
-
-	@action.bound refresh(model: TModel, refreshingSelf: boolean): void {
-		if (refreshingSelf) return;
-
-		var itemList = this._itemListFunc(model);
-		var buckets = this._bucketsFunc(model);
-
-		this.resetState(buckets, itemList);
-	}
-
-	@action completed(model: TModel): void {}
-
-	render(model: TModel, stepIdx: number): JSX.Element {
-		return (
-			<AssignItemsStepControl model={model} step={this} stepIndex={stepIdx} />
-		);
-	}
-}
-
-export const AssignItemsStepControl = observer(
-	<TModel, TItem>(
-		props: StepControlProps<TModel, AssignItemsStepModel<TModel, TItem>>
-	) => {
-		return (
-			<div className={`step step-assignitems step-${props.step.Name}`}>
+			<div className={`step step-assignitems step-${this.Name}`}>
 				<div className="buckets">
-					{props.step.Buckets.ByIndex.map((b) => (
-						<div
-							className="bucket"
-							key={`AssignItems-${props.step.Name}-${b.Name}`}
-						>
+					{stepState.Buckets.map((b: BucketDefinition<TItem>) => (
+						<div className="bucket" key={`AssignItems-${this.Name}-${b.Name}`}>
 							<div className="bucket-name">{b.Name}</div>
-							<DragAndDropBucket
-								dragState={props.step.DragAndDropState}
-								items={b.Items}
-								isLocked={() => b.Locked}
-								maxCount={b.MaxCount}
-								itemRenderer={props.step._itemRenderer}
-							/>
+							<div
+								className={`bucket-contents${b.Locked ? " bucket-locked" : ""}${
+									b.MaxCount && values[b.Name]?.length >= b.MaxCount
+										? " bucket-full"
+										: ""
+								}`}
+								onDragOver={function (e) {
+									onDragOver(values[b.Name] || [], b, e);
+								}}
+								onDragExit={function () {
+									onDragExit(b);
+								}}
+							>
+								{(values[b.Name] || []).map((i, idx) => (
+									<span
+										className="bucket-item"
+										draggable={b.Locked ? false : true}
+										key={`AssignedItem-${this.Name}-${b.Name}-${idx}`}
+										onDragStart={function (e) {
+											onDragStart(i, values[b.Name] || [], b, e);
+										}}
+										onDragEnd={function (e) {
+											onDragEnd();
+										}}
+									>
+										{this.RenderItem(i)}
+									</span>
+								))}
+							</div>
 						</div>
 					))}
 				</div>
 				<div className="available">
-					<DragAndDropBucket
-						dragState={props.step.DragAndDropState}
-						items={props.step.Available}
-						itemRenderer={props.step._itemRenderer}
-					/>
+					<div
+						className="bucket-contents"
+						onDragOver={function (e) {
+							onDragOver(stepState.Available, undefined, e);
+						}}
+						onDragExit={function () {
+							onDragExit(undefined);
+						}}
+					>
+						{stepState.Available.map((i, idx) => (
+							<span
+								className="bucket-item"
+								key={`AssignedItem-${this.Name}-Available-${idx}`}
+								draggable={true}
+								onDragStart={function (e) {
+									onDragStart(i, stepState.Available, undefined, e);
+								}}
+								onDragEnd={function (e) {
+									onDragEnd();
+								}}
+							>
+								{this.RenderItem(i)}
+							</span>
+						))}
+					</div>
 				</div>
 			</div>
 		);
 	}
-);
+}
