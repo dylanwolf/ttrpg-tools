@@ -1,20 +1,29 @@
 import { StepModel, StepState } from "../../models/StepModel";
 
-interface StringDropDownStepState<TItem> extends StepState {
-	SelectList: TItem[];
+interface StringDropDownStepState extends StepState {
+	SelectList: DropDownItem[];
 	Value: string | undefined;
+}
+
+interface DropDownItem {
+	Value: string;
+	Text: string;
 }
 
 export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
 	TSource,
 	TData,
-	StringDropDownStepState<TItem>
+	StringDropDownStepState
 > {
 	Label: string;
 	GetSelectList: (src: TSource, data: TData) => TItem[];
 	GetValue: (item: TItem) => string;
 	GetText: (item: TItem) => string;
-	GetDefaultValue: (source: TSource, data: TData, lst: TItem[]) => string;
+	GetDefaultValue: (
+		source: TSource,
+		data: TData,
+		lst: string[]
+	) => string | undefined;
 
 	constructor(
 		name: string,
@@ -22,10 +31,14 @@ export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
 		getSelectList: (src: TSource, data: TData) => TItem[],
 		getValue: (item: TItem) => string,
 		getText: (item: TItem) => string,
-		getDefaultValue: (source: TSource, data: TData, lst: TItem[]) => string,
+		getDefaultValue: (
+			source: TSource,
+			data: TData,
+			lst: string[]
+		) => string | undefined,
 		updateCharacter: (
 			source: TSource,
-			state: StringDropDownStepState<TItem>,
+			state: StringDropDownStepState,
 			newData: TData
 		) => void
 	) {
@@ -37,23 +50,34 @@ export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
 		this.GetDefaultValue = getDefaultValue;
 	}
 
-	initializeState(): StringDropDownStepState<TItem> {
+	initializeState(): StringDropDownStepState {
 		return { IsCompleted: false, IsVisible: false, SelectList: [], Value: "" };
 	}
 
-	updateState(
-		source: TSource,
-		data: TData,
-		newState: StringDropDownStepState<TItem>
-	) {
-		var selectList = this.GetSelectList(source, data);
+	clearState(newState: StringDropDownStepState) {
+		newState.Value = undefined;
+		newState.SelectList = [];
+	}
+
+	updateState(source: TSource, data: TData, newState: StringDropDownStepState) {
+		var selectList = this.GetSelectList(source, data).map((itm) => {
+			return {
+				Text: this.GetText(itm),
+				Value: this.GetValue(itm),
+			};
+		});
+
 		newState.SelectList = selectList;
 
 		if (
 			newState.Value === undefined ||
-			!selectList.any((x) => this.GetValue(x) === newState.Value)
+			!selectList.any((x) => x.Value === newState.Value)
 		) {
-			newState.Value = this.GetDefaultValue(source, data, selectList);
+			newState.Value = this.GetDefaultValue(
+				source,
+				data,
+				selectList.map((x) => x.Value)
+			);
 		}
 
 		newState.IsCompleted = newState.Value ? true : false;
@@ -61,7 +85,7 @@ export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
 	}
 
 	render(
-		stepState: StringDropDownStepState<TItem>,
+		stepState: StringDropDownStepState,
 		triggerUpdate: (index: number, stepUpdates: any) => void
 	) {
 		var index = this.Index;
@@ -78,12 +102,12 @@ export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
 				<label>
 					{this.Label ? `${this.Label}:` : ""}
 					<select value={stepState.Value} onChange={onChange}>
-						{stepState.SelectList.map((i: TItem) => (
+						{stepState.SelectList.map((i) => (
 							<option
-								value={this.GetValue(i)}
-								key={`StringDropDown-${this.Name}-${this.GetValue(i)}`}
+								value={i.Value}
+								key={`StringDropDown-${this.Name}-${i.Value}`}
 							>
-								{this.GetText(i)}
+								{i.Text}
 							</option>
 						))}
 					</select>

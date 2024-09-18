@@ -1,4 +1,4 @@
-export function adjustDiceRoll(...args: (string | number)[]) {
+export function adjustRyuutamaDiceRoll(...args: (string | number)[]) {
 	var diceParts: string[] = [];
 	var modifiers = 0;
 

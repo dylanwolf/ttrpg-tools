@@ -27,6 +27,8 @@ export abstract class StepModel<TSource, TData, TState extends StepState> {
 
 	abstract initializeState(): TState;
 
+	abstract clearState(newState: TState): void;
+
 	abstract updateState(source: TSource, data: TData, newState: TState): void;
 
 	abstract render(
@@ -99,7 +101,7 @@ export class StepCollection<TSource, TData> {
 		var inCompleted = true;
 		for (var idx = 0; idx < state.Steps.length; idx++) {
 			var step = this.ByIndex[idx];
-			//console.log(`Processing step ${idx} (${startStep} - ${endStep})`);
+			console.log(`Processing step ${idx} (${startStep} - ${endStep})`);
 
 			// If no matching step, continue
 			if (!step) {
@@ -129,11 +131,11 @@ export class StepCollection<TSource, TData> {
 
 			// If we finished this step, move on to the next
 			if (stepState.IsCompleted && endStep <= idx) {
-				endStep += 1;
+				endStep = idx + 1;
 			}
 		}
 
-		if (inCompleted) newState.CurrentStep = endStep;
+		if (inCompleted) newState.CurrentStep = endStep + 1;
 
 		return {
 			Key: state.Key,

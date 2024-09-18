@@ -159,6 +159,12 @@ export class AssignItemsStep<TSource, TData, TItem> extends StepModel<
 		};
 	}
 
+	clearState(newState: AssignItemsStepState<TItem>) {
+		newState.Value = undefined;
+		newState.Buckets = [];
+		newState.Available = [];
+	}
+
 	updateState(
 		source: TSource,
 		data: TData,

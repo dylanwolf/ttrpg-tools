@@ -46,6 +46,10 @@ export class NumericStep<TSource, TData> extends StepModel<
 		};
 	}
 
+	clearState(newState: NumericStepState) {
+		newState.Value = undefined;
+	}
+
 	updateState(source: TSource, data: TData, newState: NumericStepState): void {
 		newState.MinValue = this.GetMinValue(source, data);
 		newState.MaxValue = this.GetMaxValue(source, data);

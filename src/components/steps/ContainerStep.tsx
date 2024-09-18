@@ -1,4 +1,3 @@
-import { setMaxListeners } from "events";
 import { StepModel, StepState } from "../../models/StepModel";
 import { mergeStateWithUpdates } from "../../models/builderHelpers";
 
@@ -47,20 +46,30 @@ export class ContainerStep<TSource, TData> extends StepModel<
 		};
 	}
 
+	clearState(newState: ContainerStepState) {
+		this.Children.forEach((step, idx) => {
+			step.clearState(newState.Steps[idx]);
+		});
+	}
+
 	updateState(
 		source: TSource,
 		data: TData,
 		newState: ContainerStepState
 	): void {
-		this.Children.forEach((step, idx) => {
-			step.updateState(source, data, newState.Steps[idx]);
-		});
-
 		newState.IsVisible = this.GetIsVisible
 			? this.GetIsVisible(source, data)
 			: true;
 
-		newState.IsCompleted = newState.Steps.all((x) => x.IsCompleted);
+		this.Children.forEach((step, idx) => {
+			if (newState.IsVisible)
+				step.updateState(source, data, newState.Steps[idx]);
+			else step.clearState(newState.Steps[idx]);
+		});
+
+		newState.IsCompleted = newState.IsVisible
+			? newState.Steps.all((x) => x.IsCompleted)
+			: true;
 	}
 
 	render(

@@ -8,7 +8,7 @@ import {
 } from "../models/BuilderFactory";
 import { valueIfInList } from "../models/builderHelpers";
 import { StepCollection } from "../models/StepModel";
-import { adjustDiceRoll } from "./DiceRolls";
+import { adjustRyuutamaDiceRoll } from "./DiceRolls";
 
 const BUILDER_KEY = "ryuutama";
 
@@ -16,8 +16,9 @@ export interface SourceData {
 	CharacterTemplates: CharacterTemplate[];
 	StartingAbilityScores: StartingAbilityScore[];
 	Classes: CharacterClass[];
-	Skills: ClassSkill[];
+	Skills: CharacterSkill[];
 	Weapons: Weapon[];
+	Types: CharacterType[];
 }
 
 export interface CharacterTemplate {
@@ -42,13 +43,15 @@ export interface CharacterClass {
 	Skills: string[];
 }
 
-export interface ClassSkill {
+export interface CharacterSkill {
 	Name: string;
 	Description: string;
 	RelevantRoll?: string | undefined;
 	SelectSkill?: boolean | undefined;
 	ExtraMasteredWeapon?: string[] | undefined;
 	Specialization?: string[] | undefined;
+	RestrictedFromSideJob?: boolean | undefined;
+	Bonuses?: { [stat: string]: number } | undefined;
 }
 
 export interface Weapon {
@@ -59,6 +62,14 @@ export interface Weapon {
 	Damage: string;
 }
 
+export interface CharacterType {
+	Name: string;
+	Bonuses?: { [stat: string]: number } | undefined;
+	SeasonalMagic?: number | undefined;
+	SpellsPerLevel?: number | undefined;
+	ExtraMasteredWeapon?: boolean | undefined;
+}
+
 export interface CharacterState {
 	Level: number;
 	CharacterTemplate: string;
@@ -66,7 +77,10 @@ export interface CharacterState {
 	AbilityScoreAssignments: { [name: string]: number | undefined };
 	Level1WeaponMastery: string;
 	Level1Class: string;
+	Level1SideJob: string;
 	Level1WeaponGrace: string;
+	Level1Type: string;
+	Level1WeaponFocus: string;
 }
 
 const initialCharacterData: CharacterState = {
@@ -76,7 +90,10 @@ const initialCharacterData: CharacterState = {
 	AbilityScoreAssignments: {},
 	Level1WeaponMastery: "",
 	Level1Class: "",
+	Level1SideJob: "",
 	Level1WeaponGrace: "",
+	Level1Type: "",
+	Level1WeaponFocus: "",
 };
 
 function getCharacterTemplate(model: SourceData, data: CharacterState) {
@@ -101,10 +118,20 @@ function getLevel1Class(model: SourceData, data: CharacterState) {
 	);
 }
 
+function getLevel1BaseSkills(model: SourceData, data: CharacterState) {
+	var l1class = getLevel1Class(model, data);
+	if (!l1class) return [];
+
+	return model.Skills.filter((x) => l1class.Skills.includes(x.Name));
+}
+
 function getLevel1Skills(model: SourceData, data: CharacterState) {
 	var l1class = getLevel1Class(model, data);
 	if (!l1class) return [];
-	return model.Skills.filter((x) => l1class.Skills.includes(x.Name));
+
+	return model.Skills.filter(
+		(x) => l1class.Skills.includes(x.Name) || data.Level1SideJob === x.Name
+	);
 }
 
 registerBuilderModel(
@@ -126,8 +153,7 @@ registerBuilderModel(
 				(src, data) => src.CharacterTemplates,
 				(itm) => itm.Name,
 				(itm) => itm.Name,
-				(src, data, lst) =>
-					valueIfInList(data.CharacterTemplate, (x) => x.Name, lst) || "",
+				(src, data, lst) => valueIfInList(data.CharacterTemplate, lst),
 				(src, state, newData) => (newData.CharacterTemplate = state.Value || "")
 			),
 			new StringDropDownStep<SourceData, CharacterState, StartingAbilityScore>(
@@ -144,7 +170,7 @@ registerBuilderModel(
 				(itm) => itm.Name,
 				(itm) => itm.Name,
 				(src, data, lst) =>
-					valueIfInList(data.StartingAbilityScores, (x) => x.Name, lst) || "",
+					valueIfInList(data.StartingAbilityScores, lst) || "",
 				(src, state, newData) =>
 					(newData.StartingAbilityScores = state.Value || "")
 			),
@@ -154,32 +180,55 @@ registerBuilderModel(
 				(src, data) => src.Weapons,
 				(itm) => itm.Name,
 				(itm) => itm.Name,
-				(src, data, lst) =>
-					lst.any((x) => x.Name === data.Level1WeaponMastery)
-						? data.Level1WeaponMastery
-						: lst[0].Name,
+				(src, data, lst) => valueIfInList(data.Level1WeaponMastery, lst),
 				(src, state, data) => (data.Level1WeaponMastery = state.Value || "")
+			),
+			new StringDropDownStep<SourceData, CharacterState, CharacterType>(
+				"Level1Type",
+				"Level 1 Type",
+				(src, data) => src.Types,
+				(itm) => itm.Name,
+				(itm) => itm.Name,
+				(src, data, lst) => valueIfInList(data.Level1Type, lst),
+				(src, state, data) => (data.Level1Type = state.Value || "")
 			),
 			new StringDropDownStep<SourceData, CharacterState, CharacterClass>(
 				"Level1Class",
-				"Class",
+				"Level 1 Class",
 				(src, data) => src.Classes,
 				(itm) => itm.Name,
 				(itm) => itm.Name,
-				(src, data, lst) =>
-					valueIfInList(data.Level1Class, (x) => x.Name, lst) || "",
+				(src, data, lst) => valueIfInList(data.Level1Class, lst),
 				(src, state, data) => {
 					data.Level1Class = state.Value || "";
-
-					// Test to see if properties that are dependent on this selection are still valid
-					// if (data.Level1WeaponGrace) {
-					// 	if (
-					// 		!getLevel1Skills(src, data).any((x) =>
-					// 			x.ExtraMasteredWeapon.includes(data.Level1WeaponGrace)
-					// 		)
-					// 	)
-					// 		data.Level1WeaponGrace = "";
-					// }
+				}
+			),
+			new ContainerStep<SourceData, CharacterState>(
+				"Level1SideJob",
+				"",
+				[
+					new StringDropDownStep<SourceData, CharacterState, CharacterSkill>(
+						"Level1SideJob",
+						"Level 1 Farmer Side-Job",
+						(src, data) => {
+							var existingSkills = getLevel1BaseSkills(src, data).map(
+								(s) => s.Name
+							);
+							return src.Skills.filter(
+								(s) =>
+									!existingSkills.includes(s.Name) && !s.RestrictedFromSideJob
+							).orderBy((x) => x.Name);
+						},
+						(itm) => itm.Name,
+						(itm) => itm.Name,
+						(src, data, lst) => valueIfInList(data.Level1SideJob, lst),
+						(src, state, data) => (data.Level1SideJob = state.Value || "")
+					),
+				],
+				(src, data) => {
+					return getLevel1Skills(src, data).any((x) =>
+						x.SelectSkill ? true : false
+					);
 				}
 			),
 			new ContainerStep<SourceData, CharacterState>(
@@ -188,7 +237,7 @@ registerBuilderModel(
 				[
 					new StringDropDownStep<SourceData, CharacterState, string>(
 						"Level1WeaponGrace",
-						"Level 1 Weapon Grace",
+						"Level 1 Noble Weapon Grace",
 						(src, data) =>
 							getLevel1Skills(src, data)
 								.map((s) => s.ExtraMasteredWeapon || [])
@@ -196,80 +245,161 @@ registerBuilderModel(
 								.distinct(),
 						(itm) => itm,
 						(itm) => itm,
-						(src, data, lst) =>
-							lst.any((x) => x === data.Level1WeaponGrace)
-								? data.Level1WeaponGrace
-								: lst[0],
+						(src, data, lst) => valueIfInList(data.Level1WeaponGrace, lst),
 						(src, state, data) => (data.Level1WeaponGrace = state.Value || "")
 					),
 				],
 				(src, data) => {
+					console.log(
+						getLevel1Skills(src, data).any(
+							(x) => (x.ExtraMasteredWeapon || []).length > 0
+						)
+					);
 					return getLevel1Skills(src, data).any(
 						(x) => (x.ExtraMasteredWeapon || []).length > 0
 					);
 				}
 			),
-			// new AssignItemsStep<SourceData, CharacterState, StartingDice>(
-			// 	"AssignAbilityScores",
-			// 	(src, data) =>
-			// 		getStartingAbilityScores(src, data.StartingAbilityScores).Dice,
-			// 	(us, them) => us.Value === them.Value,
-			// 	(src, data, lst) =>
-			// 		["STR", "DEX", "INT", "SPI"].map((attr) => {
-			// 			var fixedMatch = lst.filter((x) => x.Attribute === attr)[0];
+			new AssignItemsStep<SourceData, CharacterState, StartingDice>(
+				"AssignAbilityScores",
+				(src, data) => getStartingAbilityScores(src, data).Dice,
+				(us, them) => us.Value === them.Value,
+				(src, data, lst) =>
+					["STR", "DEX", "INT", "SPI"].map((attr) => {
+						var fixedMatch = lst.filter((x) => x.Attribute === attr)[0];
 
-			// 			return {
-			// 				Name: attr,
-			// 				Locked: fixedMatch ? true : false,
-			// 				MaxCount: 1,
-			// 				FixedValues: fixedMatch ? [fixedMatch] : undefined,
-			// 			};
-			// 		}),
-			// 	(src, data, lst) => {
-			// 		var defaultValue: { [name: string]: StartingDice[] } = {};
-			// 		var remaining = [...lst];
+						return {
+							Name: attr,
+							Locked: fixedMatch ? true : false,
+							MaxCount: 1,
+							FixedValues: fixedMatch ? [fixedMatch] : undefined,
+						};
+					}),
+				(src, data, lst) => {
+					var defaultValue: { [name: string]: StartingDice[] } = {};
+					var remaining = [...lst];
 
-			// 		Object.keys(data.AbilityScoreAssignments).forEach((key) => {
-			// 			var match = remaining.filter(
-			// 				(x) => x.Value === data.AbilityScoreAssignments[key]
-			// 			)[0];
-			// 			if (match) {
-			// 				defaultValue[key] = [match];
-			// 				remaining.splice(remaining.indexOf(match), 1);
-			// 			}
-			// 		});
+					Object.keys(data.AbilityScoreAssignments).forEach((key) => {
+						var match = remaining.filter(
+							(x) => x.Value === data.AbilityScoreAssignments[key]
+						)[0];
+						if (match) {
+							defaultValue[key] = [match];
+							remaining.splice(remaining.indexOf(match), 1);
+						}
+					});
 
-			// 		return defaultValue;
-			// 	},
-			// 	(itm) => <span>d{itm.Value}</span>,
-			// 	(src, state, data) => {
-			// 		var value: { [name: string]: number } = {};
-			// 		var stateValue = state.Value || {};
+					return defaultValue;
+				},
+				(itm) => <span>d{itm.Value}</span>,
+				(src, state, data) => {
+					var value: { [name: string]: number } = {};
+					var stateValue = state.Value || {};
 
-			// 		Object.keys(stateValue).forEach((key) => {
-			// 			var die = stateValue[key][0];
-			// 			if (die) value[key] = die.Value;
-			// 		});
+					Object.keys(stateValue).forEach((key) => {
+						var die = stateValue[key][0];
+						if (die) value[key] = die.Value;
+					});
 
-			// 		data.AbilityScoreAssignments = value;
-			// 	}
-			// ),
+					data.AbilityScoreAssignments = value;
+				}
+			),
 		],
 		() => initialCharacterData
 	)
 );
 
-function collectAbilityScores(data: CharacterState) {
-	return {
-		STR: data.AbilityScoreAssignments["STR"],
-		DEX: data.AbilityScoreAssignments["DEX"],
-		INT: data.AbilityScoreAssignments["INT"],
-		SPI: data.AbilityScoreAssignments["SPI"],
+interface CharacterSheetData {
+	Level: number;
+	CharacterTemplateDisplayName: string | undefined;
+	Level1Class: string | undefined;
+	Level1Type: string | undefined;
+	AbilityScores: {
+		STR: number | undefined;
+		DEX: number | undefined;
+		INT: number | undefined;
+		SPI: number | undefined;
 	};
+	Derived: {
+		CarryingCapacity: number;
+		HP: number;
+		MP: number;
+	};
+	OtherBonuses: { [stat: string]: string };
+	Skills: CharacterSkill[];
+	WeaponMasteries: Weapon[];
 }
 
-function collectWeaponMasteries(source: SourceData, data: CharacterState) {
-	return [data.Level1WeaponMastery, data.Level1WeaponGrace]
+function collectCharacterSheetData(
+	source: SourceData,
+	data: CharacterState
+): CharacterSheetData {
+	var tpl = getCharacterTemplate(source, data);
+	var level1Skills = getLevel1Skills(source, data);
+
+	var attrStr = data.AbilityScoreAssignments["STR"];
+	var attrDex = data.AbilityScoreAssignments["DEX"];
+	var attrInt = data.AbilityScoreAssignments["INT"];
+	var attrSpi = data.AbilityScoreAssignments["SPI"];
+
+	var groupedTypes = [data.Level1Type]
+		.groupBy((x) => x)
+		.map((grp) => {
+			return {
+				Count: grp.items.length,
+				Type: source.Types.filter((x) => x.Name === grp.key)[0],
+			};
+		})
+		.filter((x) => x.Type);
+
+	var groupedSkills = [level1Skills]
+		.filter((x) => x)
+		.flat()
+		.groupBy((x) => x.Name)
+		.map((grp) => {
+			return {
+				Count: grp.items.length,
+				Skill: source.Skills.filter((x) => x.Name === grp.key)[0],
+				IsSideJob: grp.key === data.Level1SideJob,
+			};
+		});
+
+	var bonuses: { [stat: string]: number } = {};
+
+	groupedTypes.forEach((x) => {
+		if (!x.Type.Bonuses) return;
+
+		Object.keys(x.Type.Bonuses).forEach((key) => {
+			if (!x.Type.Bonuses) return;
+
+			if (!bonuses[key]) bonuses[key] = 0;
+			bonuses[key] += x.Type.Bonuses[key] * x.Count;
+		});
+	});
+
+	groupedSkills.forEach((x) => {
+		if (!x.Skill.Bonuses) return;
+
+		Object.keys(x.Skill.Bonuses).forEach((key) => {
+			if (!x.Skill.Bonuses) return;
+
+			if (!bonuses[key]) bonuses[key] = 0;
+			bonuses[key] += x.Skill.Bonuses[key] * x.Count;
+		});
+	});
+
+	var carryCapacity = (attrStr || 0) + 3 + (bonuses["Carrying Capacity"] || 0);
+	var hp = (attrStr || 0) * 2 + (bonuses["HP"] || 0);
+	var mp = (attrSpi || 0) * 2 + (bonuses["MP"] || 0);
+	var damage = bonuses["Damage"] || 0;
+
+	var otherBonuses: { [stat: string]: string } = {};
+	Object.keys(bonuses).forEach((key) => {
+		if (["HP", "MP", "Damage", "Carrying Capacity"].includes(key)) return;
+		otherBonuses[key] = adjustRyuutamaDiceRoll(bonuses[key]);
+	});
+
+	var weaponMasteries = [data.Level1WeaponMastery, data.Level1WeaponGrace]
 		.filter((x) => x)
 		.groupBy((x) => x)
 		.map((grp) => {
@@ -284,69 +414,91 @@ function collectWeaponMasteries(source: SourceData, data: CharacterState) {
 				Name: x.Mastery.Name,
 				Description: x.Mastery.Description,
 				Examples: x.Mastery.Examples,
-				Accuracy: adjustDiceRoll(x.Mastery.Accuracy, x.Count - 1),
-				Damage: x.Mastery.Damage,
+				Accuracy: adjustRyuutamaDiceRoll(x.Mastery.Accuracy, x.Count - 1),
+				Damage: adjustRyuutamaDiceRoll(x.Mastery.Damage, damage),
 			};
 		});
-}
 
-function collectSkills(source: SourceData, data: CharacterState) {
-	return [getLevel1Skills(source, data)]
-		.filter((x) => x)
-		.flat()
-		.groupBy((x) => x.Name)
-		.map((grp) => {
-			return {
-				Count: grp.items.length,
-				Skill: source.Skills.filter((x) => x.Name === grp.key)[0],
-			};
-		})
-		.filter((x) => x.Skill)
-		.map((x) => {
-			return {
-				Name: x.Skill.Name,
-				Description: x.Skill.Description,
-				RelevantRoll: x.Skill.RelevantRoll
-					? adjustDiceRoll(x.Skill.RelevantRoll, x.Count - 1)
-					: undefined,
-			};
-		});
+	return {
+		Level: data.Level || 1,
+		CharacterTemplateDisplayName: tpl?.DisplayValue || undefined,
+		Level1Class: data.Level1Class,
+		Level1Type: data.Level1Type,
+		AbilityScores: {
+			STR: attrStr,
+			DEX: attrDex,
+			INT: attrInt,
+			SPI: attrSpi,
+		},
+		Derived: {
+			CarryingCapacity: carryCapacity,
+			HP: hp,
+			MP: mp,
+		},
+		Skills: groupedSkills
+			.map((x) => {
+				return {
+					Name: x.Skill.Name,
+					Description: x.Skill.Description,
+					RelevantRoll: x.Skill.RelevantRoll
+						? adjustRyuutamaDiceRoll(
+								x.Skill.RelevantRoll,
+								x.Count - 1 + (x.IsSideJob ? -1 : 0)
+						  )
+						: undefined,
+				};
+			})
+			.orderBy((x) => x.Name),
+		WeaponMasteries: weaponMasteries,
+		OtherBonuses: otherBonuses,
+	};
 }
 
 function characterSheetRenderer(source: SourceData, data: CharacterState) {
-	var characterTemplate = getCharacterTemplate(source, data);
-	var abilityScores = collectAbilityScores(data);
+	var cs = collectCharacterSheetData(source, data);
 
 	return (
 		<div className="character-sheet">
 			<div className="level">Level {data.Level}</div>
 			<div className="classes">
-				{[characterTemplate.DisplayValue, data.Level1Class]
-					.filter((x) => x)
-					.join(" ")}
+				{cs.CharacterTemplateDisplayName
+					? `${cs.CharacterTemplateDisplayName} `
+					: ""}
+				{[cs.Level1Class].filter((x) => x).join(" / ")}
+			</div>
+			<div className="types">
+				{[cs.Level1Type].filter((x) => x).join(" / ")}
 			</div>
 			<div className="ability-scores">
-				STR: {abilityScores.STR}
-				DEX: {abilityScores.DEX}
-				INT: {abilityScores.INT}
-				SPI: {abilityScores.SPI}
+				<div className="score">STR: {cs.AbilityScores.STR}</div>
+				<div className="score">DEX: {cs.AbilityScores.DEX}</div>
+				<div className="score">INT: {cs.AbilityScores.INT}</div>
+				<div className="score">SPI: {cs.AbilityScores.SPI}</div>
+				<div className="score">HP: {cs.Derived.HP}</div>
+				<div className="score">MP: {cs.Derived.MP}</div>
+				<div className="score">
+					Carrying Capacity: {cs.Derived.CarryingCapacity}
+				</div>
 			</div>
-			{renderSkills(collectSkills(source, data))}
-			{renderWeaponMasteries(collectWeaponMasteries(source, data))}
+			{renderSkills(cs.Skills)}
+			{renderWeaponMasteries(cs.WeaponMasteries)}
+			{renderOtherBonuses(cs.OtherBonuses)}
 		</div>
 	);
 }
 
-function renderSkills(skills: ClassSkill[]) {
+function renderSkills(skills: CharacterSkill[]) {
 	if (skills && skills.length > 0) {
 		return (
 			<>
 				<div className="title">Skills</div>
 				<table>
 					<thead>
-						<th>Name</th>
-						<th>Description</th>
-						<th>Roll</th>
+						<tr>
+							<th>Name</th>
+							<th>Description</th>
+							<th>Roll</th>
+						</tr>
 					</thead>
 					<tbody>
 						{skills.map((s) => (
@@ -395,6 +547,33 @@ function renderWeaponMasteries(weapons: Weapon[]) {
 	} else {
 		return <></>;
 	}
+}
+
+function renderOtherBonuses(bonuses: { [stat: string]: string }) {
+	var keys = Object.keys(bonuses).orderBy((x) => x);
+	if (keys.length === 0) return <></>;
+
+	return (
+		<div className="other-bonuses">
+			<div className="title">Other Bonuses</div>
+			<table>
+				<thead>
+					<tr>
+						<th>Roll or Stat</th>
+						<th>Bonus</th>
+					</tr>
+				</thead>
+				<tbody>
+					{keys.map((k) => (
+						<tr key={`Ryuutama-OtherBonus-${k}`}>
+							<td>{k}</td>
+							<td>{bonuses[k]}</td>
+						</tr>
+					))}
+				</tbody>
+			</table>
+		</div>
+	);
 }
 
 registerCharacterSheetRenderer(BUILDER_KEY, characterSheetRenderer);

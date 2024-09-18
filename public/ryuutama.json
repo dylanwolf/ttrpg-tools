@@ -70,7 +70,12 @@
 	"Skills": [
 		{
 			"Name": "Well-Traveled",
-			"Description": "+1 to Journey Checks"
+			"Description": "Bonus to Journey Checks",
+			"Bonuses": {
+				"Camping": 1,
+				"Direction": 1,
+				"Travel": 1
+			}
 		},
 		{
 			"Name": "Knowledge of Tradition",
@@ -84,12 +89,15 @@
 		},
 		{
 			"Name": "Well-Spoken",
-			"Description": "+1 to negotiation checks",
+			"Description": "Bonus to negotiation checks",
 			"RelevantRoll": "[INT + SPI]"
 		},
 		{
 			"Name": "Animal Owner",
-			"Description": "You can keep 2 more animals for a total of 3 without paying their food and water."
+			"Description": "You can keep additional animals without paying their food and water.",
+			"Bonuses": {
+				"Kept Animals": 2
+			}
 		},
 		{
 			"Name": "Trader",
@@ -128,7 +136,11 @@
 		},
 		{
 			"Name": "Robust",
-			"Description": "+1 to Condition checks. +3 to Carrying Capacity"
+			"Description": "+1 to Condition checks. +3 to Carrying Capacity",
+			"Bonuses": {
+				"Condition Checks": 1,
+				"Carrying Capacity": 3
+			}
 		},
 		{
 			"Name": "Side-Job",
@@ -157,16 +169,6 @@
 			"Name": "Repair",
 			"Description": "Repair an item, returning it to full durability.",
 			"RelevantRoll": "[STR+DEX]"
-		},
-		{
-			"Name": "",
-			"Description": "",
-			"RelevantRoll": ""
-		},
-		{
-			"Name": "",
-			"Description": "",
-			"RelevantRoll": ""
 		},
 		{
 			"Name": "Weapon Grace",
@@ -216,6 +218,33 @@
 			"Examples": "unarmed combat, using a stick, etc.",
 			"Accuracy": "[DEX+STR]",
 			"Damage": "[STR]-2"
+		}
+	],
+	"Types": [
+		{
+			"Name": "Attack",
+			"Bonuses": {
+				"HP": 4,
+				"Damage": 1
+			},
+			"ExtraMasteredWeapon": true
+		},
+		{
+			"Name": "Technical",
+			"Bonuses": {
+				"Initiative": 1,
+				"Carrying Capacity": 3,
+				"Concentration Bonus": 1
+			},
+			"Skills": ["Accurate"]
+		},
+		{
+			"Name": "Magic",
+			"Bonuses": {
+				"MP": 4
+			},
+			"SeasonalMagic": 1,
+			"SpellsPerLevel": 2
 		}
 	]
 }

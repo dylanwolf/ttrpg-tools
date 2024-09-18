@@ -1,13 +1,5 @@
-export function valueIfInList<TItem>(
-	currentValue: string,
-	getValue: (itm: TItem) => string,
-	lst: TItem[]
-) {
-	return lst.any((x) => getValue(x) === currentValue)
-		? currentValue
-		: lst[0]
-		? getValue(lst[0])
-		: undefined;
+export function valueIfInList(currentValue: string, lst: string[]) {
+	return lst.any((x) => x === currentValue) ? currentValue : lst[0];
 }
 
 export function mergeStateWithUpdates<TState>(oldState: TState, updates?: any) {

@@ -36,7 +36,7 @@ export function registerArrayHelpers() {
 			for (var i = 0; i < this.length; i++) {
 				if (!predicate(this[i])) return false;
 			}
-			return false;
+			return true;
 		};
 	}
 
@@ -101,7 +101,7 @@ export function registerArrayHelpers() {
 			clone.sort(function (us, them) {
 				var usValue = sortFunc(us);
 				var themValue = sortFunc(them);
-				return usValue === themValue ? 0 : usValue < themValue ? 1 : -1;
+				return usValue === themValue ? 0 : usValue > themValue ? 1 : -1;
 			});
 			return clone;
 		};

@@ -49,9 +49,13 @@ function BuilderProcessInternal(props: BuilderProcessProps) {
 
 	return (
 		<div className={`builder-${model?.Model.BuilderKey}`}>
-			<div>{JSON.stringify(model?.Character)}</div>
+			<div style={{ overflowY: "auto", maxHeight: "200px" }}>
+				{JSON.stringify(model?.Character)}
+			</div>
 			<hr />
-			<div>{JSON.stringify(model?.StepState)}</div>
+			<div style={{ overflowY: "auto", maxHeight: "200px" }}>
+				{JSON.stringify(model?.StepState)}
+			</div>
 			<hr />
 			{model?.Model.ByIndex.filter(
 				(step) =>
