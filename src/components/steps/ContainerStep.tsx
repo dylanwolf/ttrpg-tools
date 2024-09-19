@@ -1,5 +1,5 @@
 import { StepModel, StepState } from "../../models/StepModel";
-import { mergeStateWithUpdates } from "../../models/builderHelpers";
+import { mergeStateWithUpdates } from "../../builderHelpers";
 
 interface ContainerStepState extends StepState {
 	Steps: StepState[];
@@ -57,6 +57,8 @@ export class ContainerStep<TSource, TData> extends StepModel<
 		data: TData,
 		newState: ContainerStepState
 	): void {
+		// TODO: Allow for progression (tracking internal CurrentStep) to work like larger process; currently, all child objects must be independent
+
 		newState.IsVisible = this.GetIsVisible
 			? this.GetIsVisible(source, data)
 			: true;

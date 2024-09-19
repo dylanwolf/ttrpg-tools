@@ -54,7 +54,8 @@ function updateState<TItem>(
 	newState: AssignItemsStepState<TItem>,
 	equalityFunc: (us: TItem, them: TItem) => boolean,
 	items: TItem[],
-	buckets: BucketDefinition<TItem>[]
+	buckets: BucketDefinition<TItem>[],
+	isRequired: boolean
 ) {
 	var remaining = [...items];
 	var newValue: { [name: string]: TItem[] } = {};
@@ -80,7 +81,7 @@ function updateState<TItem>(
 	newState.Available = remaining;
 	newState.Buckets = buckets;
 	newState.Value = newValue;
-	newState.IsCompleted = remaining.length === 0;
+	newState.IsCompleted = !isRequired || remaining.length === 0;
 	newState.IsVisible = true;
 }
 
@@ -119,6 +120,7 @@ export class AssignItemsStep<TSource, TData, TItem> extends StepModel<
 		lst: TItem[]
 	) => { [name: string]: TItem[] };
 	RenderItem: (item: TItem) => JSX.Element;
+	IsRequired: boolean;
 
 	constructor(
 		name: string,
@@ -139,7 +141,8 @@ export class AssignItemsStep<TSource, TData, TItem> extends StepModel<
 			source: TSource,
 			state: AssignItemsStepState<TItem>,
 			newData: TData
-		) => void
+		) => void,
+		isRequired?: boolean | undefined
 	) {
 		super(name, updateCharacter);
 		this.GetItemsList = getItemsList;
@@ -147,6 +150,7 @@ export class AssignItemsStep<TSource, TData, TItem> extends StepModel<
 		this.ItemEquals = itemEqualsFunc;
 		this.GetDefaultValue = getDefaultValue;
 		this.RenderItem = renderItem;
+		this.IsRequired = isRequired === undefined ? true : isRequired;
 	}
 
 	initializeState(): AssignItemsStepState<TItem> {
@@ -154,7 +158,7 @@ export class AssignItemsStep<TSource, TData, TItem> extends StepModel<
 			Available: [],
 			Buckets: [],
 			Value: undefined,
-			IsCompleted: false,
+			IsCompleted: !this.IsRequired,
 			IsVisible: true,
 		};
 	}
@@ -176,7 +180,7 @@ export class AssignItemsStep<TSource, TData, TItem> extends StepModel<
 		if (newState.Value === undefined)
 			newState.Value = this.GetDefaultValue(source, data, items);
 
-		updateState(newState, this.ItemEquals, items, buckets);
+		updateState(newState, this.ItemEquals, items, buckets, this.IsRequired);
 	}
 
 	render(

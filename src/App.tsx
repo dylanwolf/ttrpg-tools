@@ -3,8 +3,10 @@ import "./App.css";
 import { BuilderProcess } from "./components/BuilderProcess";
 import { store } from "./models/AppStore";
 import React from "react";
-import { renderCharacterSheet } from "./models/BuilderFactory";
-require("./data/RyuutamaSourceData");
+
+/* Load models */
+require("./data/ryuutama/BuilderModel");
+require("./data/ryuutama/CharacterSheet");
 
 function App() {
 	return (

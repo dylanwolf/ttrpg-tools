@@ -1,4 +1,5 @@
 {
+	"AdditionalSources": ["Holiday 2015 Package"],
 	"CharacterTemplates": [
 		{
 			"Name": "Human / Humanoid",
@@ -6,8 +7,9 @@
 			"StartingAbilityScoreFilter": ["Average", "Standard", "Specialized"]
 		},
 		{
-			"Name": "Koneko Goblin (Holiday 2015)",
+			"Name": "Koneko Goblin",
 			"DisplayValue": "Koneko Goblin",
+			"DataSource": "Holiday 2015 Package",
 			"StartingAbilityScoreFilter": ["Koneko Goblin"]
 		}
 	],
@@ -64,7 +66,12 @@
 		},
 		{
 			"Name": "Noble",
-			"Skills": ["Weapon Grace"]
+			"Skills": ["Etiquette", "Refined Education", "Weapon Grace"]
+		},
+		{
+			"Name": "Navigator",
+			"DataSource": "Holiday 2015 Package",
+			"Skills": ["Navigation", "Grog Drinker", "Repair"]
 		}
 	],
 	"Skills": [
@@ -78,19 +85,19 @@
 			}
 		},
 		{
-			"Name": "Knowledge of Tradition",
-			"Description": "You can get more information about the things you see and hear.",
-			"RelevantRoll": "[INT + INT]"
+			"Name": "Music",
+			"Description": "Learn terrain/weather songs and give all party members a bonus to their next roll.",
+			"RelevantRoll": "[DEX+SPI]"
 		},
 		{
-			"Name": "Music",
+			"Name": "Knowledge of Tradition",
 			"Description": "You can get more information about the things you see and hear.",
-			"RelevantRoll": "[INT + INT]"
+			"RelevantRoll": "[INT+INT]"
 		},
 		{
 			"Name": "Well-Spoken",
 			"Description": "Bonus to negotiation checks",
-			"RelevantRoll": "[INT + SPI]"
+			"RelevantRoll": "[INT+SPI]"
 		},
 		{
 			"Name": "Animal Owner",
@@ -102,7 +109,7 @@
 		{
 			"Name": "Trader",
 			"Description": "You may buy items at a reduced price or sell items at an increased price.",
-			"RelevantRoll": "[INT + SPI]"
+			"RelevantRoll": "[INT+SPI]"
 		},
 		{
 			"Name": "Animal Tracking",
@@ -171,9 +178,36 @@
 			"RelevantRoll": "[STR+DEX]"
 		},
 		{
+			"Name": "Etiquette",
+			"Description": "Leave a positive impression on someone of rank or status.",
+			"RelevantRoll": "[DEX+INT]"
+		},
+		{
+			"Name": "Refined Education",
+			"Description": "Know detailed information about the things you see or hear.",
+			"RelevantRoll": "[INT+INT]"
+		},
+		{
 			"Name": "Weapon Grace",
 			"Description": "Gain an extra weapon mastery",
 			"ExtraMasteredWeapon": ["Blade", "Polearm", "Bow"]
+		},
+		{
+			"Name": "Navigation",
+			"Description": "You may perform Navigation Checks (STR+DEX) and you gain a bonus to Direction checks.",
+			"RelevantRoll": "[STR+DEX]",
+			"DataSource": "Holiday 2015 Package",
+			"Bonuses": {
+				"Direction": [2, 3]
+			}
+		},
+		{
+			"Name": "Grog Drinker",
+			"Description": "You are in Tip-Top Shape at Condition 9 (8 if this class is taken again). If you did not drink grog the day before, you cannot be in Tip-Top Shape.",
+			"DataSource": "Holiday 2015 Package",
+			"Bonuses": {
+				"Tip-Top Shape on Condition": ["9 or more", "8 or more"]
+			}
 		}
 	],
 	"Weapons": [
@@ -243,8 +277,19 @@
 			"Bonuses": {
 				"MP": 4
 			},
-			"SeasonalMagic": 1,
+			"SeasonalMagic": true,
 			"SpellsPerLevel": 2
 		}
+	],
+	"SeasonalMagic": [
+		{ "Name": "Spring" },
+		{ "Name": "Summer" },
+		{ "Name": "Fall" },
+		{ "Name": "Winter" }
+	],
+	"IncantationSpells": [
+		{ "Name": "Pure Crystalight", "Level": "Low", "SpellType": "Normal" },
+		{ "Name": "Dragonica, Open!", "Level": "Mid", "SpellType": "Normal" },
+		{ "Name": "Rainbow Drop Bridge", "Level": "High", "SpellType": "Ritual" }
 	]
 }

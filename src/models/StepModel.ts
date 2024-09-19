@@ -1,4 +1,4 @@
-import { mergeStateWithUpdates } from "./builderHelpers";
+import { mergeStateWithUpdates } from "../builderHelpers";
 
 export interface StepCollectionState {
 	Key: string;

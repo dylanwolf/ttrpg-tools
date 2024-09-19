@@ -9,6 +9,8 @@ var CHARACTER_SHEETS: {
 export function registerBuilderModel<TSource, TData>(
 	model: StepCollection<TSource, TData>
 ) {
+	console.log(model.BuilderKey);
+	console.log(model);
 	MODELS[model.BuilderKey] = model;
 }
 

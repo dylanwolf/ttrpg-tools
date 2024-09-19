@@ -1,13 +1,9 @@
+import { SelectItem } from "../../builderHelpers";
 import { StepModel, StepState } from "../../models/StepModel";
 
 interface StringDropDownStepState extends StepState {
-	SelectList: DropDownItem[];
+	SelectList: SelectItem[];
 	Value: string | undefined;
-}
-
-interface DropDownItem {
-	Value: string;
-	Text: string;
 }
 
 export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
@@ -51,7 +47,12 @@ export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
 	}
 
 	initializeState(): StringDropDownStepState {
-		return { IsCompleted: false, IsVisible: false, SelectList: [], Value: "" };
+		return {
+			IsCompleted: false,
+			IsVisible: false,
+			SelectList: [],
+			Value: undefined,
+		};
 	}
 
 	clearState(newState: StringDropDownStepState) {

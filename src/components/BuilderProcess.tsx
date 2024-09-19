@@ -9,6 +9,8 @@ import {
 import { BusyIcon } from "./BusyIcon";
 import "./BuilderProcess.css";
 import { renderCharacterSheet } from "../models/BuilderFactory";
+import { DumpObject } from "./DumpObject";
+import { SourceData, SpellGrouping } from "../data/ryuutama/SourceData";
 
 export interface BuilderProcessProps {
 	sessionKey: string;
@@ -49,14 +51,6 @@ function BuilderProcessInternal(props: BuilderProcessProps) {
 
 	return (
 		<div className={`builder-${model?.Model.BuilderKey}`}>
-			<div style={{ overflowY: "auto", maxHeight: "200px" }}>
-				{JSON.stringify(model?.Character)}
-			</div>
-			<hr />
-			<div style={{ overflowY: "auto", maxHeight: "200px" }}>
-				{JSON.stringify(model?.StepState)}
-			</div>
-			<hr />
 			{model?.Model.ByIndex.filter(
 				(step) =>
 					step.Index <= model.StepState.CurrentStep &&
@@ -66,6 +60,24 @@ function BuilderProcessInternal(props: BuilderProcessProps) {
 					{step.render(model.StepState.Steps[step.Index], triggerUpdate)}
 				</Fragment>
 			))}
+
+			<h2>Character Data</h2>
+			<DumpObject object={model?.Character} />
+
+			<h2>Step State</h2>
+			<DumpObject object={model?.StepState} />
+
+			<h2>Source Data</h2>
+			<DumpObject object={model?.SourceData} />
+
+			{(
+				(model?.SourceData as SourceData).IncantationSpells[1].Level ===
+				SpellGrouping.Mid
+			).toString()}
+			{(
+				(model?.SourceData as SourceData).IncantationSpells[1].Level ===
+				SpellGrouping.Low
+			).toString()}
 		</div>
 	);
 }
