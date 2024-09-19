@@ -289,6 +289,8 @@
 	],
 	"IncantationSpells": [
 		{ "Name": "Pure Crystalight", "Level": "Low", "SpellType": "Normal" },
+		{ "Name": "Alert Bell Alarm", "Level": "Low", "SpellType": "Normal" },
+		{ "Name": "Arrow Compass", "Level": "Low", "SpellType": "Normal" },
 		{ "Name": "Dragonica, Open!", "Level": "Mid", "SpellType": "Normal" },
 		{ "Name": "Rainbow Drop Bridge", "Level": "High", "SpellType": "Ritual" }
 	]

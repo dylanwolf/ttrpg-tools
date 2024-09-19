@@ -132,25 +132,17 @@ export class RyuutamaSpellSelectorStep extends StepModel<
 		var index = this.Index;
 
 		function onChange(spell: IncantationSpell) {
-			if (
-				(spell.Level === SpellGrouping.Low &&
-					stepState.LowLevelChoices +
-						stepState.MidLevelChoices +
-						stepState.HighLevelChoices >
-						0) ||
-				(spell.Level === SpellGrouping.Mid &&
-					stepState.MidLevelChoices + stepState.HighLevelChoices > 0) ||
-				(spell.Level === SpellGrouping.High && stepState.HighLevelChoices > 0)
-			) {
-				var newValues = stepState.Selected || [];
-				if (newValues.includes(spell.Name)) {
-					newValues = newValues.filter((x) => x !== spell.Name);
-				} else {
-					newValues = newValues.concat(spell.Name);
-				}
+			var newValues = stepState.Selected || [];
 
-				triggerUpdate(index, { Selected: newValues });
+			if (newValues.includes(spell.Name)) {
+				newValues = newValues.filter((x) => x !== spell.Name);
+			} else if (isValidAddition(spell, stepState)) {
+				newValues = newValues.concat(spell.Name);
+			} else {
+				return;
 			}
+
+			triggerUpdate(index, { Selected: newValues });
 		}
 
 		return (
@@ -191,6 +183,7 @@ export class RyuutamaSpellSelectorStep extends StepModel<
 									<input
 										type="checkbox"
 										value={spell.Name}
+										disabled={isDisabledSelection(spell, stepState)}
 										checked={(stepState.Selected || []).includes(spell.Name)}
 										onChange={function () {
 											onChange(spell);
@@ -207,4 +200,23 @@ export class RyuutamaSpellSelectorStep extends StepModel<
 			</div>
 		);
 	}
+}
+
+function isValidAddition(spell: IncantationSpell, state: SpellSelectorState) {
+	return (
+		(spell.Level === SpellGrouping.Low &&
+			state.LowLevelChoices + state.MidLevelChoices + state.HighLevelChoices >
+				0) ||
+		(spell.Level === SpellGrouping.Mid &&
+			state.MidLevelChoices + state.HighLevelChoices > 0) ||
+		(spell.Level === SpellGrouping.High && state.HighLevelChoices > 0)
+	);
+}
+
+function isDisabledSelection(
+	spell: IncantationSpell,
+	state: SpellSelectorState
+) {
+	if (state.Selected?.includes(spell.Name)) return false;
+	return !isValidAddition(spell, state);
 }

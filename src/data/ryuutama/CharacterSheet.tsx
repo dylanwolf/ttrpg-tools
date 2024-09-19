@@ -381,7 +381,7 @@ function renderSpells(spells: IncantationSpell[]) {
 					{spells
 						.orderBy((s) => s.Name)
 						.map((s) => (
-							<tr key={`Ryuutama-IncantationSpells-${s}`}>
+							<tr key={`Ryuutama-IncantationSpells-${s.Name}`}>
 								<td>{s.Name}</td>
 								<td>{s.Level}</td>
 								<td>{s.SpellType}</td>

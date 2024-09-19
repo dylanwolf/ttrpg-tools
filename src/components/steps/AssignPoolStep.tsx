@@ -128,6 +128,8 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 							onChange={function (e) {
 								onChange(p.Name, p.MaxValue, e);
 							}}
+							min={0}
+							max={p.MaxValue}
 						/>
 					</div>
 				))}

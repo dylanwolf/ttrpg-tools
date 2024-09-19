@@ -145,6 +145,11 @@ export class ChecklistStringStep<TSource, TData, TItem> extends StepModel<
 								}}
 								type="checkbox"
 								value={i.Value}
+								disabled={
+									!(stepState.Values || []).includes(i.Value) &&
+									stepState.MaximumSelectCount !== undefined &&
+									stepState.SelectList.length >= stepState.MaximumSelectCount
+								}
 								checked={(stepState.Values || []).includes(i.Value)}
 							/>
 							{i.Text}
