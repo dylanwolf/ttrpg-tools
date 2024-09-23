@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { StepCollectionState } from "./StepModel";
+import { RootStepCollectionState } from "./StepModel";
 
 export interface BuilderSessionStateCollection {
 	Sessions: { [key: string]: BuilderSessionState<any> };
@@ -10,22 +10,21 @@ const initialState: BuilderSessionStateCollection = {
 };
 
 export interface BuilderSessionState<TData> {
-	Key: string;
+	SessionKey: string;
 	BuilderKey: string;
 	Character: TData;
-	StepState: StepCollectionState;
+	StepState: RootStepCollectionState;
 }
 
 export interface SessionStateInitializePayload<TData> {
-	Key: string;
+	SessionKey: string;
 	BuilderKey: string;
 	CharacterData: TData;
-	StepState: StepCollectionState;
+	StepState: RootStepCollectionState;
 }
 
 export interface SessionUpdate<TData> {
-	Key: string;
-	NewStepState: StepCollectionState;
+	NewStepState: RootStepCollectionState;
 	NewCharacterData: TData;
 }
 
@@ -38,12 +37,12 @@ export const characterDataSlice = createSlice({
 			action: PayloadAction<SessionStateInitializePayload<TData>>
 		) {
 			console.log(
-				`createBuilderSession(${action.payload.Key}, ${action.payload.BuilderKey})`
+				`createBuilderSession(${action.payload.SessionKey}, ${action.payload.BuilderKey})`
 			);
 
-			if (!state.Sessions[action.payload.Key]) {
-				state.Sessions[action.payload.Key] = {
-					Key: action.payload.Key,
+			if (!state.Sessions[action.payload.SessionKey]) {
+				state.Sessions[action.payload.SessionKey] = {
+					SessionKey: action.payload.SessionKey,
 					BuilderKey: action.payload.BuilderKey,
 					Character: action.payload.CharacterData,
 					StepState: action.payload.StepState,
@@ -54,10 +53,12 @@ export const characterDataSlice = createSlice({
 			state: BuilderSessionStateCollection,
 			action: PayloadAction<SessionUpdate<TData>>
 		) {
-			console.log(`updateSessionStep(${action.payload.Key})`);
-			state.Sessions[action.payload.Key].StepState =
+			console.log(
+				`updateSessionStep(${action.payload.NewStepState.SessionKey})`
+			);
+			state.Sessions[action.payload.NewStepState.SessionKey].StepState =
 				action.payload.NewStepState;
-			state.Sessions[action.payload.Key].Character =
+			state.Sessions[action.payload.NewStepState.SessionKey].Character =
 				action.payload.NewCharacterData;
 		},
 	},

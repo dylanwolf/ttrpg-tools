@@ -1,8 +1,13 @@
-import { StepModel, StepState } from "../../models/StepModel";
+import {
+	StepModel,
+	StepRunner,
+	StepRunnerState,
+	StepState,
+} from "../../models/StepModel";
 import { mergeStateWithUpdates } from "../../builderHelpers";
 
-interface ContainerStepState extends StepState {
-	Steps: StepState[];
+interface ContainerStepState extends StepState, StepRunnerState {
+	//StepUpdated: number | undefined;
 }
 
 export class ContainerStep<TSource, TData> extends StepModel<
@@ -11,7 +16,7 @@ export class ContainerStep<TSource, TData> extends StepModel<
 	ContainerStepState
 > {
 	Label: string;
-	Children: StepModel<TSource, TData, any>[];
+	Steps: StepRunner<TSource, TData>;
 	GetIsVisible: ((src: TSource, data: TData) => boolean) | undefined;
 
 	constructor(
@@ -22,32 +27,23 @@ export class ContainerStep<TSource, TData> extends StepModel<
 	) {
 		super(
 			name,
-			(source: TSource, state: ContainerStepState, newData: TData) => {
-				this.Children.forEach((step, idx) => {
-					step.UpdateCharacter(source, state.Steps[idx], newData);
-				});
-			}
+			(source: TSource, state: ContainerStepState, newData: TData) => {}
 		);
+		this.Steps = new StepRunner<TSource, TData>(name, children);
 		this.Label = label;
-		this.Children = children;
-
-		children.forEach((step, idx) => {
-			step.Index = idx;
-		});
-
 		this.GetIsVisible = getIsVisible;
 	}
 
 	initializeState(): ContainerStepState {
 		return {
-			Steps: this.Children.map((c) => c.initializeState()),
+			...this.Steps.initializeState(),
 			IsCompleted: false,
 			IsVisible: this.GetIsVisible ? false : true,
 		};
 	}
 
 	clearState(newState: ContainerStepState) {
-		this.Children.forEach((step, idx) => {
+		this.Steps.ByIndex.forEach((step, idx) => {
 			step.clearState(newState.Steps[idx]);
 		});
 	}
@@ -57,17 +53,22 @@ export class ContainerStep<TSource, TData> extends StepModel<
 		data: TData,
 		newState: ContainerStepState
 	): void {
-		// TODO: Allow for progression (tracking internal CurrentStep) to work like larger process; currently, all child objects must be independent
-
 		newState.IsVisible = this.GetIsVisible
 			? this.GetIsVisible(source, data)
 			: true;
 
-		this.Children.forEach((step, idx) => {
-			if (newState.IsVisible)
-				step.updateState(source, data, newState.Steps[idx]);
-			else step.clearState(newState.Steps[idx]);
-		});
+		if (newState.IsVisible) {
+			var updatedState = this.Steps.onParentStepUpdated(
+				source,
+				data,
+				newState,
+				-1
+			);
+			newState.CurrentStep = updatedState.NewStepState.CurrentStep;
+			newState.Steps = updatedState.NewStepState.Steps;
+		} else {
+			this.clearState(newState);
+		}
 
 		newState.IsCompleted = newState.IsVisible
 			? newState.Steps.all((x) => x.IsCompleted)
@@ -82,6 +83,7 @@ export class ContainerStep<TSource, TData> extends StepModel<
 
 		function triggerChildUpdate(index: number, stepUpdates: any) {
 			triggerUpdate(parentIndex, {
+				StepUpdated: index,
 				Steps: stepState.Steps.map((s, idx) =>
 					mergeStateWithUpdates(s, (idx === index && stepUpdates) || undefined)
 				),
@@ -92,16 +94,16 @@ export class ContainerStep<TSource, TData> extends StepModel<
 			<div className={`step step-container step-${this.Name}`}>
 				<div className="title">{this.Label}</div>
 				<div className="container">
-					{this.Children.filter((c) => stepState.Steps[c.Index].IsVisible).map(
-						(c) => (
-							<div
-								className="container-item"
-								key={`ContainerItem-${this.Name}-${c.Name}`}
-							>
-								{c.render(stepState.Steps[c.Index], triggerChildUpdate)}
-							</div>
-						)
-					)}
+					{this.Steps.ByIndex.filter(
+						(c) => stepState.Steps[c.Index].IsVisible
+					).map((c) => (
+						<div
+							className="container-item"
+							key={`ContainerItem-${this.Name}-${c.Name}`}
+						>
+							{c.render(stepState.Steps[c.Index], triggerChildUpdate)}
+						</div>
+					))}
 				</div>
 			</div>
 		);

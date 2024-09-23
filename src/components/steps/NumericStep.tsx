@@ -17,6 +17,7 @@ export class NumericStep<TSource, TData> extends StepModel<
 	GetMaxValue: (src: TSource, data: TData) => number | undefined;
 	GetNumericStep: (src: TSource, data: TData) => number | undefined;
 	GetDefaultValue: (src: TSource, data: TData) => number | undefined;
+	GetIsVisible: ((src: TSource, data: TData) => boolean) | undefined;
 
 	constructor(
 		name: string,
@@ -29,7 +30,8 @@ export class NumericStep<TSource, TData> extends StepModel<
 			source: TSource,
 			state: NumericStepState,
 			newData: TData
-		) => void
+		) => void,
+		getIsVisible?: ((src: TSource, data: TData) => boolean) | undefined
 	) {
 		super(name, updateCharacter);
 		this.Label = label;
@@ -37,12 +39,13 @@ export class NumericStep<TSource, TData> extends StepModel<
 		this.GetMaxValue = getMaxValue;
 		this.GetNumericStep = getNumericStep;
 		this.GetDefaultValue = getDefaultValue;
+		this.GetIsVisible = getIsVisible;
 	}
 
 	initializeState(): NumericStepState {
 		return {
 			IsCompleted: false,
-			IsVisible: true,
+			IsVisible: this.GetIsVisible ? false : true,
 		};
 	}
 
@@ -51,6 +54,10 @@ export class NumericStep<TSource, TData> extends StepModel<
 	}
 
 	updateState(source: TSource, data: TData, newState: NumericStepState): void {
+		newState.IsVisible = this.GetIsVisible
+			? this.GetIsVisible(source, data)
+			: true;
+
 		newState.MinValue = this.GetMinValue(source, data);
 		newState.MaxValue = this.GetMaxValue(source, data);
 		newState.NumericStep = this.GetNumericStep(source, data) || 1;
@@ -64,8 +71,9 @@ export class NumericStep<TSource, TData> extends StepModel<
 				newState.Value = newState.MaxValue;
 		}
 
-		newState.IsCompleted = newState.Value !== undefined;
-		newState.IsVisible = true;
+		newState.IsCompleted = newState.IsVisible
+			? newState.Value !== undefined
+			: true;
 	}
 	render(
 		stepState: NumericStepState,

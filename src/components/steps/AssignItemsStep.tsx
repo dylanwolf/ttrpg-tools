@@ -54,8 +54,7 @@ function updateState<TItem>(
 	newState: AssignItemsStepState<TItem>,
 	equalityFunc: (us: TItem, them: TItem) => boolean,
 	items: TItem[],
-	buckets: BucketDefinition<TItem>[],
-	isRequired: boolean
+	buckets: BucketDefinition<TItem>[]
 ) {
 	var remaining = [...items];
 	var newValue: { [name: string]: TItem[] } = {};
@@ -81,8 +80,6 @@ function updateState<TItem>(
 	newState.Available = remaining;
 	newState.Buckets = buckets;
 	newState.Value = newValue;
-	newState.IsCompleted = !isRequired || remaining.length === 0;
-	newState.IsVisible = true;
 }
 
 function isValidDrag<TItem>(item: TItem, isLocked: boolean, bucket: TItem[]) {
@@ -121,6 +118,7 @@ export class AssignItemsStep<TSource, TData, TItem> extends StepModel<
 	) => { [name: string]: TItem[] };
 	RenderItem: (item: TItem) => JSX.Element;
 	IsRequired: boolean;
+	GetIsVisible: ((src: TSource, data: TData) => boolean) | undefined;
 
 	constructor(
 		name: string,
@@ -142,7 +140,8 @@ export class AssignItemsStep<TSource, TData, TItem> extends StepModel<
 			state: AssignItemsStepState<TItem>,
 			newData: TData
 		) => void,
-		isRequired?: boolean | undefined
+		isRequired?: boolean | undefined,
+		getIsVisible?: ((src: TSource, data: TData) => boolean) | undefined
 	) {
 		super(name, updateCharacter);
 		this.GetItemsList = getItemsList;
@@ -151,6 +150,7 @@ export class AssignItemsStep<TSource, TData, TItem> extends StepModel<
 		this.GetDefaultValue = getDefaultValue;
 		this.RenderItem = renderItem;
 		this.IsRequired = isRequired === undefined ? true : isRequired;
+		this.GetIsVisible = getIsVisible;
 	}
 
 	initializeState(): AssignItemsStepState<TItem> {
@@ -159,7 +159,7 @@ export class AssignItemsStep<TSource, TData, TItem> extends StepModel<
 			Buckets: [],
 			Value: undefined,
 			IsCompleted: !this.IsRequired,
-			IsVisible: true,
+			IsVisible: this.GetIsVisible ? false : true,
 		};
 	}
 
@@ -174,13 +174,22 @@ export class AssignItemsStep<TSource, TData, TItem> extends StepModel<
 		data: TData,
 		newState: AssignItemsStepState<TItem>
 	): void {
+		newState.IsVisible = this.GetIsVisible
+			? this.GetIsVisible(source, data)
+			: true;
+
 		var items = this.GetItemsList(source, data);
 		var buckets = this.GetBuckets(source, data, items);
 
 		if (newState.Value === undefined)
 			newState.Value = this.GetDefaultValue(source, data, items);
 
-		updateState(newState, this.ItemEquals, items, buckets, this.IsRequired);
+		updateState(newState, this.ItemEquals, items, buckets);
+
+		newState.IsCompleted =
+			newState.IsVisible && this.IsRequired
+				? newState.Available.length === 0
+				: true;
 	}
 
 	render(

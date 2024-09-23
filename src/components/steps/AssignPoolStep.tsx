@@ -21,6 +21,7 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 	GetAvailable: (src: TSource, data: TData) => number;
 	GetPools: (src: TSource, data: TData) => PoolDefinition[];
 	GetDefaultValue: (src: TSource, data: TData) => { [name: string]: number };
+	GetIsVisible: ((src: TSource, data: TData) => boolean) | undefined;
 	IsRequired: boolean;
 
 	constructor(
@@ -34,7 +35,8 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 			state: AssignPoolStepState,
 			newData: TData
 		) => void,
-		isRequired?: boolean | undefined
+		isRequired?: boolean | undefined,
+		getIsVisible?: ((src: TSource, data: TData) => boolean) | undefined
 	) {
 		super(name, updateCharacter);
 		this.Label = label;
@@ -42,6 +44,7 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 		this.GetPools = getPools;
 		this.GetDefaultValue = getDefaultValue;
 		this.IsRequired = isRequired === undefined ? true : isRequired;
+		this.GetIsVisible = getIsVisible;
 	}
 
 	initializeState(): AssignPoolStepState {
@@ -51,7 +54,7 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 			Pools: [],
 			Values: {},
 			IsCompleted: !this.IsRequired,
-			IsVisible: true,
+			IsVisible: this.GetIsVisible ? false : true,
 		};
 	}
 
@@ -66,6 +69,10 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 		data: TData,
 		newState: AssignPoolStepState
 	): void {
+		newState.IsVisible = this.GetIsVisible
+			? this.GetIsVisible(source, data)
+			: true;
+
 		var available = this.GetAvailable(source, data);
 		var pools = this.GetPools(source, data);
 
@@ -86,8 +93,9 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 		newState.Pools = pools;
 		newState.TotalAvailable = available;
 		newState.Remaining = remaining;
-		newState.IsCompleted = !this.IsRequired || remaining === 0;
-		newState.IsVisible = true;
+
+		newState.IsCompleted =
+			newState.IsVisible && this.IsRequired ? newState.Remaining === 0 : true;
 	}
 
 	render(

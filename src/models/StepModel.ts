@@ -1,9 +1,12 @@
 import { mergeStateWithUpdates } from "../builderHelpers";
 
-export interface StepCollectionState {
-	Key: string;
+export interface StepRunnerState {
 	CurrentStep: number;
 	Steps: StepState[];
+}
+
+export interface RootStepCollectionState extends StepRunnerState {
+	SessionKey: string;
 }
 
 export interface StepState {
@@ -37,18 +40,13 @@ export abstract class StepModel<TSource, TData, TState extends StepState> {
 	): JSX.Element;
 }
 
-export class StepCollection<TSource, TData> {
-	BuilderKey: string;
+export class StepRunner<TSource, TData> {
+	Name: string;
 	ByIndex: StepModel<TSource, TData, any>[];
 	ByKey: { [key: string]: StepModel<TSource, TData, any> } = {};
-	GetInitialCharacterData: () => TData;
 
-	constructor(
-		builderKey: string,
-		steps: StepModel<TSource, TData, any>[],
-		getInitialCharacterData: () => TData
-	) {
-		this.BuilderKey = builderKey;
+	constructor(name: string, steps: StepModel<TSource, TData, any>[]) {
+		this.Name = name;
 		this.ByIndex = steps;
 
 		steps.forEach((step, idx) => {
@@ -56,52 +54,45 @@ export class StepCollection<TSource, TData> {
 			step.Index = idx;
 			//step.Container = this;
 		});
-
-		this.GetInitialCharacterData = getInitialCharacterData;
 	}
 
-	initializeState(sessionKey: string): StepCollectionState {
+	initializeState(): StepRunnerState {
 		return {
-			Key: sessionKey,
 			CurrentStep: -1,
 			Steps: this.ByIndex.map((s) => s.initializeState()),
 		};
 	}
 
-	getCurrentStep(state: StepCollectionState) {
-		for (var idx = 0; idx < state.Steps.length; idx++) {
-			if (!state.Steps[idx].IsCompleted) {
-				return idx;
-			}
-		}
-		return this.ByIndex.length;
-	}
-
-	onStepUpdated(
+	onParentStepUpdated(
 		source: TSource,
-		data: TData,
-		state: StepCollectionState,
+		newData: TData,
+		state: StepRunnerState,
 		changedStep: number,
 		stepUpdates?: any
 	) {
-		var newState: StepCollectionState = {
-			Key: state.Key,
+		var newState: StepRunnerState = {
 			Steps: [],
 			CurrentStep: state.CurrentStep,
 		};
 
-		var newData = structuredClone(data);
+		if (newState.CurrentStep === -1) newState.CurrentStep = 0;
 
 		var startStep = changedStep;
 		var endStep = startStep + 1;
 
-		console.log(`onStepUpdated(${changedStep}, ${startStep}, ${endStep})`);
+		console.log(
+			`${this.Name} onStepUpdated(${changedStep}, ${startStep}, ${endStep})`
+		);
+		//console.log(state);
 		//console.log(newData);
 
 		var inCompleted = true;
 		for (var idx = 0; idx < state.Steps.length; idx++) {
 			var step = this.ByIndex[idx];
-			console.log(`Processing step ${idx} (${startStep} - ${endStep})`);
+			console.log(
+				`${this.Name} Processing step ${idx} (${startStep} - ${endStep})`
+			);
+			//console.log(step);
 
 			// If no matching step, continue
 			if (!step) {
@@ -113,6 +104,7 @@ export class StepCollection<TSource, TData> {
 				state.Steps[idx],
 				(idx === changedStep && stepUpdates) || undefined
 			);
+			//console.log(stepState);
 
 			// Re-process steps that may be affected
 			if (idx >= startStep && idx <= endStep) {
@@ -138,9 +130,73 @@ export class StepCollection<TSource, TData> {
 		if (inCompleted) newState.CurrentStep = endStep + 1;
 
 		return {
-			Key: state.Key,
 			NewStepState: newState,
 			NewCharacterData: newData,
+		};
+	}
+
+	onStepUpdated(
+		source: TSource,
+		data: TData,
+		state: StepRunnerState,
+		changedStep: number,
+		stepUpdates?: any
+	) {
+		var newData = structuredClone(data);
+		return this.onParentStepUpdated(
+			source,
+			newData,
+			state,
+			changedStep,
+			stepUpdates
+		);
+	}
+}
+
+export class RootStepCollection<TSource, TData> extends StepRunner<
+	TSource,
+	TData
+> {
+	BuilderKey: string;
+	GetInitialCharacterData: () => TData;
+
+	constructor(
+		builderKey: string,
+		steps: StepModel<TSource, TData, any>[],
+		getInitialCharacterData: () => TData
+	) {
+		super("Root", steps);
+		this.BuilderKey = builderKey;
+		this.GetInitialCharacterData = getInitialCharacterData;
+	}
+
+	initializeRootState(sessionKey: string): RootStepCollectionState {
+		return {
+			SessionKey: sessionKey,
+			...this.initializeState(),
+		};
+	}
+
+	onRootStepUpdated(
+		source: TSource,
+		data: TData,
+		state: RootStepCollectionState,
+		changedStep: number,
+		stepUpdates?: any
+	) {
+		var newState = this.onStepUpdated(
+			source,
+			data,
+			state,
+			changedStep,
+			stepUpdates
+		);
+		return {
+			NewCharacterData: newState.NewCharacterData,
+			NewStepState: {
+				SessionKey: state.SessionKey,
+				...newState.NewStepState,
+			},
 		};
 	}
 }

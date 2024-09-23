@@ -6,7 +6,7 @@ import { ContainerStep } from "../../components/steps/ContainerStep";
 import { NumericStep } from "../../components/steps/NumericStep";
 import { StringDropDownStep } from "../../components/steps/StringDropDownStep";
 import { registerBuilderModel } from "../../models/BuilderFactory";
-import { StepCollection } from "../../models/StepModel";
+import { RootStepCollection } from "../../models/StepModel";
 import {
 	CharacterState,
 	getCharacterTemplate,
@@ -56,7 +56,7 @@ function getMaxStatIncreases(currentDie: number) {
 }
 
 registerBuilderModel(
-	new StepCollection<SourceData, CharacterState>(
+	new RootStepCollection<SourceData, CharacterState>(
 		BUILDER_KEY,
 		[
 			new ChecklistStringStep<SourceData, CharacterState, string>(
@@ -160,70 +160,60 @@ registerBuilderModel(
 				(src, data, lst) => valueIfInList(data.Level1WeaponMastery, lst),
 				(src, state, data) => (data.Level1WeaponMastery = state.Value || "")
 			),
-			new StringDropDownStep<SourceData, CharacterState, CharacterType>(
-				"Level1Type",
-				"Level 1 Type",
-				(src, data) => isInSelectedSource(data, src.Types),
-				(itm) => itm.Name,
-				(itm) => itm.Name,
-				(src, data, lst) => valueIfInList(data.Level1Type, lst),
-				(src, state, data) => (data.Level1Type = state.Value || "")
-			),
+			new ContainerStep<SourceData, CharacterState>("Level1TypeContainer", "", [
+				new StringDropDownStep<SourceData, CharacterState, CharacterType>(
+					"Level1Type",
+					"Level 1 Type",
+					(src, data) => isInSelectedSource(data, src.Types),
+					(itm) => itm.Name,
+					(itm) => itm.Name,
+					(src, data, lst) => valueIfInList(data.Level1Type, lst),
+					(src, state, data) => (data.Level1Type = state.Value || "")
+				),
+				new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
+					"Level1WeaponFocus",
+					"Weapon Focus",
+					(src, data) => isInSelectedSource(data, src.Weapons),
+					(itm) => itm.Name,
+					(itm) => itm.Name,
+					(src, data, lst) => valueIfInList(data.Level1WeaponFocus, lst),
+					(src, state, data) => {
+						data.Level1WeaponFocus = state.Value || "";
+					},
+					(src, data) =>
+						getLevel1Type(src, data).ExtraMasteredWeapon ? true : false
+				),
+				new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
+					"Level1SeasonalMagic",
+					"Seasonal Magic",
+					(src, data) => isInSelectedSource(data, src.SeasonalMagic),
+					(itm) => itm.Name,
+					(itm) => itm.Name,
+					(src, data, lst) => valueIfInList(data.Level1SeasonalMagic, lst),
+					(src, state, data) => {
+						data.Level1SeasonalMagic = state.Value || "";
+					},
+					(src, data) => (getLevel1Type(src, data).SeasonalMagic ? true : false)
+				),
+			]),
 			new ContainerStep<SourceData, CharacterState>(
-				"Level1WeaponFocus",
+				"Level1ClassContainer",
 				"",
 				[
-					new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
-						"Level1WeaponFocus",
-						"Attack Type: Weapon Focus",
-						(src, data) => isInSelectedSource(data, src.Weapons),
-						(itm) => itm.Name,
-						(itm) => itm.Name,
-						(src, data, lst) => valueIfInList(data.Level1WeaponFocus, lst),
-						(src, state, data) => {
-							data.Level1WeaponFocus = state.Value || "";
-						}
-					),
-				],
-				(src, data) =>
-					getLevel1Type(src, data).ExtraMasteredWeapon ? true : false
-			),
-			new ContainerStep<SourceData, CharacterState>(
-				"Level1SeasonalMagic",
-				"Magic Type: Seasonal Magic",
-				[
-					new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
+					new StringDropDownStep<SourceData, CharacterState, CharacterClass>(
 						"Level1Class",
 						"Level 1 Class",
-						(src, data) => isInSelectedSource(data, src.SeasonalMagic),
+						(src, data) => isInSelectedSource(data, src.Classes),
 						(itm) => itm.Name,
 						(itm) => itm.Name,
-						(src, data, lst) => valueIfInList(data.Level1SeasonalMagic, lst),
+						(src, data, lst) => valueIfInList(data.Level1Class, lst),
 						(src, state, data) => {
-							data.Level1SeasonalMagic = state.Value || "";
+							data.Level1Class = state.Value || "";
 						}
 					),
-				],
-				(src, data) => (getLevel1Type(src, data).SeasonalMagic ? true : false)
-			),
-			new StringDropDownStep<SourceData, CharacterState, CharacterClass>(
-				"Level1Class",
-				"Level 1 Class",
-				(src, data) => isInSelectedSource(data, src.Classes),
-				(itm) => itm.Name,
-				(itm) => itm.Name,
-				(src, data, lst) => valueIfInList(data.Level1Class, lst),
-				(src, state, data) => {
-					data.Level1Class = state.Value || "";
-				}
-			),
-			new ContainerStep<SourceData, CharacterState>(
-				"Level1SideJob",
-				"",
-				[
 					new StringDropDownStep<SourceData, CharacterState, CharacterSkill>(
 						"Level1SideJob",
-						"Farmer: Side-Job",
+						"Side-Job",
 						(src, data) => {
 							var existingSkills = getLevel1BaseSkills(src, data).map(
 								(s) => s.Name
@@ -239,22 +229,16 @@ registerBuilderModel(
 						(itm) => itm.Name,
 						(itm) => itm.Name,
 						(src, data, lst) => valueIfInList(data.Level1SideJob, lst),
-						(src, state, data) => (data.Level1SideJob = state.Value || "")
+						(src, state, data) => (data.Level1SideJob = state.Value || ""),
+						(src, data) => {
+							return getLevel1Skills(src, data).any((x) =>
+								x.SelectSkill ? true : false
+							);
+						}
 					),
-				],
-				(src, data) => {
-					return getLevel1Skills(src, data).any((x) =>
-						x.SelectSkill ? true : false
-					);
-				}
-			),
-			new ContainerStep<SourceData, CharacterState>(
-				"Level1WeaponGrace",
-				"",
-				[
 					new StringDropDownStep<SourceData, CharacterState, string>(
 						"Level1WeaponGrace",
-						"Noble: Weapon Grace",
+						"Weapon Grace",
 						(src, data) =>
 							getLevel1Skills(src, data)
 								.map((s) => s.ExtraMasteredWeapon || [])
@@ -263,14 +247,14 @@ registerBuilderModel(
 						(itm) => itm,
 						(itm) => itm,
 						(src, data, lst) => valueIfInList(data.Level1WeaponGrace, lst),
-						(src, state, data) => (data.Level1WeaponGrace = state.Value || "")
+						(src, state, data) => (data.Level1WeaponGrace = state.Value || ""),
+						(src, data) => {
+							return getLevel1Skills(src, data).any(
+								(x) => (x.ExtraMasteredWeapon || []).length > 0
+							);
+						}
 					),
-				],
-				(src, data) => {
-					return getLevel1Skills(src, data).any(
-						(x) => (x.ExtraMasteredWeapon || []).length > 0
-					);
-				}
+				]
 			),
 			new ContainerStep<SourceData, CharacterState>(
 				"LevelUpContainer",

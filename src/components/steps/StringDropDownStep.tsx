@@ -20,6 +20,7 @@ export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
 		data: TData,
 		lst: string[]
 	) => string | undefined;
+	GetIsVisible: ((src: TSource, data: TData) => boolean) | undefined;
 
 	constructor(
 		name: string,
@@ -36,7 +37,8 @@ export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
 			source: TSource,
 			state: StringDropDownStepState,
 			newData: TData
-		) => void
+		) => void,
+		getIsVisible?: ((src: TSource, data: TData) => boolean) | undefined
 	) {
 		super(name, updateCharacter);
 		this.Label = label;
@@ -44,12 +46,13 @@ export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
 		this.GetValue = getValue;
 		this.GetText = getText;
 		this.GetDefaultValue = getDefaultValue;
+		this.GetIsVisible = getIsVisible;
 	}
 
 	initializeState(): StringDropDownStepState {
 		return {
 			IsCompleted: false,
-			IsVisible: false,
+			IsVisible: this.GetIsVisible ? false : true,
 			SelectList: [],
 			Value: undefined,
 		};
@@ -61,6 +64,10 @@ export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
 	}
 
 	updateState(source: TSource, data: TData, newState: StringDropDownStepState) {
+		newState.IsVisible = this.GetIsVisible
+			? this.GetIsVisible(source, data)
+			: true;
+
 		var selectList = this.GetSelectList(source, data).map((itm) => {
 			return {
 				Text: this.GetText(itm),
@@ -81,8 +88,11 @@ export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
 			);
 		}
 
-		newState.IsCompleted = newState.Value ? true : false;
-		newState.IsVisible = true;
+		newState.IsCompleted = newState.IsVisible
+			? newState.Value
+				? true
+				: false
+			: true;
 	}
 
 	render(

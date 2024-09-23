@@ -1,16 +1,16 @@
-import { StepCollection } from "./StepModel";
+import { RootStepCollection } from "./StepModel";
 
-var MODELS: { [key: string]: StepCollection<any, any> } = {};
+var MODELS: { [key: string]: RootStepCollection<any, any> } = {};
 var SOURCES: { [key: string]: any } = {};
 var CHARACTER_SHEETS: {
 	[key: string]: (source: any, data: any) => JSX.Element;
 } = {};
 
 export function registerBuilderModel<TSource, TData>(
-	model: StepCollection<TSource, TData>
+	model: RootStepCollection<TSource, TData>
 ) {
-	console.log(model.BuilderKey);
-	console.log(model);
+	// console.log(model.BuilderKey);
+	// console.log(model);
 	MODELS[model.BuilderKey] = model;
 }
 
@@ -22,7 +22,7 @@ export function registerCharacterSheetRenderer<TSource, TData>(
 }
 
 export function getBuilderModel<TSource, TData>(key: string) {
-	return MODELS[key] as StepCollection<TSource, TData>;
+	return MODELS[key] as RootStepCollection<TSource, TData>;
 }
 
 export async function getBuilderSource<TSource>(key: string) {

@@ -25,6 +25,7 @@ export class ChecklistStringStep<TSource, TData, TItem> extends StepModel<
 		lst: string[]
 	) => string[] | undefined;
 	IsRequired: boolean;
+	GetIsVisible: ((src: TSource, data: TData) => boolean) | undefined;
 
 	constructor(
 		name: string,
@@ -44,7 +45,8 @@ export class ChecklistStringStep<TSource, TData, TItem> extends StepModel<
 			state: ChecklistStringStepState,
 			newData: TData
 		) => void,
-		isRequired?: boolean | undefined
+		isRequired?: boolean | undefined,
+		getIsVisible?: ((src: TSource, data: TData) => boolean) | undefined
 	) {
 		super(name, updateCharacter);
 		this.Label = label;
@@ -55,14 +57,15 @@ export class ChecklistStringStep<TSource, TData, TItem> extends StepModel<
 		this.GetMaximumSelectCount = getMaximumSelectCount;
 		this.GetDefaultValue = getDefaultValue;
 		this.IsRequired = isRequired === undefined ? true : isRequired;
+		this.GetIsVisible = getIsVisible;
 	}
 
 	initializeState(): ChecklistStringStepState {
 		return {
 			IsCompleted: !this.IsRequired,
-			IsVisible: true,
 			SelectList: [],
 			Values: undefined,
+			IsVisible: this.GetIsVisible ? false : true,
 		};
 	}
 
@@ -78,6 +81,10 @@ export class ChecklistStringStep<TSource, TData, TItem> extends StepModel<
 		data: TData,
 		newState: ChecklistStringStepState
 	): void {
+		newState.IsVisible = this.GetIsVisible
+			? this.GetIsVisible(source, data)
+			: true;
+
 		var selectList = this.GetSelectList(source, data).map((itm) => {
 			return {
 				Text: this.GetText(itm),
@@ -105,10 +112,10 @@ export class ChecklistStringStep<TSource, TData, TItem> extends StepModel<
 		newState.MaximumSelectCount = this.GetMaximumSelectCount(source, data);
 
 		newState.IsCompleted =
-			!this.IsRequired ||
-			!newState.MinimumSelectCount ||
-			(newState.Values || []).length >= newState.MinimumSelectCount;
-		newState.IsVisible = true;
+			newState.IsVisible && this.IsRequired
+				? !newState.MinimumSelectCount ||
+				  (newState.Values || []).length >= newState.MinimumSelectCount
+				: true;
 	}
 	render(
 		stepState: ChecklistStringStepState,

@@ -8,7 +8,7 @@ import builderSessionReducer, {
 	updateSessionStep,
 } from "./BuilderSessionSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { StepCollection, StepCollectionState } from "./StepModel";
+import { RootStepCollection, RootStepCollectionState } from "./StepModel";
 import { getBuilderSource, getBuilderModel } from "./BuilderFactory";
 import { useEffect } from "react";
 
@@ -36,8 +36,8 @@ export interface BuilderState<TSource, TData> {
 	IsLoading: boolean;
 	SourceData: TSource | undefined;
 	Character: TData;
-	StepState: StepCollectionState;
-	Model: StepCollection<TSource, TData>;
+	StepState: RootStepCollectionState;
+	Model: RootStepCollection<TSource, TData>;
 }
 
 export const ensureBuilderStateFor =
@@ -68,21 +68,21 @@ export const ensureBuilderStateFor =
 		var model = getBuilderModel(builderKey);
 
 		if (!state.builderSessions.Sessions[sessionKey]) {
-			var initialStepState = model.initializeState(sessionKey);
+			var initialStepState = model.initializeRootState(sessionKey);
 			var initialCharacterData = initialData || model.GetInitialCharacterData();
 
 			dispatch(
 				createBuilderSession({
-					Key: sessionKey,
+					SessionKey: sessionKey,
 					BuilderKey: builderKey,
 					CharacterData: initialCharacterData,
-					StepState: model.initializeState(sessionKey),
+					StepState: initialStepState,
 				})
 			);
 
 			dispatch(
 				updateSessionStep(
-					model.onStepUpdated(
+					model.onRootStepUpdated(
 						builderData,
 						initialCharacterData,
 						initialStepState,
@@ -120,7 +120,7 @@ export const builderSessionUpdate =
 
 		dispatch(
 			updateSessionStep(
-				model.onStepUpdated(
+				model.onRootStepUpdated(
 					sourceData,
 					session.Character,
 					session.StepState,
