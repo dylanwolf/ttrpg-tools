@@ -73,29 +73,33 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 			? this.GetIsVisible(source, data)
 			: true;
 
-		var available = this.GetAvailable(source, data);
-		var pools = this.GetPools(source, data);
+		if (!newState.IsVisible) {
+			this.clearState(newState);
+			newState.IsCompleted = true;
+		} else {
+			var available = this.GetAvailable(source, data);
+			var pools = this.GetPools(source, data);
 
-		var newValue: { [name: string]: number } = {};
+			var newValue: { [name: string]: number } = {};
 
-		var remaining = available;
-		pools.forEach((p) => {
-			var value = newState.Values[p.Name] || 0;
+			var remaining = available;
+			pools.forEach((p) => {
+				var value = newState.Values[p.Name] || 0;
 
-			if (value > remaining) value = remaining;
-			if (p.MaxValue !== undefined && value > p.MaxValue) value = p.MaxValue;
+				if (value > remaining) value = remaining;
+				if (p.MaxValue !== undefined && value > p.MaxValue) value = p.MaxValue;
 
-			newValue[p.Name] = value;
-			remaining -= value;
-		});
+				newValue[p.Name] = value;
+				remaining -= value;
+			});
 
-		newState.Values = newValue;
-		newState.Pools = pools;
-		newState.TotalAvailable = available;
-		newState.Remaining = remaining;
+			newState.Values = newValue;
+			newState.Pools = pools;
+			newState.TotalAvailable = available;
+			newState.Remaining = remaining;
 
-		newState.IsCompleted =
-			newState.IsVisible && this.IsRequired ? newState.Remaining === 0 : true;
+			newState.IsCompleted = this.IsRequired ? newState.Remaining === 0 : true;
+		}
 	}
 
 	render(

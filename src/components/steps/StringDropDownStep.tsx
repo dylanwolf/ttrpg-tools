@@ -68,31 +68,32 @@ export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
 			? this.GetIsVisible(source, data)
 			: true;
 
-		var selectList = this.GetSelectList(source, data).map((itm) => {
-			return {
-				Text: this.GetText(itm),
-				Value: this.GetValue(itm),
-			};
-		});
+		if (!newState.IsVisible) {
+			this.clearState(newState);
+			newState.IsCompleted = true;
+		} else {
+			var selectList = this.GetSelectList(source, data).map((itm) => {
+				return {
+					Text: this.GetText(itm),
+					Value: this.GetValue(itm),
+				};
+			});
 
-		newState.SelectList = selectList;
+			newState.SelectList = selectList;
 
-		if (
-			newState.Value === undefined ||
-			!selectList.any((x) => x.Value === newState.Value)
-		) {
-			newState.Value = this.GetDefaultValue(
-				source,
-				data,
-				selectList.map((x) => x.Value)
-			);
+			if (
+				newState.Value === undefined ||
+				!selectList.any((x) => x.Value === newState.Value)
+			) {
+				newState.Value = this.GetDefaultValue(
+					source,
+					data,
+					selectList.map((x) => x.Value)
+				);
+			}
+
+			newState.IsCompleted = newState.Value ? true : false;
 		}
-
-		newState.IsCompleted = newState.IsVisible
-			? newState.Value
-				? true
-				: false
-			: true;
 	}
 
 	render(

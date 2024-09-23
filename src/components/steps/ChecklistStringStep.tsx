@@ -85,37 +85,41 @@ export class ChecklistStringStep<TSource, TData, TItem> extends StepModel<
 			? this.GetIsVisible(source, data)
 			: true;
 
-		var selectList = this.GetSelectList(source, data).map((itm) => {
-			return {
-				Text: this.GetText(itm),
-				Value: this.GetValue(itm),
-			};
-		});
+		if (!newState.IsVisible) {
+			this.clearState(newState);
+			newState.IsCompleted = true;
+		} else {
+			var selectList = this.GetSelectList(source, data).map((itm) => {
+				return {
+					Text: this.GetText(itm),
+					Value: this.GetValue(itm),
+				};
+			});
 
-		newState.SelectList = selectList;
+			newState.SelectList = selectList;
 
-		var selectListValues = selectList.map((x) => x.Value);
+			var selectListValues = selectList.map((x) => x.Value);
 
-		if (newState.Values === undefined)
-			newState.Values = this.GetDefaultValue(
-				source,
-				data,
-				selectList.map((x) => x.Value)
-			);
+			if (newState.Values === undefined)
+				newState.Values = this.GetDefaultValue(
+					source,
+					data,
+					selectList.map((x) => x.Value)
+				);
 
-		if (newState.Values)
-			newState.Values = newState.Values.filter((x) =>
-				selectListValues.includes(x)
-			);
+			if (newState.Values)
+				newState.Values = newState.Values.filter((x) =>
+					selectListValues.includes(x)
+				);
 
-		newState.MinimumSelectCount = this.GetMinimumSelectCount(source, data);
-		newState.MaximumSelectCount = this.GetMaximumSelectCount(source, data);
+			newState.MinimumSelectCount = this.GetMinimumSelectCount(source, data);
+			newState.MaximumSelectCount = this.GetMaximumSelectCount(source, data);
 
-		newState.IsCompleted =
-			newState.IsVisible && this.IsRequired
+			newState.IsCompleted = this.IsRequired
 				? !newState.MinimumSelectCount ||
 				  (newState.Values || []).length >= newState.MinimumSelectCount
 				: true;
+		}
 	}
 	render(
 		stepState: ChecklistStringStepState,

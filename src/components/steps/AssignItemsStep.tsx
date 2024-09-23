@@ -178,18 +178,22 @@ export class AssignItemsStep<TSource, TData, TItem> extends StepModel<
 			? this.GetIsVisible(source, data)
 			: true;
 
-		var items = this.GetItemsList(source, data);
-		var buckets = this.GetBuckets(source, data, items);
+		if (!newState.IsVisible) {
+			this.clearState(newState);
+			newState.IsCompleted = true;
+		} else {
+			var items = this.GetItemsList(source, data);
+			var buckets = this.GetBuckets(source, data, items);
 
-		if (newState.Value === undefined)
-			newState.Value = this.GetDefaultValue(source, data, items);
+			if (newState.Value === undefined)
+				newState.Value = this.GetDefaultValue(source, data, items);
 
-		updateState(newState, this.ItemEquals, items, buckets);
+			updateState(newState, this.ItemEquals, items, buckets);
 
-		newState.IsCompleted =
-			newState.IsVisible && this.IsRequired
+			newState.IsCompleted = this.IsRequired
 				? newState.Available.length === 0
 				: true;
+		}
 	}
 
 	render(

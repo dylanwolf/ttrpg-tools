@@ -58,22 +58,31 @@ export class NumericStep<TSource, TData> extends StepModel<
 			? this.GetIsVisible(source, data)
 			: true;
 
-		newState.MinValue = this.GetMinValue(source, data);
-		newState.MaxValue = this.GetMaxValue(source, data);
-		newState.NumericStep = this.GetNumericStep(source, data) || 1;
+		if (!newState.IsVisible) {
+			this.clearState(newState);
+			newState.IsCompleted = true;
+		} else {
+			newState.MinValue = this.GetMinValue(source, data);
+			newState.MaxValue = this.GetMaxValue(source, data);
+			newState.NumericStep = this.GetNumericStep(source, data) || 1;
 
-		if (newState.Value === undefined)
-			newState.Value = this.GetDefaultValue(source, data);
-		if (newState.Value !== undefined) {
-			if (newState.MinValue !== undefined && newState.Value < newState.MinValue)
-				newState.Value = newState.MinValue;
-			if (newState.MaxValue !== undefined && newState.Value > newState.MaxValue)
-				newState.Value = newState.MaxValue;
+			if (newState.Value === undefined)
+				newState.Value = this.GetDefaultValue(source, data);
+			if (newState.Value !== undefined) {
+				if (
+					newState.MinValue !== undefined &&
+					newState.Value < newState.MinValue
+				)
+					newState.Value = newState.MinValue;
+				if (
+					newState.MaxValue !== undefined &&
+					newState.Value > newState.MaxValue
+				)
+					newState.Value = newState.MaxValue;
+			}
+
+			newState.IsCompleted = newState.Value !== undefined;
 		}
-
-		newState.IsCompleted = newState.IsVisible
-			? newState.Value !== undefined
-			: true;
 	}
 	render(
 		stepState: NumericStepState,
