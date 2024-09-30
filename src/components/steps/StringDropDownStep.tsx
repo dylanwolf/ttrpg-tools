@@ -110,7 +110,11 @@ export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
 		}
 
 		return (
-			<div className={`step step-dropdown step-${this.Name}`}>
+			<div
+				className={`step step-dropdown step-${this.Name} step-${
+					stepState.IsCompleted ? "complete" : "incomplete"
+				}`}
+			>
 				<label>
 					{this.Label ? `${this.Label}:` : ""}
 					<select value={stepState.Value} onChange={onChange}>

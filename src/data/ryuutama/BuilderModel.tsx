@@ -4,6 +4,7 @@ import { AssignPoolStep } from "../../components/steps/AssignPoolStep";
 import { ChecklistStringStep } from "../../components/steps/ChecklistStringStep";
 import { ContainerStep } from "../../components/steps/ContainerStep";
 import { NumericStep } from "../../components/steps/NumericStep";
+import { StaticTextStep } from "../../components/steps/StaticTextStep";
 import { StringDropDownStep } from "../../components/steps/StringDropDownStep";
 import { registerBuilderModel } from "../../models/BuilderFactory";
 import { RootStepCollection } from "../../models/StepModel";
@@ -62,6 +63,13 @@ registerBuilderModel(
 	new RootStepCollection<SourceData, CharacterState>(
 		BUILDER_KEY,
 		[
+			new StaticTextStep<SourceData, CharacterState>(
+				"Version",
+				"Character Builder Version",
+				false,
+				(src, data) => src.Version,
+				(src, state, newData) => (newData.Version = src.Version)
+			),
 			new ChecklistStringStep<SourceData, CharacterState, string>(
 				"AdditionalSources",
 				"Include Sources",

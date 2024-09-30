@@ -27,6 +27,7 @@ export function collectBonuses(
 }
 
 export interface SourceData {
+	Version: string;
 	AdditionalSources: string[];
 	CharacterTemplates: CharacterTemplate[];
 	StartingAbilityScores: StartingAbilityScore[];

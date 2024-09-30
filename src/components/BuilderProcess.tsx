@@ -10,7 +10,6 @@ import { BusyIcon } from "./BusyIcon";
 import "./BuilderProcess.css";
 import { renderCharacterSheet } from "../models/BuilderFactory";
 import { DumpObject } from "./DumpObject";
-import { SourceData, SpellGrouping } from "../data/ryuutama/SourceData";
 
 export interface BuilderProcessProps {
 	sessionKey: string;
@@ -69,15 +68,6 @@ function BuilderProcessInternal(props: BuilderProcessProps) {
 
 			<h2>Source Data</h2>
 			<DumpObject object={model?.SourceData} />
-
-			{(
-				(model?.SourceData as SourceData).IncantationSpells[1].Level ===
-				SpellGrouping.Mid
-			).toString()}
-			{(
-				(model?.SourceData as SourceData).IncantationSpells[1].Level ===
-				SpellGrouping.Low
-			).toString()}
 		</div>
 	);
 }

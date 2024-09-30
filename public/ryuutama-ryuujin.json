@@ -1,0 +1,74 @@
+{
+	"AdditionalSources": [],
+	"RyuujinTypes": [
+		{
+			"Name": "Midori-ryuu, the Green Dragon",
+			"Artefacts": ["Encyclopedia", "Sextant", "Torch"],
+			"Benedictions": [
+				"The Tale of the Journey",
+				"The Tale of Nostalgia",
+				"The Tale of the Traveler's Journal"
+			]
+		},
+		{
+			"Name": "Ao-ryuu, the Azure Dragon",
+			"Artefacts": ["Crystal", "Ring", "Mascot"],
+			"Benedictions": [
+				"The Tale of Kindness",
+				"The Tale of Love",
+				"The Tale of the Heart"
+			]
+		},
+		{
+			"Name": "Kurenai-ryuu, the Crimson Dragon",
+			"Artefacts": ["Greatsword", "Longspear", "Longbow"],
+			"Benedictions": [
+				"The Tale of the Hero",
+				"The Tale of the Challenge",
+				"The Tale of Revival"
+			]
+		},
+		{
+			"Name": "Kuro-ryuu, the Black Dragon",
+			"Artefacts": ["Chalice", "Dagger", "Mirror"],
+			"Benedictions": [
+				"The Tale of Revenge",
+				"The Tale of Guidance",
+				"The Tale of Slaughter"
+			]
+		}
+	],
+	"Artefacts": [
+		{
+			"Name": "Encyclopedia",
+			"Description": "You are running the game with rules as written."
+		},
+		{
+			"Name": "Sextant",
+			"Description": "This artefact indicates the GM has created a few original rules and will be using them."
+		},
+		{
+			"Name": "Torch",
+			"Description": "At the end of each session, all of the experience granted by PCs is doubled."
+		},
+		{
+			"Name": "Crystal",
+			"Description": "All of the PCs can survive damage that reduces them as far as -20 HP. They will not die until their HP reaches -21."
+		}
+	],
+	"Benedictions": [
+		{
+			"Name": "The Tale of the Journey",
+			"Description": "Up to two PCs who roleplay ardently pursuing the goal of the journey can ignore all weather modifiers for the rest of the session."
+		},
+		{
+			"Name": "The Tale of Nostalgia",
+			"Description": "If the PCs roleplay having nostalgia for home, they can ignore all negative effects of mind-based status effects for the rest of the session; this affects up to two PCs at once if they meet the conditions."
+		},
+		{
+			"Name": "The Tale of the Traveler's Journal",
+			"Description": "At the end of the session, up to two PCs who write about their journey in a travel diary will receive their character level x 300 in gold."
+		}
+	],
+	"Reveils": []
+}

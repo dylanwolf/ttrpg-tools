@@ -2,6 +2,7 @@ import { SourceData } from "./SourceData";
 
 export interface CharacterState {
 	AdditionalSources: string[];
+	Version: string;
 	Level: number;
 	CharacterTemplate?: string | undefined;
 	StartingAbilityScores?: string | undefined;
@@ -30,6 +31,7 @@ export interface CharacterState {
 
 const initialCharacterData: CharacterState = {
 	AdditionalSources: [],
+	Version: "",
 	Level: 10,
 	AbilityScoreAssignments: {},
 };
