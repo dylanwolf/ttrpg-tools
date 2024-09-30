@@ -4,7 +4,7 @@ interface NumericStepState extends StepState {
 	MinValue?: number | undefined;
 	MaxValue?: number | undefined;
 	NumericStep?: number | undefined;
-	Value?: number | undefined;
+	Value?: number | null | undefined;
 }
 
 export class NumericStep<TSource, TData> extends StepModel<
@@ -68,7 +68,7 @@ export class NumericStep<TSource, TData> extends StepModel<
 
 			if (newState.Value === undefined)
 				newState.Value = this.GetDefaultValue(source, data);
-			if (newState.Value !== undefined) {
+			if (newState.Value !== undefined && newState.Value !== null) {
 				if (
 					newState.MinValue !== undefined &&
 					newState.Value < newState.MinValue
@@ -92,12 +92,16 @@ export class NumericStep<TSource, TData> extends StepModel<
 
 		function onChange(evt: React.ChangeEvent<HTMLInputElement>) {
 			var field = evt.currentTarget;
-			var newValue = parseInt(field.value);
-
-			if (newValue !== undefined && !isNaN(newValue)) {
-				triggerUpdate(index, { Value: newValue });
+			if (field.value.trim() === "") {
+				triggerUpdate(index, { Value: null });
 			} else {
-				evt.preventDefault();
+				var newValue = parseInt(field.value);
+
+				if (newValue !== undefined && !isNaN(newValue)) {
+					triggerUpdate(index, { Value: newValue });
+				} else {
+					evt.preventDefault();
+				}
 			}
 		}
 
@@ -111,7 +115,7 @@ export class NumericStep<TSource, TData> extends StepModel<
 					{this.Label ? `${this.Label}:` : ""}
 					<input
 						type="number"
-						value={stepState.Value}
+						value={stepState.Value !== null ? stepState.Value : ""}
 						min={stepState.MinValue}
 						max={stepState.MaxValue}
 						step={stepState.NumericStep}

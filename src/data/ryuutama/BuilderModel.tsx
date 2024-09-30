@@ -1,6 +1,9 @@
 import { valueIfInList } from "../../builderHelpers";
 import { AssignItemsStep } from "../../components/steps/AssignItemsStep";
-import { AssignPoolStep } from "../../components/steps/AssignPoolStep";
+import {
+	AssignPoolStep,
+	removeNullValues,
+} from "../../components/steps/AssignPoolStep";
 import { ChecklistStringStep } from "../../components/steps/ChecklistStringStep";
 import { ContainerStep } from "../../components/steps/ContainerStep";
 import { NumericStep } from "../../components/steps/NumericStep";
@@ -427,7 +430,7 @@ registerBuilderModel(
 							}),
 						(src, data) => data.HPMPAssignments || {},
 						(src, state, data) => {
-							data.HPMPAssignments = structuredClone(state.Values);
+							data.HPMPAssignments = removeNullValues(state.Values);
 						},
 						false
 					),
@@ -446,7 +449,7 @@ registerBuilderModel(
 							}),
 						(src, data) => data.StatIncreases || {},
 						(src, state, data) => {
-							data.StatIncreases = structuredClone(state.Values);
+							data.StatIncreases = removeNullValues(state.Values);
 						},
 						false
 					),

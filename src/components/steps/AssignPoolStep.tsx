@@ -9,7 +9,17 @@ interface AssignPoolStepState extends StepState {
 	TotalAvailable: number;
 	Remaining: number;
 	Pools: PoolDefinition[];
-	Values: { [name: string]: number };
+	Values: { [name: string]: number | null };
+}
+
+export function removeNullValues(values: { [name: string]: number | null }) {
+	var result: { [name: string]: number } = {};
+
+	Object.keys(values).forEach((key) => {
+		result[key] = values[key] || 0;
+	});
+
+	return result;
 }
 
 export class AssignPoolStep<TSource, TData> extends StepModel<
@@ -80,10 +90,15 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 			var available = this.GetAvailable(source, data);
 			var pools = this.GetPools(source, data);
 
-			var newValue: { [name: string]: number } = {};
+			var newValue: { [name: string]: number | null } = {};
 
 			var remaining = available;
 			pools.forEach((p) => {
+				if (newState.Values[p.Name] === null) {
+					newValue[p.Name] = null;
+					return;
+				}
+
 				var value = newState.Values[p.Name] || 0;
 
 				if (value > remaining) value = remaining;
@@ -114,17 +129,26 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 			evt: React.ChangeEvent<HTMLInputElement>
 		) {
 			var field = evt.currentTarget;
-			var newValue = parseInt(field.value);
-			var currentValue = stepState.Values[name];
 
-			if (
-				newValue >= 0 &&
-				(maxValue === undefined || maxValue >= newValue) &&
-				newValue - currentValue <= stepState.Remaining
-			) {
+			if (field.value.trim() === "") {
 				var newValues = structuredClone(stepState.Values);
-				newValues[name] = newValue;
+				newValues[name] = null;
+
+				console.log(newValues);
 				triggerUpdate(index, { Values: newValues });
+			} else {
+				var newValue = parseInt(field.value);
+				var currentValue = stepState.Values[name];
+
+				if (
+					newValue >= 0 &&
+					(maxValue === undefined || maxValue >= newValue) &&
+					newValue - (currentValue || 0) <= stepState.Remaining
+				) {
+					var newValues = structuredClone(stepState.Values);
+					newValues[name] = newValue;
+					triggerUpdate(index, { Values: newValues });
+				}
 			}
 		}
 
@@ -140,7 +164,11 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 						{p.Name}:{" "}
 						<input
 							type="number"
-							value={stepState.Values[p.Name] || 0}
+							value={
+								stepState.Values[p.Name] !== null
+									? stepState.Values[p.Name] || 0
+									: ""
+							}
 							onChange={function (e) {
 								onChange(p.Name, p.MaxValue, e);
 							}}

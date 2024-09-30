@@ -98,7 +98,9 @@
 		{
 			"Name": "Well-Spoken",
 			"Description": "Bonus to negotiation checks",
-			"RelevantRoll": "[INT+SPI]"
+			"Bonuses": {
+				"Negotiation ([INT+SPI])": 1
+			}
 		},
 		{
 			"Name": "Animal Owner",
