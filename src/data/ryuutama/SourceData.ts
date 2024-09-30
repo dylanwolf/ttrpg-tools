@@ -36,6 +36,9 @@ export interface SourceData {
 	Types: CharacterType[];
 	SeasonalMagic: SeasonalMagic[];
 	IncantationSpells: IncantationSpell[];
+	TerrainWeatherSpecialty: string[];
+	StatusEffects: string[];
+	SeasonalDragons: string[];
 }
 
 export interface CharacterTemplate extends IFromSource {

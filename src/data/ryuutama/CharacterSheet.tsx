@@ -4,6 +4,7 @@ import {
 	CharacterState,
 	getCharacterTemplate,
 	getLevel1Skills,
+	getLevel5Skills,
 } from "./CharacterData";
 import {
 	BUILDER_KEY,
@@ -19,8 +20,11 @@ interface CharacterSheetData {
 	Level: number;
 	CharacterTemplateDisplayName: string | undefined;
 	Level1Class: string | undefined;
-	Level1Type: string | undefined;
+	Level5Class: string | undefined;
+	Types: string[];
 	SeasonalMagics: string[];
+	StatusEffectImmunity: string | undefined;
+	SeasonalDragon: string | undefined;
 	AbilityScores: {
 		STR: number | undefined;
 		DEX: number | undefined;
@@ -28,10 +32,11 @@ interface CharacterSheetData {
 		SPI: number | undefined;
 	};
 	Derived: {
-		CarryingCapacity: number;
-		HP: number;
-		MP: number;
+		CarryingCapacity: number | undefined;
+		HP: number | undefined;
+		MP: number | undefined;
 	};
+	TerrainWeatherSpecialties: string[];
 	OtherBonuses: { [stat: string]: string };
 	Skills: CharacterSkill[];
 	WeaponMasteries: Weapon[];
@@ -82,6 +87,7 @@ function collectCharacterSheetData(
 ): CharacterSheetData {
 	var tpl = getCharacterTemplate(source, data);
 	var level1Skills = getLevel1Skills(source, data);
+	var level5Skills = getLevel5Skills(source, data);
 
 	var incantationSpells = data.SelectedSpells
 		? source.IncantationSpells.filter((x) =>
@@ -90,8 +96,8 @@ function collectCharacterSheetData(
 		: [];
 
 	var originalStr = data.AbilityScoreAssignments["STR"];
-	// var originalDex = data.AbilityScoreAssignments["DEX"];
-	// var originalInt = data.AbilityScoreAssignments["INT"];
+	var originalDex = data.AbilityScoreAssignments["DEX"];
+	var originalInt = data.AbilityScoreAssignments["INT"];
 	var originalSpi = data.AbilityScoreAssignments["SPI"];
 
 	var adjustedStr = getAdjustedAbilityScore(data, "STR");
@@ -99,7 +105,7 @@ function collectCharacterSheetData(
 	var adjustedInt = getAdjustedAbilityScore(data, "INT");
 	var adjustedSpi = getAdjustedAbilityScore(data, "SPI");
 
-	var groupedTypes = [data.Level1Type]
+	var groupedTypes = [data.Level1Type, data.Level6Type]
 		.groupBy((x) => x || "")
 		.map((grp) => {
 			return {
@@ -109,7 +115,7 @@ function collectCharacterSheetData(
 		})
 		.filter((x) => x.Type);
 
-	var groupedSkills = [level1Skills]
+	var groupedSkills = [level1Skills, level5Skills]
 		.filter((x) => x)
 		.flat()
 		.groupBy((x) => x.Name)
@@ -117,7 +123,8 @@ function collectCharacterSheetData(
 			return {
 				Count: grp.items.length,
 				Skill: source.Skills.filter((x) => x.Name === grp.key)[0],
-				IsSideJob: grp.key === data.Level1SideJob,
+				IsSideJob:
+					grp.key === data.Level1SideJob || grp.key === data.Level5SideJob,
 			};
 		});
 
@@ -169,6 +176,8 @@ function collectCharacterSheetData(
 		data.Level1WeaponMastery,
 		data.Level1WeaponGrace,
 		data.Level1WeaponFocus,
+		data.Level5WeaponGrace,
+		data.Level6WeaponFocus,
 	]
 		.filter((x) => x)
 		.groupBy((x) => x || "")
@@ -192,19 +201,22 @@ function collectCharacterSheetData(
 	return {
 		Level: data.Level || 1,
 		CharacterTemplateDisplayName: tpl?.DisplayValue || undefined,
-		SeasonalMagics: [data.Level1SeasonalMagic].filter((x) => x) as string[],
+		SeasonalMagics: [data.Level1SeasonalMagic, data.Level6SeasonalMagic].filter(
+			(x) => x
+		) as string[],
 		Level1Class: data.Level1Class,
-		Level1Type: data.Level1Type,
+		Level5Class: data.Level5Class,
+		Types: groupedTypes.map((x) => x.Type.Name).distinct(),
 		AbilityScores: {
-			STR: adjustedStr,
-			DEX: adjustedDex,
-			INT: adjustedInt,
-			SPI: adjustedSpi,
+			STR: originalStr && adjustedStr,
+			DEX: originalDex && adjustedDex,
+			INT: originalInt && adjustedInt,
+			SPI: originalSpi && adjustedSpi,
 		},
 		Derived: {
 			CarryingCapacity: carryCapacity,
-			HP: hp,
-			MP: mp,
+			HP: originalStr && hp,
+			MP: originalSpi && mp,
 		},
 		Skills: groupedSkills
 			.map((x) => {
@@ -223,6 +235,12 @@ function collectCharacterSheetData(
 		WeaponMasteries: weaponMasteries,
 		OtherBonuses: otherBonuses,
 		IncantationSpells: incantationSpells,
+		TerrainWeatherSpecialties: [
+			data.Level3WeatherTerrainSpecialty || "",
+			data.Level7WeatherTerrainSpecialty || "",
+		].filter((x) => x !== ""),
+		StatusEffectImmunity: data.Level4StatusEffectImmunity,
+		SeasonalDragon: data.Level9SeasonalDragon,
 	};
 }
 
@@ -236,17 +254,13 @@ function characterSheetRenderer(source: SourceData, data: CharacterState) {
 				{cs.CharacterTemplateDisplayName
 					? `${cs.CharacterTemplateDisplayName} `
 					: ""}
-				{[cs.Level1Class]
+				{[cs.Level1Class, cs.Level5Class]
 					.filter((x) => x)
 					.distinct()
 					.join(" / ")}
 			</div>
 			<div className="types">
-				Type(s):{" "}
-				{[cs.Level1Type]
-					.filter((x) => x)
-					.distinct()
-					.join(" / ")}
+				Type{cs.Types.length > 1 ? "s" : ""}:{cs.Types.join(" / ")}
 			</div>
 			{cs.SeasonalMagics.length > 0 ? (
 				<div className="seasonal-magics">
@@ -255,15 +269,53 @@ function characterSheetRenderer(source: SourceData, data: CharacterState) {
 			) : (
 				<></>
 			)}
+			{cs.TerrainWeatherSpecialties.length > 0 ? (
+				<div className="terrain-weather-specialties">
+					Terrain/Weather Specialt
+					{cs.TerrainWeatherSpecialties.length > 1 ? "ies" : "y"}:{" "}
+					{cs.TerrainWeatherSpecialties.join(", ")}
+				</div>
+			) : (
+				<></>
+			)}
+			{cs.StatusEffectImmunity ? (
+				<div className="status-effect-immunity">
+					Status Effect Immunity: {cs.StatusEffectImmunity}
+				</div>
+			) : (
+				<></>
+			)}
+			{cs.SeasonalDragon ? (
+				<div className="seasonal-dragon">
+					Favor of the Seasonal Dragon: {cs.SeasonalDragon}
+				</div>
+			) : (
+				<></>
+			)}
 			<div className="ability-scores">
-				<div className="score">STR: {cs.AbilityScores.STR}</div>
-				<div className="score">DEX: {cs.AbilityScores.DEX}</div>
-				<div className="score">INT: {cs.AbilityScores.INT}</div>
-				<div className="score">SPI: {cs.AbilityScores.SPI}</div>
-				<div className="score">HP: {cs.Derived.HP}</div>
-				<div className="score">MP: {cs.Derived.MP}</div>
 				<div className="score">
-					Carrying Capacity: {cs.Derived.CarryingCapacity}
+					STR: {cs.AbilityScores.STR ? `d${cs.AbilityScores.STR}` : ""}
+				</div>
+				<div className="score">
+					DEX: {cs.AbilityScores.DEX ? `d${cs.AbilityScores.DEX}` : ""}
+				</div>
+				<div className="score">
+					INT: {cs.AbilityScores.INT ? `d${cs.AbilityScores.INT}` : ""}
+				</div>
+				<div className="score">
+					SPI: {cs.AbilityScores.SPI ? `d${cs.AbilityScores.SPI}` : ""}
+				</div>
+				<div className="score">
+					HP: {cs.Derived.HP ? cs.Derived.HP.toString() : ""}
+				</div>
+				<div className="score">
+					MP: {cs.Derived.MP ? cs.Derived.MP.toString() : ""}
+				</div>
+				<div className="score">
+					Carrying Capacity:{" "}
+					{cs.AbilityScores.STR && cs.Derived.CarryingCapacity
+						? cs.Derived.CarryingCapacity.toString()
+						: ""}
 				</div>
 			</div>
 			{renderSkills(cs.Skills)}
@@ -342,7 +394,7 @@ function renderOtherBonuses(bonuses: { [stat: string]: string }) {
 
 	return (
 		<div className="other-bonuses">
-			<div className="title">Other Bonuses</div>
+			<div className="title">Bonuses</div>
 			<table>
 				<thead>
 					<tr>

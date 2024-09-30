@@ -145,7 +145,11 @@ export class ChecklistStringStep<TSource, TData, TItem> extends StepModel<
 		}
 
 		return (
-			<div className={`step step-checklist step-${this.Name}`}>
+			<div
+				className={`step step-checklist step-${this.Name} step-${
+					stepState.IsCompleted ? "complete" : "incomplete"
+				}`}
+			>
 				<div className="title">{this.Label}</div>
 				<div className="items">
 					{stepState.SelectList.map((i) => (

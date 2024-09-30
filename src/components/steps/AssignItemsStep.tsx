@@ -267,7 +267,11 @@ export class AssignItemsStep<TSource, TData, TItem> extends StepModel<
 		var values = stepState.Value || {};
 
 		return (
-			<div className={`step step-assignitems step-${this.Name}`}>
+			<div
+				className={`step step-assignitems step-${this.Name} step-${
+					stepState.IsCompleted ? "complete" : "incomplete"
+				}`}
+			>
 				<div className="buckets">
 					{stepState.Buckets.map((b: BucketDefinition<TItem>) => (
 						<div className="bucket" key={`AssignItems-${this.Name}-${b.Name}`}>

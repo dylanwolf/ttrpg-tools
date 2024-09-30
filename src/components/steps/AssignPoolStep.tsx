@@ -129,7 +129,11 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 		}
 
 		return (
-			<div className={`step step-assignpool step-${this.Name}`}>
+			<div
+				className={`step step-assignpool step-${this.Name} step-${
+					stepState.IsCompleted ? "complete" : "incomplete"
+				}`}
+			>
 				<div className="available">Available: {stepState.Remaining}</div>
 				{stepState.Pools.map((p) => (
 					<div className="pool" key={`AssignPool-${this.Name}-${p.Name}`}>

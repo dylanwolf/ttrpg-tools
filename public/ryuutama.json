@@ -293,5 +293,38 @@
 		{ "Name": "Arrow Compass", "Level": "Low", "SpellType": "Normal" },
 		{ "Name": "Dragonica, Open!", "Level": "Mid", "SpellType": "Normal" },
 		{ "Name": "Rainbow Drop Bridge", "Level": "High", "SpellType": "Ritual" }
-	]
+	],
+	"TerrainWeatherSpecialty": [
+		"Grassland",
+		"Wasteland",
+		"Woods",
+		"Highlands",
+		"Rocky Terrain",
+		"Deep Forest",
+		"Swamp",
+		"Mountain",
+		"Desert",
+		"Jungle",
+		"Alpine",
+		"Rain",
+		"Strong Wind",
+		"Fog",
+		"Hot",
+		"Cold",
+		"Hard Rain",
+		"Snow",
+		"Deep Fog",
+		"Dark",
+		"Hurricane",
+		"Blizzard"
+	],
+	"StatusEffects": [
+		"Injury",
+		"Poison",
+		"Sickness",
+		"Exhaustion",
+		"Muddled",
+		"Shock"
+	],
+	"SeasonalDragons": ["Spring", "Summer", "Fall", "Winter"]
 }

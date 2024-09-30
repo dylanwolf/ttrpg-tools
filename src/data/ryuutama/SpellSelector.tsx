@@ -1,6 +1,6 @@
 import { StepModel, StepState } from "../../models/StepModel";
 import { isInSelectedSource } from "./BuilderModel";
-import { CharacterState, getLevel1Type } from "./CharacterData";
+import { CharacterState, getLevel1Type, getLevel6Type } from "./CharacterData";
 import { IncantationSpell, SourceData, SpellGrouping } from "./SourceData";
 
 interface SpellSelectorState extends StepState {
@@ -45,25 +45,30 @@ export class RyuutamaSpellSelectorStep extends StepModel<
 		data: CharacterState,
 		newState: SpellSelectorState
 	): void {
-		// TODO: Add support for level 6 type
 		var level1Type = getLevel1Type(source, data);
-		if (level1Type.SpellsPerLevel) {
-			var remainingLow = 0;
-			var remainingMid = 0;
-			var remainingHigh = 0;
+		var level6Type = getLevel6Type(source, data);
 
+		var remainingLow = 0;
+		var remainingMid = 0;
+		var remainingHigh = 0;
+
+		if (level1Type.SpellsPerLevel || level6Type.SpellsPerLevel) {
 			for (var lvl = 1; lvl <= data.Level; lvl++) {
 				if (lvl < 4) {
 					remainingLow += level1Type.SpellsPerLevel || 0;
 				} else if (lvl < 6) {
 					remainingMid += level1Type.SpellsPerLevel || 0;
 				} else if (lvl < 7) {
-					remainingMid += level1Type.SpellsPerLevel || 0; // TODO: Add support for level 6 type
+					remainingMid +=
+						(level1Type.SpellsPerLevel || 0) + (level6Type.SpellsPerLevel || 0);
 				} else {
-					remainingHigh += level1Type.SpellsPerLevel || 0; // TODO: Add support for level 6 type
+					remainingHigh +=
+						(level1Type.SpellsPerLevel || 0) + (level6Type.SpellsPerLevel || 0);
 				}
 			}
+		}
 
+		if (remainingLow + remainingMid + remainingHigh > 0) {
 			newState.SelectList = isInSelectedSource(data, source.IncantationSpells);
 
 			var priorSelected =

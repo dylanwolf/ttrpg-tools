@@ -15,9 +15,16 @@ export interface CharacterState {
 	Level1Type?: string | undefined;
 	Level1WeaponFocus?: string | undefined;
 	Level1SeasonalMagic?: string | undefined;
-	Level7Type?: string | undefined;
-	Level7WeaponFocus?: string | undefined;
-	Level7SeasonalMagic?: string | undefined;
+	Level3WeatherTerrainSpecialty?: string | undefined;
+	Level4StatusEffectImmunity?: string | undefined;
+	Level5Class?: string | undefined;
+	Level5SideJob?: string | undefined;
+	Level5WeaponGrace?: string | undefined;
+	Level6Type?: string | undefined;
+	Level6WeaponFocus?: string | undefined;
+	Level7WeatherTerrainSpecialty?: string | undefined;
+	Level6SeasonalMagic?: string | undefined;
+	Level9SeasonalDragon?: string | undefined;
 	SelectedSpells?: string[];
 }
 
@@ -72,6 +79,32 @@ export function getLevel1Skills(source: SourceData, data: CharacterState) {
 	);
 }
 
+export function getLevel5Class(source: SourceData, data: CharacterState) {
+	return (
+		source.Classes.filter((x) => x.Name === data.Level5Class)[0] || undefined
+	);
+}
+
+export function getLevel5BaseSkills(source: SourceData, data: CharacterState) {
+	var l1class = getLevel5Class(source, data);
+	if (!l1class) return [];
+
+	return source.Skills.filter((x) => l1class.Skills.includes(x.Name));
+}
+
+export function getLevel5Skills(source: SourceData, data: CharacterState) {
+	var l1class = getLevel5Class(source, data);
+	if (!l1class) return [];
+
+	return source.Skills.filter(
+		(x) => l1class.Skills.includes(x.Name) || data.Level5SideJob === x.Name
+	);
+}
+
 export function getLevel1Type(source: SourceData, data: CharacterState) {
 	return source.Types.filter((x) => x.Name === data.Level1Type)[0];
+}
+
+export function getLevel6Type(source: SourceData, data: CharacterState) {
+	return source.Types.filter((x) => x.Name === data.Level6Type)[0] || undefined;
 }

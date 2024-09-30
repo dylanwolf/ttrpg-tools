@@ -14,6 +14,9 @@ import {
 	getLevel1BaseSkills,
 	getLevel1Skills,
 	getLevel1Type,
+	getLevel5BaseSkills,
+	getLevel5Skills,
+	getLevel6Type,
 	getStartingAbilityScores,
 } from "./CharacterData";
 import {
@@ -256,6 +259,152 @@ registerBuilderModel(
 					),
 				]
 			),
+			new StringDropDownStep<SourceData, CharacterState, string>(
+				"Level3WeatherTerrainSpecialty",
+				"Level 3 Weather/Terrain Specialty",
+				(src, data) =>
+					src.TerrainWeatherSpecialty.filter(
+						(x) => x !== data.Level7WeatherTerrainSpecialty
+					).orderBy((x) => x),
+				(itm) => itm,
+				(itm) => itm,
+				(src, data, lst) =>
+					valueIfInList(data.Level3WeatherTerrainSpecialty, lst),
+				(src, state, data) =>
+					(data.Level3WeatherTerrainSpecialty = state.Value),
+				(src, data) => data.Level >= 3
+			),
+			new StringDropDownStep<SourceData, CharacterState, string>(
+				"Level4StatusEffectImmunity",
+				"Level 4 Status Effect Immunity",
+				(src, data) => src.StatusEffects,
+				(itm) => itm,
+				(itm) => itm,
+				(src, data, lst) => valueIfInList(data.Level4StatusEffectImmunity, lst),
+				(src, state, data) => (data.Level4StatusEffectImmunity = state.Value),
+				(src, data) => data.Level >= 4
+			),
+			new ContainerStep<SourceData, CharacterState>(
+				"Level5ClassContainer",
+				"",
+				[
+					new StringDropDownStep<SourceData, CharacterState, CharacterClass>(
+						"Level5Class",
+						"Level 5 Class",
+						(src, data) => isInSelectedSource(data, src.Classes),
+						(itm) => itm.Name,
+						(itm) => itm.Name,
+						(src, data, lst) => valueIfInList(data.Level5Class, lst),
+						(src, state, data) => {
+							data.Level5Class = state.Value || "";
+						}
+					),
+					new StringDropDownStep<SourceData, CharacterState, CharacterSkill>(
+						"Level5SideJob",
+						"Side-Job",
+						(src, data) => {
+							var existingSkills = getLevel5BaseSkills(src, data).map(
+								(s) => s.Name
+							);
+							return isInSelectedSource(
+								data,
+								src.Skills.filter(
+									(s) =>
+										!existingSkills.includes(s.Name) && !s.RestrictedFromSideJob
+								)
+							).orderBy((x) => x.Name);
+						},
+						(itm) => itm.Name,
+						(itm) => itm.Name,
+						(src, data, lst) => valueIfInList(data.Level5SideJob, lst),
+						(src, state, data) => (data.Level5SideJob = state.Value || ""),
+						(src, data) => {
+							return getLevel5Skills(src, data).any((x) =>
+								x.SelectSkill ? true : false
+							);
+						}
+					),
+					new StringDropDownStep<SourceData, CharacterState, string>(
+						"Level5WeaponGrace",
+						"Weapon Grace",
+						(src, data) =>
+							getLevel5Skills(src, data)
+								.map((s) => s.ExtraMasteredWeapon || [])
+								.flat()
+								.distinct(),
+						(itm) => itm,
+						(itm) => itm,
+						(src, data, lst) => valueIfInList(data.Level5WeaponGrace, lst),
+						(src, state, data) => (data.Level5WeaponGrace = state.Value || ""),
+						(src, data) => {
+							return getLevel5Skills(src, data).any(
+								(x) => (x.ExtraMasteredWeapon || []).length > 0
+							);
+						}
+					),
+				]
+			),
+			new ContainerStep<SourceData, CharacterState>("Level6TypeContainer", "", [
+				new StringDropDownStep<SourceData, CharacterState, CharacterType>(
+					"Level6Type",
+					"Level 6 Type",
+					(src, data) => isInSelectedSource(data, src.Types),
+					(itm) => itm.Name,
+					(itm) => itm.Name,
+					(src, data, lst) => valueIfInList(data.Level6Type, lst),
+					(src, state, data) => (data.Level6Type = state.Value || "")
+				),
+				new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
+					"Level6WeaponFocus",
+					"Weapon Focus",
+					(src, data) => isInSelectedSource(data, src.Weapons),
+					(itm) => itm.Name,
+					(itm) => itm.Name,
+					(src, data, lst) => valueIfInList(data.Level6WeaponFocus, lst),
+					(src, state, data) => {
+						data.Level6WeaponFocus = state.Value || "";
+					},
+					(src, data) =>
+						getLevel6Type(src, data).ExtraMasteredWeapon ? true : false
+				),
+				new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
+					"Level6SeasonalMagic",
+					"Seasonal Magic",
+					(src, data) => isInSelectedSource(data, src.SeasonalMagic),
+					(itm) => itm.Name,
+					(itm) => itm.Name,
+					(src, data, lst) => valueIfInList(data.Level6SeasonalMagic, lst),
+					(src, state, data) => {
+						data.Level6SeasonalMagic = state.Value || "";
+					},
+					(src, data) => (getLevel6Type(src, data).SeasonalMagic ? true : false)
+				),
+			]),
+			new StringDropDownStep<SourceData, CharacterState, string>(
+				"Level7WeatherTerrainSpecialty",
+				"Level 7 Weather/Terrain Specialty",
+				(src, data) =>
+					src.TerrainWeatherSpecialty.filter(
+						(x) => x !== data.Level3WeatherTerrainSpecialty
+					).orderBy((x) => x),
+				(itm) => itm,
+				(itm) => itm,
+				(src, data, lst) =>
+					valueIfInList(data.Level7WeatherTerrainSpecialty, lst),
+				(src, state, data) =>
+					(data.Level7WeatherTerrainSpecialty = state.Value),
+				(src, data) => data.Level >= 7
+			),
+			new StringDropDownStep<SourceData, CharacterState, string>(
+				"Level9SeasonalDragon",
+				"Level 9 Favor of the Seasonal Dragon",
+				(src, data) => src.SeasonalDragons,
+				(itm) => itm,
+				(itm) => itm,
+				(src, data, lst) => valueIfInList(data.Level9SeasonalDragon, lst),
+				(src, state, data) => (data.Level9SeasonalDragon = state.Value),
+				(src, data) => data.Level >= 9
+			),
 			new ContainerStep<SourceData, CharacterState>(
 				"LevelUpContainer",
 				"",
@@ -301,10 +450,3 @@ registerBuilderModel(
 		() => getInitialCharacterData()
 	)
 );
-
-// TODO: Level 3 + 7 Terrain/Weather Specialty
-// TODO: Level 4 Status Effect Immunity
-// TODO: Level 5 Extra Class
-// TODO: Level 6 Extra Type
-// TODO: Level 9 Seasonal Dragon
-// TODO: Spell Selection

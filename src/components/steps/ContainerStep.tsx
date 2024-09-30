@@ -91,7 +91,11 @@ export class ContainerStep<TSource, TData> extends StepModel<
 		}
 
 		return (
-			<div className={`step step-container step-${this.Name}`}>
+			<div
+				className={`step step-container step-${this.Name} step-${
+					stepState.IsCompleted ? "complete" : "incomplete"
+				}`}
+			>
 				<div className="title">{this.Label}</div>
 				<div className="container">
 					{this.Steps.ByIndex.filter(

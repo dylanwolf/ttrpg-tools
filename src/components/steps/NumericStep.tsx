@@ -102,7 +102,11 @@ export class NumericStep<TSource, TData> extends StepModel<
 		}
 
 		return (
-			<div className={`step step-numeric step-${this.Name}`}>
+			<div
+				className={`step step-numeric step-${this.Name} step-${
+					stepState.IsCompleted ? "complete" : "incomplete"
+				}`}
+			>
 				<label>
 					{this.Label ? `${this.Label}:` : ""}
 					<input
