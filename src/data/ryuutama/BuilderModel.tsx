@@ -1,9 +1,9 @@
 import { valueIfInList } from "../../builderHelpers";
-import { AssignItemsStep } from "../../components/steps/AssignItemsStep";
 import {
 	AssignPoolStep,
 	removeNullValues,
 } from "../../components/steps/AssignPoolStep";
+import { AssignStatsStep } from "../../components/steps/AssignStatsStep";
 import { ChecklistStringStep } from "../../components/steps/ChecklistStringStep";
 import { ContainerStep } from "../../components/steps/ContainerStep";
 import { NumericStep } from "../../components/steps/NumericStep";
@@ -120,8 +120,9 @@ registerBuilderModel(
 				(src, state, newData) =>
 					(newData.StartingAbilityScores = state.Value || "")
 			),
-			new AssignItemsStep<SourceData, CharacterState, StartingDice>(
+			new AssignStatsStep<SourceData, CharacterState, StartingDice>(
 				"AssignAbilityScores",
+				"Assign Ability Scores",
 				(src, data) => getStartingAbilityScores(src, data).Dice,
 				(us, them) => us.Value === them.Value,
 				(src, data, lst) =>
@@ -131,12 +132,11 @@ registerBuilderModel(
 						return {
 							Name: attr,
 							Locked: fixedMatch ? true : false,
-							MaxCount: 1,
-							FixedValues: fixedMatch ? [fixedMatch] : undefined,
+							FixedValue: fixedMatch || undefined,
 						};
 					}),
 				(src, data, lst) => {
-					var defaultValue: { [name: string]: StartingDice[] } = {};
+					var defaultValue: { [name: string]: StartingDice } = {};
 					var remaining = [...lst];
 
 					Object.keys(data.AbilityScoreAssignments).forEach((key) => {
@@ -144,20 +144,20 @@ registerBuilderModel(
 							(x) => x.Value === data.AbilityScoreAssignments[key]
 						)[0];
 						if (match) {
-							defaultValue[key] = [match];
+							defaultValue[key] = match;
 							remaining.splice(remaining.indexOf(match), 1);
 						}
 					});
 
 					return defaultValue;
 				},
-				(itm) => <span>d{itm.Value}</span>,
+				(choice) => "d" + choice.Value,
 				(src, state, data) => {
 					var value: { [name: string]: number } = {};
 					var stateValue = state.Value || {};
 
 					Object.keys(stateValue).forEach((key) => {
-						var die = stateValue[key][0];
+						var die = stateValue[key];
 						if (die) value[key] = die.Value;
 					});
 
@@ -165,6 +165,51 @@ registerBuilderModel(
 				},
 				false
 			),
+			// new AssignItemsStep<SourceData, CharacterState, StartingDice>(
+			// 	"AssignAbilityScores",
+			// 	(src, data) => getStartingAbilityScores(src, data).Dice,
+			// 	(us, them) => us.Value === them.Value,
+			// 	(src, data, lst) =>
+			// 		["STR", "DEX", "INT", "SPI"].map((attr) => {
+			// 			var fixedMatch = lst.filter((x) => x.Attribute === attr)[0];
+
+			// 			return {
+			// 				Name: attr,
+			// 				Locked: fixedMatch ? true : false,
+			// 				MaxCount: 1,
+			// 				FixedValues: fixedMatch ? [fixedMatch] : undefined,
+			// 			};
+			// 		}),
+			// 	(src, data, lst) => {
+			// 		var defaultValue: { [name: string]: StartingDice[] } = {};
+			// 		var remaining = [...lst];
+
+			// 		Object.keys(data.AbilityScoreAssignments).forEach((key) => {
+			// 			var match = remaining.filter(
+			// 				(x) => x.Value === data.AbilityScoreAssignments[key]
+			// 			)[0];
+			// 			if (match) {
+			// 				defaultValue[key] = [match];
+			// 				remaining.splice(remaining.indexOf(match), 1);
+			// 			}
+			// 		});
+
+			// 		return defaultValue;
+			// 	},
+			// 	(itm) => <span>d{itm.Value}</span>,
+			// 	(src, state, data) => {
+			// 		var value: { [name: string]: number } = {};
+			// 		var stateValue = state.Value || {};
+
+			// 		Object.keys(stateValue).forEach((key) => {
+			// 			var die = stateValue[key][0];
+			// 			if (die) value[key] = die.Value;
+			// 		});
+
+			// 		data.AbilityScoreAssignments = value;
+			// 	},
+			// 	false
+			// ),
 			new StringDropDownStep<SourceData, CharacterState, Weapon>(
 				"Level1WeaponMastery",
 				"Level 1 Weapon Mastery",
@@ -381,7 +426,13 @@ registerBuilderModel(
 				new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
 					"Level6SeasonalMagic",
 					"Seasonal Magic",
-					(src, data) => isInSelectedSource(data, src.SeasonalMagic),
+					(src, data) =>
+						isInSelectedSource(
+							data,
+							src.SeasonalMagic.filter(
+								(x) => x.Name !== data.Level1SeasonalMagic
+							)
+						),
 					(itm) => itm.Name,
 					(itm) => itm.Name,
 					(src, data, lst) => valueIfInList(data.Level6SeasonalMagic, lst),

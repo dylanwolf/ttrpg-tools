@@ -1,7 +1,0 @@
-.bucket-item {
-    cursor: pointer;
-}
-
-.bucket-locked .bucket-item {
-    cursor: initial;
-}

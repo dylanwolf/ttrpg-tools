@@ -130,10 +130,9 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 		) {
 			var field = evt.currentTarget;
 
+			var newValues = structuredClone(stepState.Values);
 			if (field.value.trim() === "") {
-				var newValues = structuredClone(stepState.Values);
 				newValues[name] = null;
-
 				console.log(newValues);
 				triggerUpdate(index, { Values: newValues });
 			} else {
@@ -145,7 +144,6 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 					(maxValue === undefined || maxValue >= newValue) &&
 					newValue - (currentValue || 0) <= stepState.Remaining
 				) {
-					var newValues = structuredClone(stepState.Values);
 					newValues[name] = newValue;
 					triggerUpdate(index, { Values: newValues });
 				}

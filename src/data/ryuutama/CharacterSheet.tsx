@@ -260,7 +260,7 @@ function characterSheetRenderer(source: SourceData, data: CharacterState) {
 					.join(" / ")}
 			</div>
 			<div className="types">
-				Type{cs.Types.length > 1 ? "s" : ""}:{cs.Types.join(" / ")}
+				Type{cs.Types.length > 1 ? "s" : ""}: {cs.Types.join(" / ")}
 			</div>
 			{cs.SeasonalMagics.length > 0 ? (
 				<div className="seasonal-magics">
