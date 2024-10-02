@@ -4,11 +4,10 @@ import {
 	builderStateSelector,
 	useAppDispatch,
 	useAppSelector,
-	useEnsureBuilderStateFor,
-} from "../models/AppStore";
+} from "../state/AppStore";
 import { BusyIcon } from "./BusyIcon";
 import "./BuilderProcess.css";
-import { renderCharacterSheet } from "../models/BuilderFactory";
+import { renderCharacterSheet } from "../state/BuilderFactory";
 import { DumpObject } from "./DumpObject";
 
 export interface BuilderProcessProps {
@@ -17,8 +16,6 @@ export interface BuilderProcessProps {
 
 export function BuilderProcess(props: BuilderProcessProps) {
 	const model = useAppSelector(builderStateSelector(props.sessionKey));
-
-	useEnsureBuilderStateFor(props.sessionKey, "ryuutama");
 
 	return !model ? (
 		<>

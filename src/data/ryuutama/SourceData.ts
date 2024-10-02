@@ -1,4 +1,5 @@
 import { isNumeric } from "../../builderHelpers";
+import { SourceDataBase } from "../../state/BuilderSourceSlice";
 
 export const BUILDER_KEY = "ryuutama";
 
@@ -26,7 +27,7 @@ export function collectBonuses(
 	}
 }
 
-export interface SourceData {
+export interface SourceData extends SourceDataBase {
 	Version: string;
 	AdditionalSources: string[];
 	CharacterTemplates: CharacterTemplate[];

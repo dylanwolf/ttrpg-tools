@@ -9,8 +9,9 @@ import { ContainerStep } from "../../components/steps/ContainerStep";
 import { NumericStep } from "../../components/steps/NumericStep";
 import { StaticTextStep } from "../../components/steps/StaticTextStep";
 import { StringDropDownStep } from "../../components/steps/StringDropDownStep";
-import { registerBuilderModel } from "../../models/BuilderFactory";
-import { RootStepCollection } from "../../models/StepModel";
+import { StringEntryStep } from "../../components/steps/StringEntryStep";
+import { registerBuilderModel } from "../../state/BuilderFactory";
+import { RootStepCollection } from "../../state/StepModel";
 import {
 	CharacterState,
 	getCharacterTemplate,
@@ -84,6 +85,13 @@ registerBuilderModel(
 				(src, data) => undefined,
 				(src, state, data) => (data.AdditionalSources = state.Values || [])
 			),
+			new StringEntryStep<SourceData, CharacterState>(
+				"Name",
+				"Name",
+				(src, data) => data.Title || "",
+				(src, state, newData) => (newData.Title = state.Value || ""),
+				false
+			),
 			new NumericStep<SourceData, CharacterState>(
 				"Level",
 				"Level",
@@ -139,7 +147,7 @@ registerBuilderModel(
 					var defaultValue: { [name: string]: StartingDice } = {};
 					var remaining = [...lst];
 
-					Object.keys(data.AbilityScoreAssignments).forEach((key) => {
+					Object.keys(data.AbilityScoreAssignments || []).forEach((key) => {
 						var match = remaining.filter(
 							(x) => x.Value === data.AbilityScoreAssignments[key]
 						)[0];

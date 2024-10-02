@@ -3,13 +3,18 @@ import { RootStepCollectionState } from "./StepModel";
 
 export interface BuilderSessionStateCollection {
 	Sessions: { [key: string]: BuilderSessionState<any> };
+	CurrentSessionKey?: string | undefined;
 }
 
 const initialState: BuilderSessionStateCollection = {
 	Sessions: {},
 };
 
-export interface BuilderSessionState<TData> {
+export interface CharacterDataBase {
+	Title: string;
+}
+
+export interface BuilderSessionState<TData extends CharacterDataBase> {
 	SessionKey: string;
 	BuilderKey: string;
 	Character: TData;
@@ -49,6 +54,14 @@ export const characterDataSlice = createSlice({
 				};
 			}
 		},
+		setCurrentSession(
+			state: BuilderSessionStateCollection,
+			action: PayloadAction<string | undefined>
+		) {
+			console.log(`setCurrentSession(${action.payload || "undefined"})`);
+			if (!action.payload || state.Sessions[action.payload])
+				state.CurrentSessionKey = action.payload;
+		},
 		updateSessionStep<TData>(
 			state: BuilderSessionStateCollection,
 			action: PayloadAction<SessionUpdate<TData>>
@@ -61,9 +74,23 @@ export const characterDataSlice = createSlice({
 			state.Sessions[action.payload.NewStepState.SessionKey].Character =
 				action.payload.NewCharacterData;
 		},
+		removeSession(
+			state: BuilderSessionStateCollection,
+			action: PayloadAction<string>
+		) {
+			console.log(`removeSession(${action.payload})`);
+			delete state.Sessions[action.payload];
+			if (action.payload === state.CurrentSessionKey) {
+				state.CurrentSessionKey = Object.keys(state.Sessions)[0] || undefined;
+			}
+		},
 	},
 });
 
-export const { createBuilderSession, updateSessionStep } =
-	characterDataSlice.actions;
+export const {
+	createBuilderSession,
+	updateSessionStep,
+	setCurrentSession,
+	removeSession,
+} = characterDataSlice.actions;
 export default characterDataSlice.reducer;

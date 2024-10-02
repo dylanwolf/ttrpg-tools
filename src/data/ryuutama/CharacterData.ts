@@ -1,6 +1,7 @@
+import { CharacterDataBase } from "../../state/BuilderSessionSlice";
 import { SourceData } from "./SourceData";
 
-export interface CharacterState {
+export interface CharacterState extends CharacterDataBase {
 	AdditionalSources: string[];
 	Version: string;
 	Level: number;
@@ -30,6 +31,7 @@ export interface CharacterState {
 }
 
 const initialCharacterData: CharacterState = {
+	Title: "New Character",
 	AdditionalSources: [],
 	Version: "",
 	Level: 10,

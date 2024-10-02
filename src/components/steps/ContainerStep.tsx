@@ -3,7 +3,7 @@ import {
 	StepRunner,
 	StepRunnerState,
 	StepState,
-} from "../../models/StepModel";
+} from "../../state/StepModel";
 import { mergeStateWithUpdates } from "../../builderHelpers";
 
 interface ContainerStepState extends StepState, StepRunnerState {

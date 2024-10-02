@@ -2,15 +2,19 @@ import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import builderSourceReducer, {
 	beginLoadingSourceData,
 	finishLoadingSourceData,
+	SourceDataBase,
 } from "./BuilderSourceSlice";
 import builderSessionReducer, {
+	CharacterDataBase,
 	createBuilderSession,
+	setCurrentSession,
 	updateSessionStep,
 } from "./BuilderSessionSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStepCollection, RootStepCollectionState } from "./StepModel";
 import { getBuilderSource, getBuilderModel } from "./BuilderFactory";
 import { useEffect } from "react";
+import { v4 as uuid } from "uuid";
 
 export const store = configureStore({
 	reducer: {
@@ -44,6 +48,7 @@ export const ensureBuilderStateFor =
 	<TSource, TData>(
 		sessionKey: string,
 		builderKey: string,
+		autoSelect: boolean,
 		initialData?: TData | undefined
 	) =>
 	async (dispatch: AppDispatch, getState: () => RootState) => {
@@ -90,24 +95,20 @@ export const ensureBuilderStateFor =
 					)
 				)
 			);
+
+			if (autoSelect) dispatch(setCurrentSession(sessionKey));
 		}
 	};
 
-export function useEnsureBuilderStateFor(
-	sessionKey: string,
+export function createSession(
 	builderKey: string,
+	autoSelect: boolean,
 	initialState?: any
 ) {
-	const state = useAppSelector(builderStateSelector<any, any>(sessionKey));
-
-	useEffect(() => {
-		//console.log(`useEnsureBuilderStateFor useEffect()`);
-		if (!state?.IsLoading && !state?.SourceData) {
-			store.dispatch(
-				ensureBuilderStateFor(sessionKey, builderKey, initialState)
-			);
-		}
-	});
+	const sessionKey = uuid();
+	store.dispatch(
+		ensureBuilderStateFor(sessionKey, builderKey, autoSelect, initialState)
+	);
 }
 
 export const builderSessionUpdate =
@@ -132,7 +133,9 @@ export const builderSessionUpdate =
 	};
 
 export const builderStateSelector =
-	<TSource, TData>(key: string) =>
+	<TSource extends SourceDataBase, TData extends CharacterDataBase>(
+		key: string
+	) =>
 	(state: RootState): BuilderState<TSource, TData> | undefined => {
 		var session = state.builderSessions.Sessions[key];
 
@@ -150,5 +153,42 @@ export const builderStateSelector =
 			Character: session?.Character,
 			StepState: session?.StepState,
 			Model: getBuilderModel<TSource, TData>(session.BuilderKey),
+		};
+	};
+
+export interface BuilderTabState {
+	CurrentSessionKey?: string | undefined;
+	Tabs: BuilderTab[];
+}
+
+export interface BuilderTab {
+	SessionKey: string;
+	BuilderName: string;
+	CharacterTitle: string;
+}
+
+export const builderTabSelector =
+	() =>
+	(state: RootState): BuilderTabState => {
+		var sessionKeys =
+			(state.builderSessions &&
+				state.builderSessions.Sessions &&
+				Object.keys(state.builderSessions.Sessions)) ||
+			[];
+
+		return {
+			CurrentSessionKey: state.builderSessions.CurrentSessionKey,
+			Tabs: sessionKeys.map((key) => {
+				var session = state.builderSessions.Sessions[key];
+				var builderName =
+					state.builderSources.Sources[session.BuilderKey]?.Data.__NAME__ ||
+					"Loading...";
+
+				return {
+					SessionKey: key,
+					CharacterTitle: session.Character.Title,
+					BuilderName: builderName,
+				};
+			}),
 		};
 	};

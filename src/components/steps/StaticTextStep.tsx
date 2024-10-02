@@ -1,5 +1,5 @@
 import Markdown from "react-markdown";
-import { StepModel, StepState } from "../../models/StepModel";
+import { StepModel, StepState } from "../../state/StepModel";
 
 interface StaticTextStepState extends StepState {
 	Value: string;

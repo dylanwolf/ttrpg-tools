@@ -1,4 +1,4 @@
-import { StepModel, StepState } from "../../models/StepModel";
+import { StepModel, StepState } from "../../state/StepModel";
 
 interface NumericStepState extends StepState {
 	MinValue?: number | undefined;

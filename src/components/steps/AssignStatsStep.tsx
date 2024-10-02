@@ -1,4 +1,4 @@
-import { StepModel, StepState } from "../../models/StepModel";
+import { StepModel, StepState } from "../../state/StepModel";
 
 export interface StatDefinition<TChoice> {
 	Name: string;

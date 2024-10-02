@@ -1,5 +1,5 @@
 import { SelectItem } from "../../builderHelpers";
-import { StepModel, StepState } from "../../models/StepModel";
+import { StepModel, StepState } from "../../state/StepModel";
 
 interface StringDropDownStepState extends StepState {
 	SelectList: SelectItem[];

@@ -1,12 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export interface BuilderSourceState {
-	Data?: any;
+export interface SourceDataBase {
+	__NAME__: string;
+}
+
+export interface BuilderSourceState<TData extends SourceDataBase> {
+	Data?: TData;
 	IsLoading: boolean;
 }
 
 export interface BuilderSourceStateCollection {
-	Sources: { [key: string]: BuilderSourceState };
+	Sources: { [key: string]: BuilderSourceState<any> };
 }
 
 interface BuilderSourceLoadingFinishedPayload {
@@ -35,6 +39,7 @@ export const builderDataSlice = createSlice({
 			action: PayloadAction<BuilderSourceLoadingFinishedPayload>
 		) {
 			console.log(`finishLoadingSourceData(${action.payload.Key})`);
+			console.log(action.payload.Data);
 
 			state.Sources[action.payload.Key].Data = action.payload.Data;
 			state.Sources[action.payload.Key].IsLoading = false;
