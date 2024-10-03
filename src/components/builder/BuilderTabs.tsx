@@ -11,14 +11,25 @@ import {
 import "./BuilderTabs.css";
 import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { setBrowserTitle } from "../../layout/BrowserUtils";
 
 export function BuilderTabs() {
 	const sessions = useAppSelector(builderTabSelector());
 	const dispatch = useAppDispatch();
 
 	function onSelected(sessionKey: string) {
-		if (sessionKey !== sessions.CurrentSessionKey)
+		if (sessionKey !== sessions.CurrentSessionKey) {
 			dispatch(setCurrentSession(sessionKey));
+
+			var currentSession = sessions.Tabs.filter(
+				(x) => x.SessionKey === sessions.CurrentSessionKey
+			)[0];
+			setBrowserTitle(
+				currentSession
+					? `${currentSession.BuilderName} Character Builder`
+					: "Character Builder"
+			);
+		}
 	}
 
 	function onRemoved(

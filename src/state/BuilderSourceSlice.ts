@@ -39,7 +39,6 @@ export const builderDataSlice = createSlice({
 			action: PayloadAction<BuilderSourceLoadingFinishedPayload>
 		) {
 			console.log(`finishLoadingSourceData(${action.payload.Key})`);
-			console.log(action.payload.Data);
 
 			state.Sources[action.payload.Key].Data = action.payload.Data;
 			state.Sources[action.payload.Key].IsLoading = false;

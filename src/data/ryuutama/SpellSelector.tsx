@@ -52,7 +52,7 @@ export class RyuutamaSpellSelectorStep extends StepModel<
 		var remainingMid = 0;
 		var remainingHigh = 0;
 
-		if (level1Type.SpellsPerLevel || level6Type.SpellsPerLevel) {
+		if (level1Type.SpellsPerLevel || level6Type?.SpellsPerLevel) {
 			for (var lvl = 1; lvl <= data.Level; lvl++) {
 				if (lvl < 4) {
 					remainingLow += level1Type.SpellsPerLevel || 0;
@@ -60,10 +60,12 @@ export class RyuutamaSpellSelectorStep extends StepModel<
 					remainingMid += level1Type.SpellsPerLevel || 0;
 				} else if (lvl < 7) {
 					remainingMid +=
-						(level1Type.SpellsPerLevel || 0) + (level6Type.SpellsPerLevel || 0);
+						(level1Type.SpellsPerLevel || 0) +
+						(level6Type?.SpellsPerLevel || 0);
 				} else {
 					remainingHigh +=
-						(level1Type.SpellsPerLevel || 0) + (level6Type.SpellsPerLevel || 0);
+						(level1Type.SpellsPerLevel || 0) +
+						(level6Type?.SpellsPerLevel || 0);
 				}
 			}
 		}

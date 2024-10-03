@@ -34,7 +34,7 @@ const initialCharacterData: CharacterState = {
 	Title: "New Character",
 	AdditionalSources: [],
 	Version: "",
-	Level: 10,
+	Level: 1,
 	AbilityScoreAssignments: {},
 };
 

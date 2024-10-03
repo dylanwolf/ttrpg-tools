@@ -406,50 +406,57 @@ registerBuilderModel(
 							);
 						}
 					),
-				]
+				],
+				(src, data) => data.Level >= 5
 			),
-			new ContainerStep<SourceData, CharacterState>("Level6TypeContainer", "", [
-				new StringDropDownStep<SourceData, CharacterState, CharacterType>(
-					"Level6Type",
-					"Level 6 Type",
-					(src, data) => isInSelectedSource(data, src.Types),
-					(itm) => itm.Name,
-					(itm) => itm.Name,
-					(src, data, lst) => valueIfInList(data.Level6Type, lst),
-					(src, state, data) => (data.Level6Type = state.Value || "")
-				),
-				new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
-					"Level6WeaponFocus",
-					"Weapon Focus",
-					(src, data) => isInSelectedSource(data, src.Weapons),
-					(itm) => itm.Name,
-					(itm) => itm.Name,
-					(src, data, lst) => valueIfInList(data.Level6WeaponFocus, lst),
-					(src, state, data) => {
-						data.Level6WeaponFocus = state.Value || "";
-					},
-					(src, data) =>
-						getLevel6Type(src, data).ExtraMasteredWeapon ? true : false
-				),
-				new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
-					"Level6SeasonalMagic",
-					"Seasonal Magic",
-					(src, data) =>
-						isInSelectedSource(
-							data,
-							src.SeasonalMagic.filter(
-								(x) => x.Name !== data.Level1SeasonalMagic
-							)
-						),
-					(itm) => itm.Name,
-					(itm) => itm.Name,
-					(src, data, lst) => valueIfInList(data.Level6SeasonalMagic, lst),
-					(src, state, data) => {
-						data.Level6SeasonalMagic = state.Value || "";
-					},
-					(src, data) => (getLevel6Type(src, data).SeasonalMagic ? true : false)
-				),
-			]),
+			new ContainerStep<SourceData, CharacterState>(
+				"Level6TypeContainer",
+				"",
+				[
+					new StringDropDownStep<SourceData, CharacterState, CharacterType>(
+						"Level6Type",
+						"Level 6 Type",
+						(src, data) => isInSelectedSource(data, src.Types),
+						(itm) => itm.Name,
+						(itm) => itm.Name,
+						(src, data, lst) => valueIfInList(data.Level6Type, lst),
+						(src, state, data) => (data.Level6Type = state.Value || "")
+					),
+					new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
+						"Level6WeaponFocus",
+						"Weapon Focus",
+						(src, data) => isInSelectedSource(data, src.Weapons),
+						(itm) => itm.Name,
+						(itm) => itm.Name,
+						(src, data, lst) => valueIfInList(data.Level6WeaponFocus, lst),
+						(src, state, data) => {
+							data.Level6WeaponFocus = state.Value || "";
+						},
+						(src, data) =>
+							getLevel6Type(src, data).ExtraMasteredWeapon ? true : false
+					),
+					new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
+						"Level6SeasonalMagic",
+						"Seasonal Magic",
+						(src, data) =>
+							isInSelectedSource(
+								data,
+								src.SeasonalMagic.filter(
+									(x) => x.Name !== data.Level1SeasonalMagic
+								)
+							),
+						(itm) => itm.Name,
+						(itm) => itm.Name,
+						(src, data, lst) => valueIfInList(data.Level6SeasonalMagic, lst),
+						(src, state, data) => {
+							data.Level6SeasonalMagic = state.Value || "";
+						},
+						(src, data) =>
+							getLevel6Type(src, data).SeasonalMagic ? true : false
+					),
+				],
+				(src, data) => data.Level >= 6
+			),
 			new StringDropDownStep<SourceData, CharacterState, string>(
 				"Level7WeatherTerrainSpecialty",
 				"Level 7 Weather/Terrain Specialty",

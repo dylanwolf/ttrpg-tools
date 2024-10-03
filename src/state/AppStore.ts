@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootStepCollection, RootStepCollectionState } from "./StepModel";
 import { getBuilderSource, getBuilderModel } from "./BuilderFactory";
 import { v4 as uuid } from "uuid";
+import { setBrowserTitle } from "../layout/BrowserUtils";
 
 export const store = configureStore({
 	reducer: {
@@ -95,7 +96,10 @@ export const ensureBuilderStateFor =
 				)
 			);
 
-			if (autoSelect) dispatch(setCurrentSession(sessionKey));
+			if (autoSelect) {
+				dispatch(setCurrentSession(sessionKey));
+				setBrowserTitle(`${(builderData as any)?.__NAME__} Character Builder`);
+			}
 		}
 	};
 
