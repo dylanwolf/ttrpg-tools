@@ -28,7 +28,7 @@ export function BuilderCharacterToolbar(props: BuilderCharacterToolbarProps) {
 	}
 
 	return (
-		<Navbar expand="md" bg="secondary" variant="pills">
+		<Navbar expand="md" bg="secondary" variant="pills" className="sticky-top">
 			<Navbar.Toggle aria-controls="character-toolbar"></Navbar.Toggle>
 			<Navbar.Collapse id="character-toolbar">
 				<Nav>

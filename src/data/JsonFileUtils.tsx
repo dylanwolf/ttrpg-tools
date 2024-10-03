@@ -1,5 +1,3 @@
-import { useRef } from "react";
-
 export function downloadAsJson(filename: string, output: any) {
 	const json = JSON.stringify(output, null, 2);
 	const blob = new Blob([json], { type: "application/json " });
@@ -32,10 +30,6 @@ interface JsonFileLoaderProps {
 }
 
 export function JsonFileLoader(props: JsonFileLoaderProps) {
-	function openFile() {
-		(props.forwardedRef.current as any).click();
-	}
-
 	function onSelectedFileChanged() {
 		const file = (props.forwardedRef.current as any).files[0];
 		if (file) {
