@@ -1,0 +1,32 @@
+.builder {
+    display: flex;
+    flex-direction: row;
+}
+
+.builder-process {
+    flex-basis: 50%;
+    flex-grow: 1;
+    background: #666;
+}
+
+.builder-character-sheet {
+    padding: 1em;
+    flex-basis: 50%;
+    flex-grow: 1;
+}
+
+
+.builder-process > .builder-sequence > .step {
+    border: 1px solid #000;
+    border-radius: 4px;
+    margin: 0.5em;
+    padding: 0.5em;
+    background: #ccc;
+    color: #000;
+}
+
+.builder-character-sheet .title {
+    font-weight: bold;
+    font-size: 125%;
+    margin-top: 1em;
+}

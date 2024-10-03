@@ -97,7 +97,7 @@ export class ContainerStep<TSource, TData> extends StepModel<
 				}`}
 			>
 				<div className="title">{this.Label}</div>
-				<div className="container">
+				<div className="container-box">
 					{this.Steps.ByIndex.filter(
 						(c) => stepState.Steps[c.Index].IsVisible
 					).map((c) => (

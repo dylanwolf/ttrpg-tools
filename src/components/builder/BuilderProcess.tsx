@@ -4,11 +4,12 @@ import {
 	builderStateSelector,
 	useAppDispatch,
 	useAppSelector,
-} from "../state/AppStore";
-import { BusyIcon } from "./BusyIcon";
+} from "../../state/AppStore";
+import { BusyIcon } from "../BusyIcon";
 import "./BuilderProcess.css";
-import { renderCharacterSheet } from "../state/BuilderFactory";
-import { DumpObject } from "./DumpObject";
+import { renderCharacterSheet } from "../../state/BuilderFactory";
+import { BuilderCharacterToolbar } from "./BuilderCharacterToolbar";
+import { useState } from "react";
 
 export interface BuilderProcessProps {
 	sessionKey: string;
@@ -16,24 +17,41 @@ export interface BuilderProcessProps {
 
 export function BuilderProcess(props: BuilderProcessProps) {
 	const model = useAppSelector(builderStateSelector(props.sessionKey));
+	const [showCharacterSheetMobile, setShowCharacterSheetMobile] =
+		useState<boolean>(false);
 
 	return !model ? (
 		<>
 			<BusyIcon />
 		</>
 	) : (
-		<div className="builder">
-			<div className="builder-process">
-				<BuilderProcessInternal sessionKey={props.sessionKey} />
+		<>
+			<BuilderCharacterToolbar
+				sessionKey={props.sessionKey}
+				showCharacterSheetMobile={showCharacterSheetMobile}
+				setShowCharacterSheetMobile={setShowCharacterSheetMobile}
+			/>
+			<div className="builder">
+				<div
+					className={`builder-process${
+						showCharacterSheetMobile ? " d-none d-lg-block" : ""
+					}`}
+				>
+					<BuilderProcessInternal sessionKey={props.sessionKey} />
+				</div>
+				<div
+					className={`builder-character-sheet${
+						!showCharacterSheetMobile ? " d-none d-lg-block" : ""
+					}`}
+				>
+					{renderCharacterSheet(
+						model.Model.BuilderKey,
+						model.SourceData,
+						model.Character
+					)}
+				</div>
 			</div>
-			<div className="builder-character-sheet">
-				{renderCharacterSheet(
-					model.Model.BuilderKey,
-					model.SourceData,
-					model.Character
-				)}
-			</div>
-		</div>
+		</>
 	);
 }
 
@@ -46,7 +64,7 @@ function BuilderProcessInternal(props: BuilderProcessProps) {
 	}
 
 	return (
-		<div className={`builder-${model?.Model.BuilderKey}`}>
+		<div className={`builder-sequence builder-${model?.Model.BuilderKey}`}>
 			{model?.Model.ByIndex.filter(
 				(step) =>
 					step.Index <= model.StepState.CurrentStep &&
@@ -56,15 +74,6 @@ function BuilderProcessInternal(props: BuilderProcessProps) {
 					{step.render(model.StepState.Steps[step.Index], triggerUpdate)}
 				</Fragment>
 			))}
-
-			<h2>Character Data</h2>
-			<DumpObject object={model?.Character} />
-
-			<h2>Step State</h2>
-			<DumpObject object={model?.StepState} />
-
-			<h2>Source Data</h2>
-			<DumpObject object={model?.SourceData} />
 		</div>
 	);
 }

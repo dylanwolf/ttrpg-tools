@@ -1,0 +1,31 @@
+.nav.nav-tabs {
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+}
+
+.nav.nav-tabs a {
+    white-space: nowrap;
+}
+
+.nav.nav-tabs a.active {
+    background: #333;
+}
+
+.navbar-nav .btn {
+    margin-right: 0.5em;
+}
+
+.btn .svg-inline--fa {
+    margin-right: 0.5em;
+}
+
+#root .navbar {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+#root > .navbar.bg-secondary {
+    padding-left: 2em;
+    padding-right: 1em;
+}

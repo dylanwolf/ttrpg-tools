@@ -9,7 +9,7 @@ interface AssignPoolStepState extends StepState {
 	TotalAvailable: number;
 	Remaining: number;
 	Pools: PoolDefinition[];
-	Values: { [name: string]: number | null };
+	Values: { [name: string]: number | null } | undefined;
 }
 
 export function removeNullValues(values: { [name: string]: number | null }) {
@@ -62,7 +62,7 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 			TotalAvailable: 0,
 			Remaining: 0,
 			Pools: [],
-			Values: {},
+			Values: undefined,
 			IsCompleted: !this.IsRequired,
 			IsVisible: this.GetIsVisible ? false : true,
 		};
@@ -90,16 +90,19 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 			var available = this.GetAvailable(source, data);
 			var pools = this.GetPools(source, data);
 
+			var oldValues =
+				newState.Values || this.GetDefaultValue(source, data) || {};
+
 			var newValue: { [name: string]: number | null } = {};
 
 			var remaining = available;
 			pools.forEach((p) => {
-				if (newState.Values[p.Name] === null) {
+				if (oldValues[p.Name] === null) {
 					newValue[p.Name] = null;
 					return;
 				}
 
-				var value = newState.Values[p.Name] || 0;
+				var value = oldValues[p.Name] || 0;
 
 				if (value > remaining) value = remaining;
 				if (p.MaxValue !== undefined && value > p.MaxValue) value = p.MaxValue;
@@ -130,14 +133,15 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 		) {
 			var field = evt.currentTarget;
 
-			var newValues = structuredClone(stepState.Values);
+			var newValues = structuredClone(stepState.Values || {});
 			if (field.value.trim() === "") {
 				newValues[name] = null;
 				console.log(newValues);
 				triggerUpdate(index, { Values: newValues });
 			} else {
 				var newValue = parseInt(field.value);
-				var currentValue = stepState.Values[name];
+				var currentValue =
+					(stepState.Values && stepState.Values[name]) || undefined;
 
 				if (
 					newValue >= 0 &&
@@ -163,7 +167,7 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 						<input
 							type="number"
 							value={
-								stepState.Values[p.Name] !== null
+								stepState.Values && stepState.Values[p.Name] !== null
 									? stepState.Values[p.Name] || 0
 									: ""
 							}

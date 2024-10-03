@@ -13,7 +13,6 @@ import builderSessionReducer, {
 import { useDispatch, useSelector } from "react-redux";
 import { RootStepCollection, RootStepCollectionState } from "./StepModel";
 import { getBuilderSource, getBuilderModel } from "./BuilderFactory";
-import { useEffect } from "react";
 import { v4 as uuid } from "uuid";
 
 export const store = configureStore({
@@ -52,7 +51,7 @@ export const ensureBuilderStateFor =
 		initialData?: TData | undefined
 	) =>
 	async (dispatch: AppDispatch, getState: () => RootState) => {
-		//console.log(`ensureBuilderStateFor(${sessionKey}, ${builderKey})`);
+		console.log(`ensureBuilderStateFor(${sessionKey}, ${builderKey})`);
 
 		var state = getState();
 		var builderData: TSource;
@@ -105,6 +104,7 @@ export function createSession(
 	autoSelect: boolean,
 	initialState?: any
 ) {
+	console.log(`createSession(${builderKey}, ${autoSelect})`);
 	const sessionKey = uuid();
 	store.dispatch(
 		ensureBuilderStateFor(sessionKey, builderKey, autoSelect, initialState)

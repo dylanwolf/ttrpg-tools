@@ -488,8 +488,8 @@ registerBuilderModel(
 								return { Name: attr };
 							}),
 						(src, data) => data.HPMPAssignments || {},
-						(src, state, data) => {
-							data.HPMPAssignments = removeNullValues(state.Values);
+						(src, state, newData) => {
+							newData.HPMPAssignments = removeNullValues(state.Values || {});
 						},
 						false
 					),
@@ -508,7 +508,7 @@ registerBuilderModel(
 							}),
 						(src, data) => data.StatIncreases || {},
 						(src, state, data) => {
-							data.StatIncreases = removeNullValues(state.Values);
+							data.StatIncreases = removeNullValues(state.Values || {});
 						},
 						false
 					),
