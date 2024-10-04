@@ -4,7 +4,7 @@ import {
 	StepRunnerState,
 	StepState,
 } from "../../state/StepModel";
-import { mergeStateWithUpdates } from "../../builderHelpers";
+import { mergeStateWithUpdates } from "../../helpers/builderHelpers";
 
 interface ContainerStepState extends StepState, StepRunnerState {
 	//StepUpdated: number | undefined;
@@ -27,7 +27,7 @@ export class ContainerStep<TSource, TData> extends StepModel<
 	) {
 		super(
 			name,
-			(source: TSource, state: ContainerStepState, newData: TData) => {}
+			(source: TSource, state: ContainerStepState, newData: TData) => { }
 		);
 		this.Steps = new StepRunner<TSource, TData>(name, children);
 		this.Label = label;
@@ -92,9 +92,8 @@ export class ContainerStep<TSource, TData> extends StepModel<
 
 		return (
 			<div
-				className={`step step-container step-${this.Name} step-${
-					stepState.IsCompleted ? "complete" : "incomplete"
-				}`}
+				className={`step step-container step-${this.Name} step-${stepState.IsCompleted ? "complete" : "incomplete"
+					}`}
 			>
 				<div className="title">{this.Label}</div>
 				<div className="container-box">

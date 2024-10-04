@@ -80,9 +80,8 @@ export class StringEntryStep<TSource, TData> extends StepModel<
 
 		return (
 			<div
-				className={`step step-stringentry step-${this.Name} step-${
-					stepState.IsCompleted ? "complete" : "incomplete"
-				}`}
+				className={`step step-stringentry step-${this.Name} step-${stepState.IsCompleted ? "complete" : "incomplete"
+					}`}
 			>
 				<label>
 					{this.Label ? `${this.Label}:` : ""}

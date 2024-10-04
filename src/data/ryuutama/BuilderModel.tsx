@@ -1,4 +1,4 @@
-import { valueIfInList } from "../../builderHelpers";
+import { valueIfInList } from "../../helpers/builderHelpers";
 import {
 	AssignPoolStep,
 	removeNullValues,

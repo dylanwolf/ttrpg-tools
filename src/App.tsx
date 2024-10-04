@@ -7,6 +7,9 @@ import "./App.css";
 import { Navigate } from "react-router";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { LoadingPage } from "./routing/LoadingPage";
+import { registerArrayHelpers } from "./helpers/arrayHelpers";
+
+registerArrayHelpers()
 
 // TODO: Add acknowledgement for Elderberry Inn icons if used
 // TODO: Add acknowledgement for fontawesome

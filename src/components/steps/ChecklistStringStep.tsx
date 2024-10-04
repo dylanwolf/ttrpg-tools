@@ -1,4 +1,4 @@
-import { SelectItem } from "../../builderHelpers";
+import { SelectItem } from "../../helpers/builderHelpers";
 import { StepModel, StepState } from "../../state/StepModel";
 
 interface ChecklistStringStepState extends StepState {
@@ -117,7 +117,7 @@ export class ChecklistStringStep<TSource, TData, TItem> extends StepModel<
 
 			newState.IsCompleted = this.IsRequired
 				? !newState.MinimumSelectCount ||
-				  (newState.Values || []).length >= newState.MinimumSelectCount
+				(newState.Values || []).length >= newState.MinimumSelectCount
 				: true;
 		}
 	}
@@ -146,9 +146,8 @@ export class ChecklistStringStep<TSource, TData, TItem> extends StepModel<
 
 		return (
 			<div
-				className={`step step-checklist step-${this.Name} step-${
-					stepState.IsCompleted ? "complete" : "incomplete"
-				}`}
+				className={`step step-checklist step-${this.Name} step-${stepState.IsCompleted ? "complete" : "incomplete"
+					}`}
 			>
 				<div className="title">{this.Label}</div>
 				<div className="items">

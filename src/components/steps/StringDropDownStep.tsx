@@ -1,4 +1,4 @@
-import { SelectItem } from "../../builderHelpers";
+import { SelectItem } from "../../helpers/builderHelpers";
 import { StepModel, StepState } from "../../state/StepModel";
 
 interface StringDropDownStepState extends StepState {
@@ -111,9 +111,8 @@ export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
 
 		return (
 			<div
-				className={`step step-dropdown step-${this.Name} step-${
-					stepState.IsCompleted ? "complete" : "incomplete"
-				}`}
+				className={`step step-dropdown step-${this.Name} step-${stepState.IsCompleted ? "complete" : "incomplete"
+					}`}
 			>
 				<label>
 					{this.Label ? `${this.Label}:` : ""}

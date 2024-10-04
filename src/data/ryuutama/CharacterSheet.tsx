@@ -1,4 +1,4 @@
-import { isNumeric } from "../../builderHelpers";
+import { isNumeric } from "../../helpers/builderHelpers";
 import { registerCharacterSheetRenderer } from "../../state/BuilderFactory";
 import {
 	CharacterState,
@@ -70,9 +70,8 @@ function adjustDiceRoll(...args: (string | number)[]) {
 		});
 	});
 
-	return `${diceParts.length > 0 ? `[${diceParts.join("+")}]` : ""}${
-		modifiers > 0 ? "+" : ""
-	}${modifiers !== 0 ? modifiers : ""}`;
+	return `${diceParts.length > 0 ? `[${diceParts.join("+")}]` : ""}${modifiers > 0 ? "+" : ""
+		}${modifiers !== 0 ? modifiers : ""}`;
 }
 
 function getAdjustedAbilityScore(data: CharacterState, name: string) {
@@ -91,8 +90,8 @@ function collectCharacterSheetData(
 
 	var incantationSpells = data.SelectedSpells
 		? source.IncantationSpells.filter((x) =>
-				data.SelectedSpells?.includes(x.Name)
-		  )
+			data.SelectedSpells?.includes(x.Name)
+		)
 		: [];
 
 	var originalStr = data.AbilityScoreAssignments["STR"];
@@ -225,9 +224,9 @@ function collectCharacterSheetData(
 					Description: x.Skill.Description,
 					RelevantRoll: x.Skill.RelevantRoll
 						? adjustDiceRoll(
-								x.Skill.RelevantRoll,
-								x.Count - 1 + (x.IsSideJob ? -1 : 0)
-						  )
+							x.Skill.RelevantRoll,
+							x.Count - 1 + (x.IsSideJob ? -1 : 0)
+						)
 						: undefined,
 				};
 			})
