@@ -1,93 +1,84 @@
 import { StepModel, StepState } from "../../state/StepModel";
 
 interface StringEntryStepState extends StepState {
-	Value: string | undefined;
+    Value: string | undefined;
 }
 
 export class StringEntryStep<TSource, TData> extends StepModel<
-	TSource,
-	TData,
-	StringEntryStepState
+    TSource,
+    TData,
+    StringEntryStepState
 > {
-	Label: string;
-	IsRequired: boolean;
-	GetDefaultValue: (source: TSource, data: TData) => string | undefined;
-	GetIsVisible: ((src: TSource, data: TData) => boolean) | undefined;
+    Label: string;
+    GetDefaultValue: (source: TSource, data: TData) => string | undefined;
 
-	constructor(
-		name: string,
-		label: string,
-		getDefaultValue: (source: TSource, data: TData) => string | undefined,
-		updateCharacter: (
-			source: TSource,
-			state: StringEntryStepState,
-			newData: TData
-		) => void,
-		isRequired?: boolean | undefined,
-		getIsVisible?: ((src: TSource, data: TData) => boolean) | undefined
-	) {
-		super(name, updateCharacter);
-		this.Label = label;
-		this.GetDefaultValue = getDefaultValue;
-		this.GetIsVisible = getIsVisible;
-		this.IsRequired = isRequired || false;
-	}
+    constructor(
+        name: string,
+        label: string,
+        getDefaultValue: (source: TSource, data: TData) => string | undefined,
+        updateCharacter: (
+            source: TSource,
+            state: StringEntryStepState,
+            newData: TData
+        ) => void,
+    ) {
+        super(name, updateCharacter);
+        this.Label = label;
+        this.GetDefaultValue = getDefaultValue;
+    }
 
-	initializeState(): StringEntryStepState {
-		return {
-			IsCompleted: false,
-			IsVisible: this.GetIsVisible ? false : true,
-			Value: undefined,
-		};
-	}
+    controlTypeId(): string {
+        return 'stringentry'
+    }
 
-	clearState(newState: StringEntryStepState): void {
-		newState.Value = undefined;
-	}
+    initializeState(): StringEntryStepState {
+        return {
+            IsCompleted: false,
+            IsVisible: this.GetIsVisible ? false : true,
+            Value: undefined,
+        };
+    }
 
-	updateState(
-		source: TSource,
-		data: TData,
-		newState: StringEntryStepState
-	): void {
-		newState.IsVisible = this.GetIsVisible
-			? this.GetIsVisible(source, data)
-			: true;
+    clearState(newState: StringEntryStepState): void {
+        newState.Value = undefined;
+    }
 
-		if (!newState.IsVisible) {
-			this.clearState(newState);
-			newState.IsCompleted = true;
-		} else {
-			if (newState.Value === undefined) {
-				newState.Value = this.GetDefaultValue(source, data);
-			}
+    updateStateInternal(
+        source: TSource,
+        data: TData,
+        newState: StringEntryStepState
+    ): void {
+        if (!newState.IsVisible) {
+            this.clearState(newState);
+            newState.IsCompleted = true;
+        } else {
+            if (newState.Value === undefined) {
+                newState.Value = this.GetDefaultValue(source, data);
+            }
 
-			newState.IsCompleted = newState.Value ? true : false;
-		}
-	}
-	render(
-		stepState: StringEntryStepState,
-		triggerUpdate: (index: number, stepUpdates: any) => void
-	): JSX.Element {
-		var index = this.Index;
+            newState.IsCompleted = newState.Value ? true : false;
+        }
+    }
+    renderInternal(
+        stepState: StringEntryStepState,
+        triggerUpdate: (index: number, stepUpdates: any) => void
+    ): JSX.Element {
+        var index = this.Index;
 
-		function onChange(evt: React.ChangeEvent<HTMLInputElement>) {
-			var field = evt.currentTarget;
-			var newValue = field.value;
+        function onChange(evt: React.ChangeEvent<HTMLInputElement>) {
+            var field = evt.currentTarget;
+            var newValue = field.value;
 
-			triggerUpdate(index, { Value: newValue });
-		}
+            triggerUpdate(index, { Value: newValue });
+        }
 
-		return (
-			<div
-				className={`step step-stringentry step-${this.Name} step-${stepState.IsCompleted ? "complete" : "incomplete"
-					}`}
-			>
-				<label>
-					{this.Label ? `${this.Label}:` : ""}
-					<input type="text" value={stepState.Value} onChange={onChange} />
-				</label>
-			</div>
-		);
-	}
+        return (
+            <>
+                <label>
+                    {this.Label ? `${this.Label}:` : ""}
+                    <input type="text" value={stepState.Value} onChange={onChange} />
+                </label>
+            </>
+        );
+    }
 }

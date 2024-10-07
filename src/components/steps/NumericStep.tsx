@@ -1,128 +1,131 @@
 import { StepModel, StepState } from "../../state/StepModel";
 
 interface NumericStepState extends StepState {
-	MinValue?: number | undefined;
-	MaxValue?: number | undefined;
-	NumericStep?: number | undefined;
-	Value?: number | null | undefined;
+    MinValue?: number | undefined;
+    MaxValue?: number | undefined;
+    NumericStep?: number | undefined;
+    Value?: number | null | undefined;
 }
 
 export class NumericStep<TSource, TData> extends StepModel<
-	TSource,
-	TData,
-	NumericStepState
+    TSource,
+    TData,
+    NumericStepState
 > {
-	Label: string;
-	GetMinValue: (src: TSource, data: TData) => number | undefined;
-	GetMaxValue: (src: TSource, data: TData) => number | undefined;
-	GetNumericStep: (src: TSource, data: TData) => number | undefined;
-	GetDefaultValue: (src: TSource, data: TData) => number | undefined;
-	GetIsVisible: ((src: TSource, data: TData) => boolean) | undefined;
+    Label: string;
+    GetMinValue: ((src: TSource, data: TData) => number | undefined) | undefined;
+    GetMaxValue: ((src: TSource, data: TData) => number | undefined) | undefined;
+    GetStepValue: ((src: TSource, data: TData) => number | undefined) | undefined;
+    GetDefaultValue: (src: TSource, data: TData) => number | undefined;
 
-	constructor(
-		name: string,
-		label: string,
-		getMinValue: (src: TSource, data: TData) => number | undefined,
-		getMaxValue: (src: TSource, data: TData) => number | undefined,
-		getNumericStep: (src: TSource, data: TData) => number | undefined,
-		getDefaultValue: (src: TSource, data: TData) => number | undefined,
-		updateCharacter: (
-			source: TSource,
-			state: NumericStepState,
-			newData: TData
-		) => void,
-		getIsVisible?: ((src: TSource, data: TData) => boolean) | undefined
-	) {
-		super(name, updateCharacter);
-		this.Label = label;
-		this.GetMinValue = getMinValue;
-		this.GetMaxValue = getMaxValue;
-		this.GetNumericStep = getNumericStep;
-		this.GetDefaultValue = getDefaultValue;
-		this.GetIsVisible = getIsVisible;
-	}
+    constructor(
+        name: string,
+        label: string,
+        getDefaultValue: (src: TSource, data: TData) => number | undefined,
+        updateCharacter: (
+            source: TSource,
+            state: NumericStepState,
+            newData: TData
+        ) => void,
+    ) {
+        super(name, updateCharacter);
+        this.Label = label;
+        this.GetDefaultValue = getDefaultValue;
+    }
 
-	initializeState(): NumericStepState {
-		return {
-			IsCompleted: false,
-			IsVisible: this.GetIsVisible ? false : true,
-		};
-	}
+    controlTypeId(): string {
+        return 'numeric'
+    }
 
-	clearState(newState: NumericStepState) {
-		newState.Value = undefined;
-	}
+    withMinValue(getMinValue: ((src: TSource, data: TData) => number | undefined) | undefined) {
+        this.GetMinValue = getMinValue
+        return this
+    }
 
-	updateState(source: TSource, data: TData, newState: NumericStepState): void {
-		newState.IsVisible = this.GetIsVisible
-			? this.GetIsVisible(source, data)
-			: true;
+    withMaxValue(getMaxValue: ((src: TSource, data: TData) => number | undefined) | undefined) {
+        this.GetMaxValue = getMaxValue
+        return this
+    }
 
-		if (!newState.IsVisible) {
-			this.clearState(newState);
-			newState.IsCompleted = true;
-		} else {
-			newState.MinValue = this.GetMinValue(source, data);
-			newState.MaxValue = this.GetMaxValue(source, data);
-			newState.NumericStep = this.GetNumericStep(source, data) || 1;
+    withStepValue(getNumericStep: ((src: TSource, data: TData) => number | undefined) | undefined) {
+        this.GetStepValue = getNumericStep
+        return this
+    }
 
-			if (newState.Value === undefined)
-				newState.Value = this.GetDefaultValue(source, data);
-			if (newState.Value !== undefined && newState.Value !== null) {
-				if (
-					newState.MinValue !== undefined &&
-					newState.Value < newState.MinValue
-				)
-					newState.Value = newState.MinValue;
-				if (
-					newState.MaxValue !== undefined &&
-					newState.Value > newState.MaxValue
-				)
-					newState.Value = newState.MaxValue;
-			}
+    initializeState(): NumericStepState {
+        return {
+            IsCompleted: false,
+            IsVisible: this.GetIsVisible ? false : true,
+        };
+    }
 
-			newState.IsCompleted = newState.Value !== undefined;
-		}
-	}
-	render(
-		stepState: NumericStepState,
-		triggerUpdate: (index: number, stepUpdates: any) => void
-	): JSX.Element {
-		var index = this.Index;
+    clearState(newState: NumericStepState) {
+        newState.Value = undefined;
+    }
 
-		function onChange(evt: React.ChangeEvent<HTMLInputElement>) {
-			var field = evt.currentTarget;
-			if (field.value.trim() === "") {
-				triggerUpdate(index, { Value: null });
-			} else {
-				var newValue = parseInt(field.value);
+    updateStateInternal(source: TSource, data: TData, newState: NumericStepState): void {
 
-				if (newValue !== undefined && !isNaN(newValue)) {
-					triggerUpdate(index, { Value: newValue });
-				} else {
-					evt.preventDefault();
-				}
-			}
-		}
+        if (!newState.IsVisible) {
+            this.clearState(newState);
+            newState.IsCompleted = true;
+        } else {
+            newState.MinValue = this.GetMinValue && this.GetMinValue(source, data) || undefined;
+            newState.MaxValue = this.GetMaxValue && this.GetMaxValue(source, data) || undefined;
+            newState.NumericStep = this.GetStepValue && this.GetStepValue(source, data) || 1;
 
-		return (
-			<div
-				className={`step step-numeric step-${this.Name} step-${
-					stepState.IsCompleted ? "complete" : "incomplete"
-				}`}
-			>
-				<label>
-					{this.Label ? `${this.Label}:` : ""}
-					<input
-						type="number"
-						value={stepState.Value !== null ? stepState.Value : ""}
-						min={stepState.MinValue}
-						max={stepState.MaxValue}
-						step={stepState.NumericStep}
-						onChange={onChange}
-					/>
-				</label>
-			</div>
-		);
-	}
+            if (newState.Value === undefined)
+                newState.Value = this.GetDefaultValue(source, data);
+            if (newState.Value !== undefined && newState.Value !== null) {
+                if (
+                    newState.MinValue !== undefined &&
+                    newState.Value < newState.MinValue
+                )
+                    newState.Value = newState.MinValue;
+                if (
+                    newState.MaxValue !== undefined &&
+                    newState.Value > newState.MaxValue
+                )
+                    newState.Value = newState.MaxValue;
+            }
+
+            newState.IsCompleted = newState.Value !== undefined;
+        }
+    }
+    renderInternal(
+        stepState: NumericStepState,
+        triggerUpdate: (index: number, stepUpdates: any) => void
+    ): JSX.Element {
+        var index = this.Index;
+
+        function onChange(evt: React.ChangeEvent<HTMLInputElement>) {
+            var field = evt.currentTarget;
+            if (field.value.trim() === "") {
+                triggerUpdate(index, { Value: null });
+            } else {
+                var newValue = parseInt(field.value);
+
+                if (newValue !== undefined && !isNaN(newValue)) {
+                    triggerUpdate(index, { Value: newValue });
+                } else {
+                    evt.preventDefault();
+                }
+            }
+        }
+
+        return (
+            <>
+                <label>
+                    {this.Label ? `${this.Label}:` : ""}
+                    <input
+                        type="number"
+                        value={stepState.Value !== null ? stepState.Value : ""}
+                        min={stepState.MinValue}
+                        max={stepState.MaxValue}
+                        step={stepState.NumericStep}
+                        onChange={onChange}
+                    />
+                </label>
+            </>
+        );
+    }
 }
