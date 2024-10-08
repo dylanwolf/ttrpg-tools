@@ -5,6 +5,7 @@ import {
 	getCharacterTemplate,
 	getLevel1Skills,
 	getLevel5Skills,
+	getTemplateSkills,
 } from "./CharacterData";
 import {
 	BUILDER_KEY,
@@ -70,8 +71,9 @@ function adjustDiceRoll(...args: (string | number)[]) {
 		});
 	});
 
-	return `${diceParts.length > 0 ? `[${diceParts.join("+")}]` : ""}${modifiers > 0 ? "+" : ""
-		}${modifiers !== 0 ? modifiers : ""}`;
+	return `${diceParts.length > 0 ? `[${diceParts.join("+")}]` : ""}${
+		modifiers > 0 ? "+" : ""
+	}${modifiers !== 0 ? modifiers : ""}`;
 }
 
 function getAdjustedAbilityScore(data: CharacterState, name: string) {
@@ -85,13 +87,14 @@ function collectCharacterSheetData(
 	data: CharacterState
 ): CharacterSheetData {
 	var tpl = getCharacterTemplate(source, data);
+	var templateSkills = getTemplateSkills(source, data);
 	var level1Skills = getLevel1Skills(source, data);
 	var level5Skills = getLevel5Skills(source, data);
 
 	var incantationSpells = data.SelectedSpells
 		? source.IncantationSpells.filter((x) =>
-			data.SelectedSpells?.includes(x.Name)
-		)
+				data.SelectedSpells?.includes(x.Name)
+		  )
 		: [];
 
 	var originalStr = data.AbilityScoreAssignments["STR"];
@@ -114,7 +117,7 @@ function collectCharacterSheetData(
 		})
 		.filter((x) => x.Type);
 
-	var groupedSkills = [level1Skills, level5Skills]
+	var groupedSkills = [templateSkills, level1Skills, level5Skills]
 		.filter((x) => x)
 		.flat()
 		.groupBy((x) => x.Name)
@@ -224,9 +227,9 @@ function collectCharacterSheetData(
 					Description: x.Skill.Description,
 					RelevantRoll: x.Skill.RelevantRoll
 						? adjustDiceRoll(
-							x.Skill.RelevantRoll,
-							x.Count - 1 + (x.IsSideJob ? -1 : 0)
-						)
+								x.Skill.RelevantRoll,
+								x.Count - 1 + (x.IsSideJob ? -1 : 0)
+						  )
 						: undefined,
 				};
 			})

@@ -61,6 +61,13 @@ export function getStartingAbilityScores(
 	);
 }
 
+export function getTemplateSkills(source: SourceData, data: CharacterState) {
+	var tpl = getCharacterTemplate(source, data);
+	if (!tpl || !tpl.Skills) return [];
+
+	return source.Skills.filter((x) => tpl.Skills.includes(x.Name));
+}
+
 export function getLevel1Class(source: SourceData, data: CharacterState) {
 	return (
 		source.Classes.filter((x) => x.Name === data.Level1Class)[0] || undefined

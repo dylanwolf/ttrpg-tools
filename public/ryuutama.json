@@ -12,7 +12,12 @@
 			"Name": "Koneko Goblin",
 			"DisplayValue": "Koneko Goblin",
 			"DataSource": "Holiday 2015 Package",
-			"StartingAbilityScoreFilter": ["Koneko Goblin"]
+			"StartingAbilityScoreFilter": ["Koneko Goblin"],
+			"Skills": [
+				"Jar Cap (Koneko Goblin)",
+				"Seasonal (Koneko Goblin)",
+				"Cat's Eye (Koneko Goblin)"
+			]
 		}
 	],
 	"StartingAbilityScores": [
@@ -156,7 +161,8 @@
 		{
 			"Name": "Side-Job",
 			"Description": "Use a single skill from another class with a -1 penalty.",
-			"SelectSkill": true
+			"SelectSkill": true,
+			"RestrictedFromSideJob": true
 		},
 		{
 			"Name": "Crafting",
@@ -212,6 +218,28 @@
 			"Bonuses": {
 				"Tip-Top Shape on Condition": ["9 or more", "8 or more"]
 			}
+		},
+		{
+			"Name": "Jar Cap (Koneko Goblin)",
+			"Description": "Koneko Goblins keep a small vase on their head at all times in order to hold their prized possessions.",
+			"Bonuses": {
+				"Carrying Capacity": 3
+			},
+			"RestrictedFromSideJob": true
+		},
+		{
+			"Name": "Seasonal (Koneko Goblin)",
+			"Description": "Koneko Goblins are most active during Spring.",
+			"Bonuses": {
+				"Condition (during Spring)": 1,
+				"Initiative (during Spring)": 1
+			},
+			"RestrictedFromSideJob": true
+		},
+		{
+			"Name": "Cat's Eye (Koneko Goblin)",
+			"Description": "As long as there is moonlight to guide them, Koneko Goblins do not suffer from a penalty to Travel Checks during \"night\" weather.",
+			"RestrictedFromSideJob": true
 		}
 	],
 	"Weapons": [

@@ -15,7 +15,6 @@
     flex-grow: 1;
 }
 
-
 .builder-process > .builder-sequence > .step {
     border: 1px solid #000;
     border-radius: 4px;
@@ -29,4 +28,8 @@
     font-weight: bold;
     font-size: 125%;
     margin-top: 1em;
+}
+
+.step-help {
+    float: right;
 }
