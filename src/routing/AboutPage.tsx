@@ -2,8 +2,6 @@
 // TODO: Create content page style
 // TODO: Add acknowledgement for Elderberry Inn icons if used
 
-import { TestMessageWindow } from "../components/testing/TestMessageWindow";
-
 export default function AboutPage() {
 	return (
 		<>
