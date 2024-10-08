@@ -4,15 +4,12 @@ import { store } from "./state/AppStore";
 import { SiteLayoutFrame } from "./layout/SiteLayoutFrame";
 import "bootswatch/dist/darkly/bootstrap.min.css";
 import "./App.css";
-import { Navigate } from "react-router";
+import { Navigate, Outlet } from "react-router";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { LoadingPage } from "./routing/LoadingPage";
 import { registerArrayHelpers } from "./helpers/arrayHelpers";
 
-registerArrayHelpers()
-
-// TODO: Add acknowledgement for Elderberry Inn icons if used
-// TODO: Add acknowledgement for fontawesome
+registerArrayHelpers();
 
 /* Load models */
 require("./data/ryuutama/BuilderModel");
@@ -23,20 +20,41 @@ const LazyCharacterBuilderPage = React.lazy(
 	() => import("./routing/CharacterBuilderPage")
 );
 
+const LazyAboutPage = React.lazy(() => import("./routing/AboutPage"));
+
 const router = createBrowserRouter([
 	{
-		path: "/",
-		element: <Navigate to="/builder" replace={true} />,
-	},
-	{
-		path: "/builder",
 		element: (
-			<>
-				<React.Suspense fallback={<LoadingPage />}>
-					<LazyCharacterBuilderPage />
-				</React.Suspense>
-			</>
+			<SiteLayoutFrame>
+				<Outlet />
+			</SiteLayoutFrame>
 		),
+		children: [
+			{
+				path: "/",
+				element: <Navigate to="/builder" replace={true} />,
+			},
+			{
+				path: "/builder",
+				element: (
+					<>
+						<React.Suspense fallback={<LoadingPage />}>
+							<LazyCharacterBuilderPage />
+						</React.Suspense>
+					</>
+				),
+			},
+			{
+				path: "/about",
+				element: (
+					<>
+						<React.Suspense fallback={<LoadingPage />}>
+							<LazyAboutPage />
+						</React.Suspense>
+					</>
+				),
+			},
+		],
 	},
 ]);
 
@@ -45,9 +63,7 @@ function App() {
 		<>
 			<React.StrictMode>
 				<Provider store={store} stabilityCheck="never">
-					<SiteLayoutFrame>
-						<RouterProvider router={router} />
-					</SiteLayoutFrame>
+					<RouterProvider router={router} />
 				</Provider>
 			</React.StrictMode>
 		</>
