@@ -14,12 +14,19 @@ export function BuilderNavbar() {
 
 	function onFileOpened(fileData: any) {
 		if (fileData && fileData.BuilderKey && fileData.CharacterData) {
-			createSession(fileData.BuilderKey, true, fileData.CharacterData);
+			createSessionFor(fileData.BuilderKey, fileData.CharacterData);
 		}
 	}
 
-	function createRyuutamaPC() {
-		createSession("ryuutama", true, undefined);
+	function createSessionFor(builderKey: string, initialData?: any) {
+		if (builderKey.match(/[^a-z0-9\-]/)) {
+			// TODO: Show error
+			throw `Invalid builder key ${builderKey}`;
+		}
+
+		import(`../../data/${builderKey}`).then(() =>
+			createSession(builderKey, true, initialData)
+		);
 	}
 
 	return (
@@ -29,7 +36,10 @@ export function BuilderNavbar() {
 				<Navbar.Collapse id="builder-navbar">
 					<Nav>
 						<NavDropdown title="Create Character" id="builder-create">
-							<NavDropdown.Item href="#" onClick={createRyuutamaPC}>
+							<NavDropdown.Item
+								href="#"
+								onClick={() => createSessionFor("ryuutama")}
+							>
 								Ryuutama PC
 							</NavDropdown.Item>
 						</NavDropdown>

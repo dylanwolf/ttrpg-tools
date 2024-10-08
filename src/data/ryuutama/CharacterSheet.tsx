@@ -17,6 +17,8 @@ import {
 	Weapon,
 } from "./SourceData";
 
+console.log("imported ryuutama/CharacterSheet.ts");
+
 interface CharacterSheetData {
 	Level: number;
 	CharacterTemplateDisplayName: string | undefined;

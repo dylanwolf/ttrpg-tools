@@ -9,8 +9,7 @@ var CHARACTER_SHEETS: {
 export function registerBuilderModel<TSource, TData>(
 	model: RootStepCollection<TSource, TData>
 ) {
-	// console.log(model.BuilderKey);
-	// console.log(model);
+	console.log(`Registered model for ${model.BuilderKey}`);
 	MODELS[model.BuilderKey] = model;
 }
 
@@ -18,6 +17,7 @@ export function registerCharacterSheetRenderer<TSource, TData>(
 	builderKey: string,
 	renderer: (src: TSource, data: TData) => JSX.Element
 ) {
+	console.log(`Registered character sheet for ${builderKey}`);
 	CHARACTER_SHEETS[builderKey] = renderer;
 }
 

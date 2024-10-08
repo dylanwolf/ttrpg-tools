@@ -39,6 +39,8 @@ import {
 } from "./SourceData";
 import { RyuutamaSpellSelectorStep } from "./SpellSelector";
 
+console.log("imported ryuutama/BuilderModel.ts");
+
 export function isInSelectedSource<TItem extends IFromSource>(
 	data: CharacterState,
 	items: TItem[]

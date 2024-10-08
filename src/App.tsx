@@ -12,8 +12,6 @@ import { registerArrayHelpers } from "./helpers/arrayHelpers";
 registerArrayHelpers();
 
 /* Load models */
-require("./data/ryuutama/BuilderModel");
-require("./data/ryuutama/CharacterSheet");
 
 /* Build routes */
 const LazyCharacterBuilderPage = React.lazy(

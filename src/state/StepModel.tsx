@@ -96,7 +96,10 @@ export abstract class StepModel<TSource, TData, TState extends StepState> {
 			>
 				{this.HelpComponent ? (
 					<div className="step-help">
-						<OverlayTrigger trigger="hover" overlay={helpComponentPopover}>
+						<OverlayTrigger
+							trigger={["hover", "focus"]}
+							overlay={helpComponentPopover}
+						>
 							<FontAwesomeIcon icon={faCircleInfo} />
 						</OverlayTrigger>
 					</div>
