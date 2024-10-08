@@ -1,3 +1,5 @@
+import { openMessageWindow } from "../state/AppStore";
+
 export function downloadAsJson(filename: string, output: any) {
 	const json = JSON.stringify(output, null, 2);
 	const blob = new Blob([json], { type: "application/json " });
@@ -40,8 +42,11 @@ export function JsonFileLoader(props: JsonFileLoaderProps) {
 					const obj = JSON.parse(json);
 					props.onFileLoaded(obj);
 				} catch (ex) {
-					console.error(ex);
-					// TODO: Show error message if JSON load failed
+					console.error(`Couldn't load file ${file.name}`, ex);
+					openMessageWindow({
+						Title: "Error loading JSON file",
+						Message: `${ex}`,
+					});
 				}
 			});
 			reader.readAsText(file);

@@ -15,11 +15,11 @@ export interface BuilderCharacterToolbarProps {
 }
 
 export function BuilderCharacterToolbar(props: BuilderCharacterToolbarProps) {
-	const model = useAppSelector(builderStateSelector(props.sessionKey));
+	const state = useAppSelector(builderStateSelector(props.sessionKey));
 
 	function saveAsJson() {
-		if (model) {
-			saveAsBuilderJson(model?.Model.BuilderKey, model?.Character);
+		if (state) {
+			saveAsBuilderJson(state?.Model.BuilderKey, state?.Character);
 		}
 	}
 

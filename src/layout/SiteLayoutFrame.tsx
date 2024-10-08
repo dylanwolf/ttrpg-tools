@@ -1,3 +1,4 @@
+import { ModalUIMessageWindow } from "../components/modal-ui/ModalUIMessageWindow";
 import { SiteNavbar } from "./SiteNavbar";
 
 interface SiteLayoutFrameProps {
@@ -9,6 +10,7 @@ export function SiteLayoutFrame(props: SiteLayoutFrameProps) {
 		<>
 			<SiteNavbar />
 			{props.children}
+			<ModalUIMessageWindow />
 		</>
 	);
 }

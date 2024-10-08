@@ -10,16 +10,28 @@ import builderSessionReducer, {
 	setCurrentSession,
 	updateSessionStep,
 } from "./BuilderSessionSlice";
+import modalUiReducer, {
+	CloseArgs,
+	closeModalWindow,
+	MessageWindowArgs,
+	ModalUIState,
+	showModalMessageWindow,
+} from "./ModalUISlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootStepCollection, RootStepCollectionState } from "./StepModel";
 import { getBuilderSource, getBuilderModel } from "./BuilderFactory";
 import { v4 as uuid } from "uuid";
 import { setBrowserTitle } from "../layout/BrowserUtils";
 
+/* ----------------------------------------------------------------------
+Redux data store
+---------------------------------------------------------------------- */
+
 export const store = configureStore({
 	reducer: {
 		builderSources: builderSourceReducer,
 		builderSessions: builderSessionReducer,
+		modalUI: modalUiReducer,
 	},
 });
 
@@ -35,6 +47,10 @@ export type AppThunk<ThunkReturnType = void> = ThunkAction<
 
 export const useAppSelector = useSelector.withTypes<RootState>();
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>();
+
+/* ----------------------------------------------------------------------
+Builder session functions
+---------------------------------------------------------------------- */
 
 export interface BuilderState<TSource, TData> {
 	IsLoading: boolean;
@@ -196,3 +212,23 @@ export const builderTabSelector =
 			}),
 		};
 	};
+
+/* ----------------------------------------------------------------------
+Modal UI functions
+---------------------------------------------------------------------- */
+
+export const uiStateSelector =
+	() =>
+	(state: RootState): ModalUIState | undefined => {
+		return state.modalUI.States.length > 0
+			? state.modalUI.States[state.modalUI.States.length - 1]
+			: undefined;
+	};
+
+export function closeUIWindow(args: CloseArgs) {
+	store.dispatch(closeModalWindow(args));
+}
+
+export function openMessageWindow(args: MessageWindowArgs) {
+	store.dispatch(showModalMessageWindow(args));
+}
