@@ -1,0 +1,51 @@
+.ryuutama-character-sheet .character-name {
+    font-size: 175%;
+    margin-bottom: 0.5em;
+}
+
+.ryuutama-character-sheet .blocks {
+    display: flex;
+    flex-wrap: wrap;
+    white-space: nowrap;
+    gap: 0.5em;
+}
+
+.ryuutama-character-sheet .blocks .block {
+    border: 1px solid #999;
+    border-radius: 16px;
+    background: #eee;
+    color: #000;
+    min-width: 75px;
+    flex-grow: 1
+}
+
+.ryuutama-character-sheet .blocks .block .title {
+    border-bottom: 1px solid #000;
+    font-style: italic;
+    padding: 0.25em 0.5em 0 0.5em
+}
+
+.ryuutama-character-sheet .blocks .block .content {
+    font-size: 150%;
+    padding: 0.25em 0.5em
+}
+
+.ryuutama-character-sheet .blocks .centered .content {
+    text-align: center;
+}
+
+.ryuutama-character-sheet .blocks.stats {
+    margin-top: 2em;
+}
+
+.ryuutama-character-sheet .blocks.stats .block {
+    background-color: #ccc;
+}
+
+.ryuutama-character-sheet .table-section {
+    margin-top: 2em;
+}
+
+.ryuutama-character-sheet .table-section .title {
+    font-size: 150%;
+}

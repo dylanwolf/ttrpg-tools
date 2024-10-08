@@ -1,0 +1,4 @@
+.step-assignstats .stats {
+    display: flex;
+    gap: 0.5em;
+}

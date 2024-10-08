@@ -38,8 +38,7 @@ import {
 	Weapon,
 } from "./SourceData";
 import { RyuutamaSpellSelectorStep } from "./SpellSelector";
-
-console.log("imported ryuutama/BuilderModel.ts");
+import "./ryuutama.css";
 
 export function isInSelectedSource<TItem extends IFromSource>(
 	data: CharacterState,
@@ -310,7 +309,11 @@ registerBuilderModel(
 				(src, data, lst) =>
 					valueIfInList(data.Level3WeatherTerrainSpecialty, lst),
 				(src, state, data) => (data.Level3WeatherTerrainSpecialty = state.Value)
-			).onlyShowWhen((src, data) => data.Level >= 3),
+			)
+				.onlyShowWhen((src, data) => data.Level >= 3)
+				.withHelp(
+					"Grants a bonus to rolls involving the selected Weather or Terrain."
+				),
 			new StringDropDownStep<SourceData, CharacterState, string>(
 				"Level4StatusEffectImmunity",
 				"Level 4 Status Effect Immunity",
@@ -319,7 +322,9 @@ registerBuilderModel(
 				(itm) => itm,
 				(src, data, lst) => valueIfInList(data.Level4StatusEffectImmunity, lst),
 				(src, state, data) => (data.Level4StatusEffectImmunity = state.Value)
-			).onlyShowWhen((src, data) => data.Level >= 4),
+			)
+				.onlyShowWhen((src, data) => data.Level >= 4)
+				.withHelp("Grants immunity to the selected status effect."),
 			new ContainerStep<SourceData, CharacterState>(
 				"Level5ClassContainer",
 				"",
@@ -354,11 +359,15 @@ registerBuilderModel(
 						(itm) => itm.Name,
 						(src, data, lst) => valueIfInList(data.Level5SideJob, lst),
 						(src, state, data) => (data.Level5SideJob = state.Value || "")
-					).onlyShowWhen((src, data) => {
-						return getLevel5Skills(src, data).any((x) =>
-							x.SelectSkill ? true : false
-						);
-					}),
+					)
+						.onlyShowWhen((src, data) => {
+							return getLevel5Skills(src, data).any((x) =>
+								x.SelectSkill ? true : false
+							);
+						})
+						.withHelp(
+							"Gain a Skill from another class. You take a -1 penalty to the associated roll (if there is one), which will be figured in on your character sheet."
+						),
 					new StringDropDownStep<SourceData, CharacterState, string>(
 						"Level5WeaponGrace",
 						"Weapon Grace",
@@ -371,11 +380,15 @@ registerBuilderModel(
 						(itm) => itm,
 						(src, data, lst) => valueIfInList(data.Level5WeaponGrace, lst),
 						(src, state, data) => (data.Level5WeaponGrace = state.Value || "")
-					).onlyShowWhen((src, data) => {
-						return getLevel5Skills(src, data).any(
-							(x) => (x.ExtraMasteredWeapon || []).length > 0
-						);
-					}),
+					)
+						.onlyShowWhen((src, data) => {
+							return getLevel5Skills(src, data).any(
+								(x) => (x.ExtraMasteredWeapon || []).length > 0
+							);
+						})
+						.withHelp(
+							"Gives you an extra mastered weapon. You do not take HP penalties for attacking with a mastered weapon."
+						),
 				]
 			).onlyShowWhen((src, data) => data.Level >= 5),
 			new ContainerStep<SourceData, CharacterState>("Level6TypeContainer", "", [
@@ -398,9 +411,13 @@ registerBuilderModel(
 					(src, state, data) => {
 						data.Level6WeaponFocus = state.Value || "";
 					}
-				).onlyShowWhen((src, data) =>
-					getLevel6Type(src, data).ExtraMasteredWeapon ? true : false
-				),
+				)
+					.onlyShowWhen((src, data) =>
+						getLevel6Type(src, data).ExtraMasteredWeapon ? true : false
+					)
+					.withHelp(
+						"Gives you an extra mastered weapon. You do not take HP penalties for attacking with a mastered weapon."
+					),
 				new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
 					"Level6SeasonalMagic",
 					"Seasonal Magic",
@@ -417,9 +434,13 @@ registerBuilderModel(
 					(src, state, data) => {
 						data.Level6SeasonalMagic = state.Value || "";
 					}
-				).onlyShowWhen((src, data) =>
-					getLevel6Type(src, data).SeasonalMagic ? true : false
-				),
+				)
+					.onlyShowWhen((src, data) =>
+						getLevel6Type(src, data).SeasonalMagic ? true : false
+					)
+					.withHelp(
+						"Determines your seasonal magic. You gain access to all of this season's spells available at your level."
+					),
 			]).onlyShowWhen((src, data) => data.Level >= 6),
 			new StringDropDownStep<SourceData, CharacterState, string>(
 				"Level7WeatherTerrainSpecialty",
@@ -433,7 +454,11 @@ registerBuilderModel(
 				(src, data, lst) =>
 					valueIfInList(data.Level7WeatherTerrainSpecialty, lst),
 				(src, state, data) => (data.Level7WeatherTerrainSpecialty = state.Value)
-			).onlyShowWhen((src, data) => data.Level >= 7),
+			)
+				.onlyShowWhen((src, data) => data.Level >= 7)
+				.withHelp(
+					"Grants a bonus to rolls involving the selected Weather or Terrain."
+				),
 			new StringDropDownStep<SourceData, CharacterState, string>(
 				"Level9SeasonalDragon",
 				"Level 9 Favor of the Seasonal Dragon",
@@ -442,7 +467,11 @@ registerBuilderModel(
 				(itm) => itm,
 				(src, data, lst) => valueIfInList(data.Level9SeasonalDragon, lst),
 				(src, state, data) => (data.Level9SeasonalDragon = state.Value)
-			).onlyShowWhen((src, data) => data.Level >= 9),
+			)
+				.onlyShowWhen((src, data) => data.Level >= 9)
+				.withHelp(
+					"During the selected season, you can automatically take a 10 on one check each day."
+				),
 			new ContainerStep<SourceData, CharacterState>("LevelUpContainer", "", [
 				new AssignPoolStep<SourceData, CharacterState>(
 					"AssignHPMP",
@@ -456,6 +485,8 @@ registerBuilderModel(
 					(src, state, newData) => {
 						newData.HPMPAssignments = removeNullValues(state.Values || {});
 					}
+				).withHelp(
+					"Apply HP/MP increases that you get from leveling up. You gain 3 points to assign between HP and MP each level after 1."
 				),
 				new AssignPoolStep<SourceData, CharacterState>(
 					"StatIncreases",
@@ -474,9 +505,13 @@ registerBuilderModel(
 					(src, state, data) => {
 						data.StatIncreases = removeNullValues(state.Values || {});
 					}
+				).withHelp(
+					"Apply stat die size increases you get form leveling up. You can increase stats at levels 2, 4, 6, 8, and 10. A stat cannot be raised above a d12."
 				),
 			]).onlyShowWhen((src, data) => data.Level > 1),
-			new RyuutamaSpellSelectorStep("SelectedSpells"),
+			new RyuutamaSpellSelectorStep("SelectedSpells").withHelp(
+				"Select Incantation spells granted by the Magic Type. You gain 2 spells per level per type, with Mid Level spells unlocking at level 4 and High Level spells unlocking at level 7."
+			),
 		],
 		() => getInitialCharacterData()
 	)

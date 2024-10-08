@@ -1,0 +1,5 @@
+.step-Level1SeasonalMagic, .step-Level1WeaponFocus, .step-Level1SideJob,
+.step-Level1WeaponGrace, .step-Level5SideJob, .step-Level5WeaponGrace,
+.step-Level6SeasonalMagic, .step-Level6WeaponFocus {
+    margin-left: 1em;
+}

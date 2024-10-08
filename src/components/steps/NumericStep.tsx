@@ -132,7 +132,7 @@ export class NumericStep<TSource, TData> extends StepModel<
 		return (
 			<>
 				<label>
-					{this.Label ? `${this.Label}:` : ""}
+					{this.Label ? `${this.Label}: ` : ""}
 					<input
 						type="number"
 						value={stepState.Value !== null ? stepState.Value : ""}

@@ -16,8 +16,7 @@ import {
 	SourceData,
 	Weapon,
 } from "./SourceData";
-
-console.log("imported ryuutama/CharacterSheet.ts");
+import "./CharacterSheet.css";
 
 interface CharacterSheetData {
 	Level: number;
@@ -199,6 +198,7 @@ function collectCharacterSheetData(
 				Examples: x.Mastery.Examples,
 				Accuracy: adjustDiceRoll(x.Mastery.Accuracy, x.Count - 1),
 				Damage: adjustDiceRoll(x.Mastery.Damage, damage),
+				DataSource: x.Mastery.DataSource,
 			};
 		});
 
@@ -233,6 +233,7 @@ function collectCharacterSheetData(
 								x.Count - 1 + (x.IsSideJob ? -1 : 0)
 						  )
 						: undefined,
+					DataSource: x.Skill.DataSource,
 				};
 			})
 			.orderBy((x) => x.Name),
@@ -252,74 +253,108 @@ function characterSheetRenderer(source: SourceData, data: CharacterState) {
 	var cs = collectCharacterSheetData(source, data);
 
 	return (
-		<div className="character-sheet">
-			<div className="level">Level {data.Level}</div>
-			<div className="classes">
-				{cs.CharacterTemplateDisplayName
-					? `${cs.CharacterTemplateDisplayName} `
-					: ""}
-				{[cs.Level1Class, cs.Level5Class]
-					.filter((x) => x)
-					.distinct()
-					.join(" / ")}
+		<div className="character-sheet ryuutama-character-sheet">
+			<div className="character-name">{data.Title}</div>
+			<div className="blocks">
+				<div className="block level centered">
+					<div className="title">Level</div>
+					<div className="content">{data.Level}</div>
+				</div>
+				<div className="block class">
+					<div className="title">Class</div>
+					<div className="content">
+						{cs.CharacterTemplateDisplayName
+							? `${cs.CharacterTemplateDisplayName} `
+							: ""}
+						{[cs.Level1Class, cs.Level5Class]
+							.filter((x) => x)
+							.distinct()
+							.join(" / ")}
+					</div>
+				</div>
+				<div className="block type">
+					<div className="title">Type</div>
+					<div className="content">{cs.Types.join(" / ")}</div>
+				</div>
+				{cs.SeasonalMagics.length > 0 ? (
+					<div className="block seasonal-magic">
+						<div className="title">Seasonal Magic</div>
+						<div className="content">{cs.SeasonalMagics.join(" / ")}</div>
+					</div>
+				) : (
+					<></>
+				)}
+				{cs.TerrainWeatherSpecialties.length > 0 ? (
+					<div className="block terrain-weather-specialties">
+						<div className="title">Specialties</div>
+						<div className="content">
+							{cs.TerrainWeatherSpecialties.join(", ")}
+						</div>
+					</div>
+				) : (
+					<></>
+				)}
+				{cs.StatusEffectImmunity ? (
+					<div className="block status-immunity">
+						<div className="title">Status Effect Immunity</div>
+						<div className="content">{cs.StatusEffectImmunity}</div>
+					</div>
+				) : (
+					<></>
+				)}
+				{cs.SeasonalDragon ? (
+					<div className="block seasonal-dragon">
+						<div className="title">Favor of the Seasonal Dragon</div>
+						<div className="content">{cs.SeasonalDragon}</div>
+					</div>
+				) : (
+					<></>
+				)}
 			</div>
-			<div className="types">
-				Type{cs.Types.length > 1 ? "s" : ""}: {cs.Types.join(" / ")}
-			</div>
-			{cs.SeasonalMagics.length > 0 ? (
-				<div className="seasonal-magics">
-					Seasonal Magic: {cs.SeasonalMagics.join(" / ")}
+			<div className="blocks stats">
+				<div className="block stat stat-str centered">
+					<div className="title">STR</div>
+					<div className="content">
+						{cs.AbilityScores.STR ? `d${cs.AbilityScores.STR}` : ""}
+					</div>
 				</div>
-			) : (
-				<></>
-			)}
-			{cs.TerrainWeatherSpecialties.length > 0 ? (
-				<div className="terrain-weather-specialties">
-					Terrain/Weather Specialt
-					{cs.TerrainWeatherSpecialties.length > 1 ? "ies" : "y"}:{" "}
-					{cs.TerrainWeatherSpecialties.join(", ")}
+				<div className="block stat stat-dex centered">
+					<div className="title">DEX</div>
+					<div className="content">
+						{cs.AbilityScores.DEX ? `d${cs.AbilityScores.DEX}` : ""}
+					</div>
 				</div>
-			) : (
-				<></>
-			)}
-			{cs.StatusEffectImmunity ? (
-				<div className="status-effect-immunity">
-					Status Effect Immunity: {cs.StatusEffectImmunity}
+				<div className="block stat stat-int centered">
+					<div className="title">INT</div>
+					<div className="content">
+						{cs.AbilityScores.INT ? `d${cs.AbilityScores.INT}` : ""}
+					</div>
 				</div>
-			) : (
-				<></>
-			)}
-			{cs.SeasonalDragon ? (
-				<div className="seasonal-dragon">
-					Favor of the Seasonal Dragon: {cs.SeasonalDragon}
+				<div className="block stat stat-spi centered">
+					<div className="title">SPI</div>
+					<div className="content">
+						{cs.AbilityScores.SPI ? `d${cs.AbilityScores.SPI}` : ""}
+					</div>
 				</div>
-			) : (
-				<></>
-			)}
-			<div className="ability-scores">
-				<div className="score">
-					STR: {cs.AbilityScores.STR ? `d${cs.AbilityScores.STR}` : ""}
+				<div className="block stat stat-hp centered">
+					<div className="title">HP</div>
+					<div className="content">
+						{cs.Derived.HP ? cs.Derived.HP.toString() : ""}
+					</div>
 				</div>
-				<div className="score">
-					DEX: {cs.AbilityScores.DEX ? `d${cs.AbilityScores.DEX}` : ""}
+				<div className="block stat stat-mp centered">
+					<div className="title">MP</div>
+					<div className="content">
+						{cs.Derived.MP ? cs.Derived.MP.toString() : ""}
+					</div>
 				</div>
-				<div className="score">
-					INT: {cs.AbilityScores.INT ? `d${cs.AbilityScores.INT}` : ""}
-				</div>
-				<div className="score">
-					SPI: {cs.AbilityScores.SPI ? `d${cs.AbilityScores.SPI}` : ""}
-				</div>
-				<div className="score">
-					HP: {cs.Derived.HP ? cs.Derived.HP.toString() : ""}
-				</div>
-				<div className="score">
-					MP: {cs.Derived.MP ? cs.Derived.MP.toString() : ""}
-				</div>
-				<div className="score">
-					Carrying Capacity:{" "}
-					{cs.AbilityScores.STR && cs.Derived.CarryingCapacity
-						? cs.Derived.CarryingCapacity.toString()
-						: ""}
+				<div className="block stat stat-carrying centered">
+					<div className="title">Carrying Capacity</div>
+					<div className="content">
+						{cs.AbilityScores.STR && cs.Derived.CarryingCapacity
+							? cs.Derived.CarryingCapacity.toString()
+							: ""}
+					</div>
 				</div>
 			</div>
 			{renderSkills(cs.Skills)}
@@ -333,14 +368,15 @@ function characterSheetRenderer(source: SourceData, data: CharacterState) {
 function renderSkills(skills: CharacterSkill[]) {
 	if (skills && skills.length > 0) {
 		return (
-			<>
+			<div className="table-section skills">
 				<div className="title">Skills</div>
-				<table>
+				<table className="table table-striped table-dark">
 					<thead>
 						<tr>
 							<th>Name</th>
 							<th>Description</th>
-							<th>Roll</th>
+							<th className="text-center">Roll</th>
+							<th className="text-center">Source</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -348,12 +384,13 @@ function renderSkills(skills: CharacterSkill[]) {
 							<tr key={`Ryuutama-Skill-${s.Name}`}>
 								<td>{s.Name}</td>
 								<td>{s.Description}</td>
-								<td>{s.RelevantRoll || "-"}</td>
+								<td className="text-center">{s.RelevantRoll || "-"}</td>
+								<td className="text-center">{s.DataSource || "Ryuutama"}</td>
 							</tr>
 						))}
 					</tbody>
 				</table>
-			</>
+			</div>
 		);
 	}
 }
@@ -361,16 +398,17 @@ function renderSkills(skills: CharacterSkill[]) {
 function renderWeaponMasteries(weapons: Weapon[]) {
 	if (weapons && weapons.length > 0) {
 		return (
-			<>
+			<div className="table-section weapon-masteries">
 				<div className="title">Weapon Masteries</div>
-				<table>
+				<table className="table table-striped table-dark">
 					<thead>
 						<tr>
 							<th>Name</th>
 							<th>Description</th>
 							<th>Examples</th>
-							<th>Accuracy</th>
-							<th>Damage</th>
+							<th className="text-center">Accuracy</th>
+							<th className="text-center">Damage</th>
+							<th className="text-center">Source</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -379,13 +417,14 @@ function renderWeaponMasteries(weapons: Weapon[]) {
 								<td>{w.Name}</td>
 								<td>{w.Description}</td>
 								<td>{w.Examples}</td>
-								<td>{w.Accuracy}</td>
-								<td>{w.Damage}</td>
+								<td className="text-center">{w.Accuracy}</td>
+								<td className="text-center">{w.Damage}</td>
+								<td className="text-center">{w.DataSource || "Ryuutama"}</td>
 							</tr>
 						))}
 					</tbody>
 				</table>
-			</>
+			</div>
 		);
 	} else {
 		return <></>;
@@ -397,20 +436,20 @@ function renderOtherBonuses(bonuses: { [stat: string]: string }) {
 	if (keys.length === 0) return <></>;
 
 	return (
-		<div className="other-bonuses">
-			<div className="title">Bonuses</div>
-			<table>
+		<div className="table-section other-bonuses">
+			<div className="title">Other Bonuses</div>
+			<table className="table table-striped table-dark">
 				<thead>
 					<tr>
 						<th>Roll or Stat</th>
-						<th>Bonus</th>
+						<th className="text-center">Bonus</th>
 					</tr>
 				</thead>
 				<tbody>
 					{keys.map((k) => (
 						<tr key={`Ryuutama-OtherBonus-${k}`}>
 							<td>{k}</td>
-							<td>{bonuses[k]}</td>
+							<td className="text-center">{bonuses[k]}</td>
 						</tr>
 					))}
 				</tbody>
@@ -423,14 +462,15 @@ function renderSpells(spells: IncantationSpell[]) {
 	if (spells.length === 0) return <></>;
 
 	return (
-		<div className="incantation-spells">
+		<div className="table-section incantation-spells">
 			<div className="title">Incantation Spells</div>
-			<table>
+			<table className="table table-striped table-dark">
 				<thead>
 					<tr>
 						<th>Name</th>
-						<th>Level</th>
-						<th>Spell Type</th>
+						<th className="text-center">Level</th>
+						<th className="text-center">Spell Type</th>
+						<th className="text-center">Source</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -439,8 +479,9 @@ function renderSpells(spells: IncantationSpell[]) {
 						.map((s) => (
 							<tr key={`Ryuutama-IncantationSpells-${s.Name}`}>
 								<td>{s.Name}</td>
-								<td>{s.Level}</td>
-								<td>{s.SpellType}</td>
+								<td className="text-center">{s.Level}</td>
+								<td className="text-center">{s.SpellType}</td>
+								<td className="text-center">{s.DataSource || "Ryuutama"}</td>
 							</tr>
 						))}
 				</tbody>

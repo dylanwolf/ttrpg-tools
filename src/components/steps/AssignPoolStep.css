@@ -1,0 +1,18 @@
+.step-assignpool input {
+    max-width: 75px;
+}
+
+.step-assignpool .pools {
+    display: flex;
+    gap: 0.5em;
+    margin-top: 0.5em;
+}
+
+.step-assignpool .available {
+    border: 1px solid #000;
+    display: inline-block;
+    border-radius: 24px;
+    padding: 0.25em 1em;
+    background: #eee;
+    white-space: nowrap;
+}

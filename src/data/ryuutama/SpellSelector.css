@@ -1,0 +1,19 @@
+.step-ryuutama-spell-selector table td, .step-ryuutama-spell-selector table th {
+    background: #ccc;
+    color: #000;
+}
+
+.step-ryuutama-spell-selector .available {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
+.step-ryuutama-spell-selector .available .level {
+    border: 1px solid #000;
+    display: inline-block;
+    border-radius: 24px;
+    padding: 0.25em 1em;
+    background: #eee;
+    white-space: nowrap;
+}

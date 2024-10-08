@@ -90,7 +90,7 @@ export abstract class StepModel<TSource, TData, TState extends StepState> {
 
 		return (
 			<div
-				className={`step step-${this.controlTypeId} step-${this.Name} step-${
+				className={`step step-${this.controlTypeId()} step-${this.Name} step-${
 					stepState.IsCompleted ? "complete" : "incomplete"
 				}`}
 			>

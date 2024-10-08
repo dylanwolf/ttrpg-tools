@@ -225,7 +225,8 @@
 			"Bonuses": {
 				"Carrying Capacity": 3
 			},
-			"RestrictedFromSideJob": true
+			"RestrictedFromSideJob": true,
+			"DataSource": "Holiday 2015 Package"
 		},
 		{
 			"Name": "Seasonal (Koneko Goblin)",
@@ -234,46 +235,48 @@
 				"Condition (during Spring)": 1,
 				"Initiative (during Spring)": 1
 			},
-			"RestrictedFromSideJob": true
+			"RestrictedFromSideJob": true,
+			"DataSource": "Holiday 2015 Package"
 		},
 		{
 			"Name": "Cat's Eye (Koneko Goblin)",
 			"Description": "As long as there is moonlight to guide them, Koneko Goblins do not suffer from a penalty to Travel Checks during \"night\" weather.",
-			"RestrictedFromSideJob": true
+			"RestrictedFromSideJob": true,
+			"DataSource": "Holiday 2015 Package"
 		}
 	],
 	"Weapons": [
 		{
 			"Name": "Light Blade",
-			"Description": "An accurate but weak weapon. 1-handed.",
+			"Description": "1-handed",
 			"Examples": "dagger, short sword, wakizashi, etc.",
 			"Accuracy": "[DEX+INT]+1",
 			"Damage": "[INT]-1"
 		},
 		{
 			"Name": "Blade",
-			"Description": "A weapon with good balance between accuracy and damage. 1-handed.",
+			"Description": "1-handed",
 			"Examples": "broadsword, rapier, katana, etc.",
 			"Accuracy": "[DEX+STR]",
 			"Damage": "[STR]"
 		},
 		{
 			"Name": "Polearm",
-			"Description": "A weapon with high damage. 2-handed.",
+			"Description": "2-handed",
 			"Examples": "longspear, trident, lance, etc.",
 			"Accuracy": "[DEX+STR]",
 			"Damage": "[STR]+1"
 		},
 		{
 			"Name": "Axe",
-			"Description": "A weapon with poor accuracy, but which takes advantage of the bearer's strength.",
+			"Description": "2-handed",
 			"Examples": "battleaxe, greataxe, etc.",
 			"Accuracy": "[STR+STR]-1",
 			"Damage": "[STR]"
 		},
 		{
 			"Name": "Bow",
-			"Description": "Can attack from long range, but has poor accuracy. 2-handed.",
+			"Description": "2-handed. Can attack from long range.",
 			"Examples": "shortbow, longbow, crossbow, etc.",
 			"Accuracy": "[INT+DEX]-2",
 			"Damage": "[DEX]"

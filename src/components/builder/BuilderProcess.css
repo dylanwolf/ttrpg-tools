@@ -24,12 +24,14 @@
     color: #000;
 }
 
-.builder-character-sheet .title {
-    font-weight: bold;
-    font-size: 125%;
-    margin-top: 1em;
-}
-
 .step-help {
     float: right;
+}
+
+.step label, .step .title {
+    font-weight: bold;
+}
+
+.step .items label {
+    font-weight: normal;
 }
