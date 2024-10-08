@@ -35,22 +35,22 @@ const router = createBrowserRouter([
 			{
 				path: "/builder",
 				element: (
-					<>
-						<React.Suspense fallback={<LoadingPage />}>
-							<LazyCharacterBuilderPage />
-						</React.Suspense>
-					</>
+					<React.Suspense fallback={<LoadingPage />}>
+						<LazyCharacterBuilderPage />
+					</React.Suspense>
 				),
 			},
 			{
 				path: "/about",
 				element: (
-					<>
-						<React.Suspense fallback={<LoadingPage />}>
-							<LazyAboutPage />
-						</React.Suspense>
-					</>
+					<React.Suspense fallback={<LoadingPage />}>
+						<LazyAboutPage />
+					</React.Suspense>
 				),
+			},
+			{
+				path: "/loading-test",
+				element: <LoadingPage />,
 			},
 		],
 	},

@@ -4,11 +4,11 @@
 
 export default function AboutPage() {
 	return (
-		<>
+		<div className="page-content">
 			<p>
 				Icons used from <a href="https://fontawesome.com/">Font Awesome</a> and{" "}
 				<a href="https://game-icons.net/">Game-Icons.net</a>
 			</p>
-		</>
+		</div>
 	);
 }

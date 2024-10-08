@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap');
+
 .ryuutama-character-sheet .character-name {
     font-size: 175%;
     margin-bottom: 0.5em;
@@ -48,4 +50,8 @@
 
 .ryuutama-character-sheet .table-section .title {
     font-size: 150%;
+}
+
+.ryuutama-character-sheet .blocks .block .content {
+    font-family: Caveat
 }
