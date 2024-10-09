@@ -1,22 +1,23 @@
 import { Fragment } from "react/jsx-runtime";
-import {
-	builderSessionUpdate,
-	builderStateSelector,
-	useAppDispatch,
-	useAppSelector,
-} from "../../state/AppStore";
 import { BusyIcon } from "../BusyIcon";
-import "./BuilderProcess.css";
-import { renderCharacterSheet } from "../../state/BuilderFactory";
-import { BuilderCharacterToolbar } from "./BuilderCharacterToolbar";
+import "./CharacterBuilderProcess.css";
+import { renderCharacterSheet } from "../../state/character-builder/BuilderFactory";
+import { CharacterBuilderToolbar } from "./CharacterBuilderToolbar";
 import { useState } from "react";
+import {
+	characterBuilderSessionSelector,
+	updateCharacterBuilderSession,
+} from "../../state/character-builder/BuilderTabSessions";
+import { useAppSelector } from "../../state/AppStore";
 
-export interface BuilderProcessProps {
+export interface CharacterBuilderProcessProps {
 	sessionKey: string;
 }
 
-export function BuilderProcess(props: BuilderProcessProps) {
-	const model = useAppSelector(builderStateSelector(props.sessionKey));
+export function CharacterBuilderProcess(props: CharacterBuilderProcessProps) {
+	const model = useAppSelector(
+		characterBuilderSessionSelector(props.sessionKey)
+	);
 	const [showCharacterSheetMobile, setShowCharacterSheetMobile] =
 		useState<boolean>(false);
 
@@ -26,7 +27,7 @@ export function BuilderProcess(props: BuilderProcessProps) {
 		</>
 	) : (
 		<>
-			<BuilderCharacterToolbar
+			<CharacterBuilderToolbar
 				sessionKey={props.sessionKey}
 				showCharacterSheetMobile={showCharacterSheetMobile}
 				setShowCharacterSheetMobile={setShowCharacterSheetMobile}
@@ -55,12 +56,13 @@ export function BuilderProcess(props: BuilderProcessProps) {
 	);
 }
 
-function BuilderProcessInternal(props: BuilderProcessProps) {
-	const model = useAppSelector(builderStateSelector(props.sessionKey));
-	const dispatch = useAppDispatch();
+function BuilderProcessInternal(props: CharacterBuilderProcessProps) {
+	const model = useAppSelector(
+		characterBuilderSessionSelector(props.sessionKey)
+	);
 
 	function triggerUpdate(index: number, stepUpdates: any) {
-		dispatch(builderSessionUpdate(props.sessionKey, index, stepUpdates));
+		updateCharacterBuilderSession(props.sessionKey, index, stepUpdates);
 	}
 
 	return (

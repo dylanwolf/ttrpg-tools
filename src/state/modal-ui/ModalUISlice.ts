@@ -12,7 +12,7 @@ export interface ModalUIState {
 	CloseButton?: string | undefined;
 }
 
-export interface CloseArgs {
+export interface UICloseArgs {
 	ID?: string | undefined;
 }
 
@@ -33,7 +33,7 @@ export const modalUiSlice = createSlice({
 	reducers: {
 		closeModalWindow(
 			state: ModalUIStackState,
-			action: PayloadAction<CloseArgs>
+			action: PayloadAction<UICloseArgs>
 		) {
 			if (action.payload.ID) {
 				var match = state.States.filter((x) => x.ID === action.payload.ID)[0];

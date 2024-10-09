@@ -1,4 +1,4 @@
-import { StepModel, StepState } from "../../state/StepModel";
+import { StepModel, StepState } from "../../state/character-builder/StepModel";
 import { isInSelectedSource } from "./BuilderModel";
 import { CharacterState, getLevel1Type, getLevel6Type } from "./CharacterData";
 import { IncantationSpell, SourceData, SpellGrouping } from "./SourceData";

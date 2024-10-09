@@ -1,5 +1,5 @@
 import { isNumeric } from "../../helpers/builderHelpers";
-import { registerCharacterSheetRenderer } from "../../state/BuilderFactory";
+import { registerCharacterSheetRenderer } from "../../state/character-builder/BuilderFactory";
 import {
 	CharacterState,
 	getCharacterTemplate,

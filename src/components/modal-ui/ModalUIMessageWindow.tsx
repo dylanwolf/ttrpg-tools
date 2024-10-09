@@ -1,8 +1,9 @@
-import { uiStateSelector, useAppSelector } from "../../state/AppStore";
+import { useAppSelector } from "../../state/AppStore";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { useDispatch } from "react-redux";
-import { closeModalWindow } from "../../state/ModalUISlice";
+import { closeModalWindow } from "../../state/modal-ui/ModalUISlice";
+import { uiStateSelector } from "../../state/modal-ui/ModalUI";
 
 export function ModalUIMessageWindow() {
 	const state = useAppSelector(uiStateSelector());

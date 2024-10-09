@@ -2,16 +2,16 @@ import { valueIfInList } from "../../helpers/builderHelpers";
 import {
 	AssignPoolStep,
 	removeNullValues,
-} from "../../components/steps/AssignPoolStep";
-import { AssignStatsStep } from "../../components/steps/AssignStatsStep";
-import { ChecklistStringStep } from "../../components/steps/ChecklistStringStep";
-import { ContainerStep } from "../../components/steps/ContainerStep";
-import { NumericStep } from "../../components/steps/NumericStep";
-import { StaticTextStep } from "../../components/steps/StaticTextStep";
-import { StringDropDownStep } from "../../components/steps/StringDropDownStep";
-import { StringEntryStep } from "../../components/steps/StringEntryStep";
-import { registerBuilderModel } from "../../state/BuilderFactory";
-import { RootStepCollection } from "../../state/StepModel";
+} from "../../components/builder-steps/AssignPoolStep";
+import { AssignStatsStep } from "../../components/builder-steps/AssignStatsStep";
+import { ChecklistStringStep } from "../../components/builder-steps/ChecklistStringStep";
+import { ContainerStep } from "../../components/builder-steps/ContainerStep";
+import { NumericStep } from "../../components/builder-steps/NumericStep";
+import { StaticTextStep } from "../../components/builder-steps/StaticTextStep";
+import { StringDropDownStep } from "../../components/builder-steps/StringDropDownStep";
+import { StringEntryStep } from "../../components/builder-steps/StringEntryStep";
+import { registerBuilderModel } from "../../state/character-builder/BuilderFactory";
+import { RootStepCollection } from "../../state/character-builder/StepModel";
 import {
 	CharacterState,
 	getCharacterTemplate,

@@ -4,20 +4,19 @@ import { store } from "./state/AppStore";
 import { SiteLayoutFrame } from "./layout/SiteLayoutFrame";
 import "bootswatch/dist/darkly/bootstrap.min.css";
 import "./App.css";
-import { Navigate, Outlet } from "react-router";
+import { Outlet } from "react-router";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { LoadingPage } from "./routing/LoadingPage";
 import { registerArrayHelpers } from "./helpers/arrayHelpers";
 
+//(window as any).__DEBUG__ = true;
+
 registerArrayHelpers();
 
-/* Load models */
-
 /* Build routes */
-const LazyCharacterBuilderPage = React.lazy(
-	() => import("./routing/CharacterBuilderPage")
+const LazyTabSessionsPage = React.lazy(
+	() => import("./routing/TabSessionsPage")
 );
-
 const LazyAboutPage = React.lazy(() => import("./routing/AboutPage"));
 
 const router = createBrowserRouter([
@@ -30,13 +29,9 @@ const router = createBrowserRouter([
 		children: [
 			{
 				path: "/",
-				element: <Navigate to="/builder" replace={true} />,
-			},
-			{
-				path: "/builder",
 				element: (
 					<React.Suspense fallback={<LoadingPage />}>
-						<LazyCharacterBuilderPage />
+						<LazyTabSessionsPage />
 					</React.Suspense>
 				),
 			},

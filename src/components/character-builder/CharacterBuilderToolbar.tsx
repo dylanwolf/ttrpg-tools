@@ -1,5 +1,5 @@
 import { saveAsBuilderJson } from "../../data/JsonFileUtils";
-import { builderStateSelector, useAppSelector } from "../../state/AppStore";
+import { useAppSelector } from "../../state/AppStore";
 
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
@@ -7,15 +7,18 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons/faDownload";
 import { faDiceD20 } from "@fortawesome/free-solid-svg-icons/faDiceD20";
+import { characterBuilderSessionSelector } from "../../state/character-builder/BuilderTabSessions";
 
-export interface BuilderCharacterToolbarProps {
+export interface CharacterBuilderToolbarProps {
 	sessionKey: string;
 	showCharacterSheetMobile: boolean;
 	setShowCharacterSheetMobile: (value: boolean) => void;
 }
 
-export function BuilderCharacterToolbar(props: BuilderCharacterToolbarProps) {
-	const state = useAppSelector(builderStateSelector(props.sessionKey));
+export function CharacterBuilderToolbar(props: CharacterBuilderToolbarProps) {
+	const state = useAppSelector(
+		characterBuilderSessionSelector(props.sessionKey)
+	);
 
 	function saveAsJson() {
 		if (state) {

@@ -1,3 +1,7 @@
+#toplevel-navbar {
+    z-index: 10000;
+}
+
 .nav.nav-tabs {
     overflow-x: auto;
     overflow-y: hidden;

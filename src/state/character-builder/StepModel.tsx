@@ -1,8 +1,9 @@
-import { mergeStateWithUpdates } from "../helpers/builderHelpers";
+import { mergeStateWithUpdates } from "../../helpers/builderHelpers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons/faCircleInfo";
 import Popover from "react-bootstrap/Popover";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import { CharacterBuilderUpdate, ICharacterData } from "./BuilderTabSessions";
 
 export interface StepRunnerState {
 	CurrentStep: number;
@@ -18,7 +19,11 @@ export interface StepState {
 	IsVisible: boolean;
 }
 
-export abstract class StepModel<TSource, TData, TState extends StepState> {
+export abstract class StepModel<
+	TSource,
+	TData extends ICharacterData,
+	TState extends StepState
+> {
 	Name: string;
 	Index: number = 0;
 	UpdateCharacter: (source: TSource, state: TState, newData: TData) => void;
@@ -112,7 +117,7 @@ export abstract class StepModel<TSource, TData, TState extends StepState> {
 	}
 }
 
-export class StepRunner<TSource, TData> {
+export class StepRunner<TSource, TData extends ICharacterData> {
 	Name: string;
 	ByIndex: StepModel<TSource, TData, any>[];
 	ByKey: { [key: string]: StepModel<TSource, TData, any> } = {};
@@ -225,10 +230,10 @@ export class StepRunner<TSource, TData> {
 	}
 }
 
-export class RootStepCollection<TSource, TData> extends StepRunner<
+export class RootStepCollection<
 	TSource,
-	TData
-> {
+	TData extends ICharacterData
+> extends StepRunner<TSource, TData> {
 	BuilderKey: string;
 	GetInitialCharacterData: () => TData;
 
@@ -255,7 +260,7 @@ export class RootStepCollection<TSource, TData> extends StepRunner<
 		state: RootStepCollectionState,
 		changedStep: number,
 		stepUpdates?: any
-	) {
+	): CharacterBuilderUpdate<TData> {
 		var newState = this.onStepUpdated(
 			source,
 			data,

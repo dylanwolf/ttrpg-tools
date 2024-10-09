@@ -1,4 +1,4 @@
-import { openMessageWindow } from "../state/AppStore";
+import { openMessageWindow } from "../state/modal-ui/ModalUI";
 
 export function downloadAsJson(filename: string, output: any) {
 	const json = JSON.stringify(output, null, 2);

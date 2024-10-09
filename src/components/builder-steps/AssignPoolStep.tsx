@@ -1,4 +1,4 @@
-import { StepModel, StepState } from "../../state/StepModel";
+import { StepModel, StepState } from "../../state/character-builder/StepModel";
 import "./AssignPoolStep.css";
 
 export interface PoolDefinition {

@@ -1,0 +1,8 @@
+#tab-navbar {
+    margin-top: 1em;
+}
+
+#tab-navbar .close-button {
+    margin-left: 1em;
+    margin-right: -1em;
+}

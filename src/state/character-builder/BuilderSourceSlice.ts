@@ -1,29 +1,31 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export interface SourceDataBase {
+export interface ICharacterBuilderSourceData {
 	__NAME__: string;
 }
 
-export interface BuilderSourceState<TData extends SourceDataBase> {
+export interface CharacterBuilderSourceState<
+	TData extends ICharacterBuilderSourceData
+> {
 	Data?: TData;
 	IsLoading: boolean;
 }
 
-export interface BuilderSourceStateCollection {
-	Sources: { [key: string]: BuilderSourceState<any> };
+export interface CharacterBuilderSourceStateCollection {
+	Sources: { [key: string]: CharacterBuilderSourceState<any> };
 }
 
-interface BuilderSourceLoadingFinishedPayload {
+interface CharacterBuilderSourceLoadingFinishedPayload {
 	Key: string;
 	Data: any;
 }
 
-const initialState: BuilderSourceStateCollection = {
+const initialState: CharacterBuilderSourceStateCollection = {
 	Sources: {},
 };
 
-export const builderDataSlice = createSlice({
-	name: "BuilderSource",
+export const characterBuilderSourceData = createSlice({
+	name: "CharacterBuilderSourceData",
 	initialState,
 	reducers: {
 		beginLoadingSourceData(state, action: PayloadAction<string>) {
@@ -36,7 +38,7 @@ export const builderDataSlice = createSlice({
 		},
 		finishLoadingSourceData(
 			state,
-			action: PayloadAction<BuilderSourceLoadingFinishedPayload>
+			action: PayloadAction<CharacterBuilderSourceLoadingFinishedPayload>
 		) {
 			console.log(`finishLoadingSourceData(${action.payload.Key})`);
 
@@ -47,5 +49,5 @@ export const builderDataSlice = createSlice({
 });
 
 export const { beginLoadingSourceData, finishLoadingSourceData } =
-	builderDataSlice.actions;
-export default builderDataSlice.reducer;
+	characterBuilderSourceData.actions;
+export default characterBuilderSourceData.reducer;

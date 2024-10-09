@@ -1,4 +1,4 @@
-import { StepModel, StepState } from "../../state/StepModel";
+import { StepModel, StepState } from "../../state/character-builder/StepModel";
 
 interface NumericStepState extends StepState {
 	MinValue?: number | undefined;
