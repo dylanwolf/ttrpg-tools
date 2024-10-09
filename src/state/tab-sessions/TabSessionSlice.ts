@@ -5,7 +5,7 @@ import { setBrowserTitle } from "../../layout/BrowserUtils";
 /* ----------------------------------------------------------------------------------------
 State
 ---------------------------------------------------------------------------------------- */
-export type TabType = "character-builder";
+export type TabType = "character-builder" | "encounter-builder-5e";
 
 export interface TabSessionStateCollection {
 	Sessions: { [key: string]: TabSessionState<unknown> };
@@ -93,6 +93,9 @@ export const tabSessionSlice = createSlice({
 		) {
 			if (action.payload && state.Sessions[action.payload]) {
 				state.CurrentSessionKey = action.payload;
+			}
+
+			if (state.CurrentSessionKey === action.payload) {
 				setBrowserTitle(state.Sessions[action.payload].Title);
 			}
 		},
@@ -108,6 +111,9 @@ export const tabSessionSlice = createSlice({
 
 				if (action.payload.SelectTab) {
 					state.CurrentSessionKey = action.payload.SessionKey;
+				}
+
+				if (state.CurrentSessionKey === action.payload.SessionKey) {
 					setBrowserTitle(
 						action.payload.Title ||
 							state.Sessions[action.payload.SessionKey].Title

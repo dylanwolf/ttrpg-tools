@@ -1,4 +1,5 @@
 import { SelectItem } from "../../helpers/builderHelpers";
+import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
 import { StepModel, StepState } from "../../state/character-builder/StepModel";
 
 interface ChecklistStringStepState extends StepState {
@@ -8,11 +9,11 @@ interface ChecklistStringStepState extends StepState {
 	MaximumSelectCount?: number | undefined;
 }
 
-export class ChecklistStringStep<TSource, TData, TItem> extends StepModel<
+export class ChecklistStringStep<
 	TSource,
-	TData,
-	ChecklistStringStepState
-> {
+	TData extends ICharacterData,
+	TItem
+> extends StepModel<TSource, TData, ChecklistStringStepState> {
 	Label: string;
 	GetSelectList: (src: TSource, data: TData) => TItem[];
 	GetValue: (item: TItem) => string;

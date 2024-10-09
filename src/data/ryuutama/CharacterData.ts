@@ -1,7 +1,7 @@
-import { CharacterDataBase } from "../../state/BuilderSessionSlice";
+import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
 import { SourceData } from "./SourceData";
 
-export interface CharacterState extends CharacterDataBase {
+export interface CharacterState extends ICharacterData {
 	AdditionalSources: string[];
 	Version: string;
 	Level: number;

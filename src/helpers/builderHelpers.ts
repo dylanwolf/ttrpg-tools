@@ -3,10 +3,6 @@ export interface SelectItem {
 	Text: string;
 }
 
-export function isNumeric(n: any): boolean {
-	return !isNaN(parseFloat(n)) && isFinite(n);
-}
-
 export function valueIfInList(currentValue: string | undefined, lst: string[]) {
 	return lst.any((x) => x === currentValue) ? currentValue : lst[0];
 }

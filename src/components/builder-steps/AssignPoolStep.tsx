@@ -1,3 +1,4 @@
+import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
 import { StepModel, StepState } from "../../state/character-builder/StepModel";
 import "./AssignPoolStep.css";
 
@@ -23,11 +24,10 @@ export function removeNullValues(values: { [name: string]: number | null }) {
 	return result;
 }
 
-export class AssignPoolStep<TSource, TData> extends StepModel<
+export class AssignPoolStep<
 	TSource,
-	TData,
-	AssignPoolStepState
-> {
+	TData extends ICharacterData
+> extends StepModel<TSource, TData, AssignPoolStepState> {
 	Label: string;
 	GetAvailable: (src: TSource, data: TData) => number;
 	GetPools: (src: TSource, data: TData) => PoolDefinition[];
@@ -134,7 +134,7 @@ export class AssignPoolStep<TSource, TData> extends StepModel<
 				console.log(newValues);
 				triggerUpdate(index, { Values: newValues });
 			} else {
-				var newValue = parseInt(field.value);
+				var newValue = Number(field.value);
 				var currentValue =
 					(stepState.Values && stepState.Values[name]) || undefined;
 

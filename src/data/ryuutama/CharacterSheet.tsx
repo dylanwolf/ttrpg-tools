@@ -1,4 +1,4 @@
-import { isNumeric } from "../../helpers/builderHelpers";
+import { isNumeric } from "../../helpers/mathHelpers";
 import { registerCharacterSheetRenderer } from "../../state/character-builder/BuilderFactory";
 import {
 	CharacterState,
@@ -67,7 +67,7 @@ function adjustDiceRoll(...args: (string | number)[]) {
 		}
 
 		remaining.split(/\+/).forEach((mod) => {
-			var value = parseInt(mod) || 0;
+			var value = Number(mod) || 0;
 			modifiers += value;
 		});
 	});

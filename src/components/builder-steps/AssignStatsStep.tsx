@@ -1,3 +1,4 @@
+import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
 import { StepModel, StepState } from "../../state/character-builder/StepModel";
 import "./AssignStatsStep.css";
 
@@ -79,11 +80,11 @@ function updateState<TChoice>(
 	newState.SelectLists = selectLists;
 }
 
-export class AssignStatsStep<TSource, TData, TChoice> extends StepModel<
+export class AssignStatsStep<
 	TSource,
-	TData,
-	AssignStatsStepState<TChoice>
-> {
+	TData extends ICharacterData,
+	TChoice
+> extends StepModel<TSource, TData, AssignStatsStepState<TChoice>> {
 	Label: string;
 	GetChoicesList: (source: TSource, data: TData) => TChoice[];
 	ChoiceEquals: (us: TChoice, them: TChoice) => boolean;
@@ -186,7 +187,7 @@ export class AssignStatsStep<TSource, TData, TChoice> extends StepModel<
 			evt: React.ChangeEvent<HTMLSelectElement>
 		) {
 			var field = evt.currentTarget;
-			var newIndex = parseInt(field.value);
+			var newIndex = Number(field.value);
 
 			var newValues: { [name: string]: TChoice } = {};
 			Object.keys(values).forEach((key) => {

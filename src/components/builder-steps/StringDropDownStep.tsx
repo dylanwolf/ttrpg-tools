@@ -1,4 +1,5 @@
 import { SelectItem } from "../../helpers/builderHelpers";
+import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
 import { StepModel, StepState } from "../../state/character-builder/StepModel";
 
 interface StringDropDownStepState extends StepState {
@@ -6,11 +7,11 @@ interface StringDropDownStepState extends StepState {
 	Value: string | undefined;
 }
 
-export class StringDropDownStep<TSource, TData, TItem> extends StepModel<
+export class StringDropDownStep<
 	TSource,
-	TData,
-	StringDropDownStepState
-> {
+	TData extends ICharacterData,
+	TItem
+> extends StepModel<TSource, TData, StringDropDownStepState> {
 	Label: string;
 	GetSelectList: (src: TSource, data: TData) => TItem[];
 	GetValue: (item: TItem) => string;

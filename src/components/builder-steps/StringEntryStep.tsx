@@ -1,14 +1,14 @@
+import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
 import { StepModel, StepState } from "../../state/character-builder/StepModel";
 
 interface StringEntryStepState extends StepState {
 	Value: string | undefined;
 }
 
-export class StringEntryStep<TSource, TData> extends StepModel<
+export class StringEntryStep<
 	TSource,
-	TData,
-	StringEntryStepState
-> {
+	TData extends ICharacterData
+> extends StepModel<TSource, TData, StringEntryStepState> {
 	Label: string;
 	GetDefaultValue: (source: TSource, data: TData) => string | undefined;
 

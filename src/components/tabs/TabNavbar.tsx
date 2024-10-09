@@ -14,8 +14,6 @@ export function TabNavbar() {
 	const sessions = useAppSelector(tabSessionSelector());
 
 	function onSelected(sessionKey: string) {
-		console.log(sessionKey);
-		console.log(Object.keys(sessions.Sessions));
 		if (
 			sessionKey !== sessions.CurrentSessionKey &&
 			sessions.Sessions[sessionKey]

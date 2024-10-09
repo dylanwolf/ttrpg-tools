@@ -1,3 +1,4 @@
+import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
 import { StepModel, StepState } from "../../state/character-builder/StepModel";
 
 interface NumericStepState extends StepState {
@@ -7,11 +8,10 @@ interface NumericStepState extends StepState {
 	Value?: number | null | undefined;
 }
 
-export class NumericStep<TSource, TData> extends StepModel<
+export class NumericStep<
 	TSource,
-	TData,
-	NumericStepState
-> {
+	TData extends ICharacterData
+> extends StepModel<TSource, TData, NumericStepState> {
 	Label: string;
 	GetMinValue: ((src: TSource, data: TData) => number | undefined) | undefined;
 	GetMaxValue: ((src: TSource, data: TData) => number | undefined) | undefined;
@@ -119,7 +119,7 @@ export class NumericStep<TSource, TData> extends StepModel<
 			if (field.value.trim() === "") {
 				triggerUpdate(index, { Value: null });
 			} else {
-				var newValue = parseInt(field.value);
+				var newValue = Number(field.value);
 
 				if (newValue !== undefined && !isNaN(newValue)) {
 					triggerUpdate(index, { Value: newValue });

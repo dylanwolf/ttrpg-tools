@@ -5,16 +5,16 @@ import {
 	StepState,
 } from "../../state/character-builder/StepModel";
 import { mergeStateWithUpdates } from "../../helpers/builderHelpers";
+import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
 
 interface ContainerStepState extends StepState, StepRunnerState {
 	//StepUpdated: number | undefined;
 }
 
-export class ContainerStep<TSource, TData> extends StepModel<
+export class ContainerStep<
 	TSource,
-	TData,
-	ContainerStepState
-> {
+	TData extends ICharacterData
+> extends StepModel<TSource, TData, ContainerStepState> {
 	Label: string;
 	Steps: StepRunner<TSource, TData>;
 

@@ -10,6 +10,7 @@ import {
 	openCharacterBuilderJsonFile,
 } from "../state/character-builder/BuilderTabSessions";
 import { openMessageWindow } from "../state/modal-ui/ModalUI";
+import { createEncounterBuilder5eSession } from "../state/encounter-builder-5e/EncounterBuilder5eTabSessions";
 
 export function SiteNavbar() {
 	const openCharacterJsonRef = useRef(null);
@@ -40,6 +41,10 @@ export function SiteNavbar() {
 			.finally(() => setIsBusy(false));
 	}
 
+	function onClickCreateEncounterBuilder5eSession() {
+		createEncounterBuilder5eSession();
+	}
+
 	return (
 		<>
 			<Navbar expand="lg" bg="primary" data-bs-theme="dark">
@@ -51,19 +56,33 @@ export function SiteNavbar() {
 					<Nav activeKey={window.location.pathname}>
 						{isBusy ? <BusyIcon /> : <></>}
 						{!isBusy ? (
-							<NavDropdown title="Character Builder" onClick={switchToTabView}>
-								<NavDropdown.Item onClick={onClickOpenCharacterBuilderJsonFile}>
-									Load JSON File
-								</NavDropdown.Item>
-								<NavDropdown.Divider />
-								<NavDropdown.Item
-									onClick={() =>
-										onClickCreateCharacterBuilderSession("ryuutama")
-									}
+							<>
+								<NavDropdown
+									title="Character Builder"
+									onClick={switchToTabView}
 								>
-									New Ryuutama PC
-								</NavDropdown.Item>
-							</NavDropdown>
+									<NavDropdown.Item
+										onClick={onClickOpenCharacterBuilderJsonFile}
+									>
+										Load JSON File
+									</NavDropdown.Item>
+									<NavDropdown.Divider />
+									<NavDropdown.Item
+										onClick={() =>
+											onClickCreateCharacterBuilderSession("ryuutama")
+										}
+									>
+										New Ryuutama PC
+									</NavDropdown.Item>
+								</NavDropdown>
+								{/* <NavDropdown title="GM Utilities" onClick={switchToTabView}>
+							<NavDropdown.Item
+								onClick={onClickCreateEncounterBuilder5eSession}
+							>
+								New 5e Encounter Builder
+							</NavDropdown.Item>
+						</NavDropdown> */}
+							</>
 						) : (
 							<></>
 						)}

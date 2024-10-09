@@ -1,15 +1,15 @@
 import Markdown from "react-markdown";
 import { StepModel, StepState } from "../../state/character-builder/StepModel";
+import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
 
 interface StaticTextStepState extends StepState {
 	Value: string;
 }
 
-export class StaticTextStep<TSource, TData> extends StepModel<
+export class StaticTextStep<
 	TSource,
-	TData,
-	StaticTextStepState
-> {
+	TData extends ICharacterData
+> extends StepModel<TSource, TData, StaticTextStepState> {
 	Label: string;
 	AcceptMarkdown: boolean;
 	GetValue: (src: TSource, data: TData) => string;
