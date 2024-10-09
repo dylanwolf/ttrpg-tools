@@ -1,3 +1,4 @@
+import { ICharacterData } from "./BuilderTabSessions";
 import { RootStepCollection } from "./StepModel";
 
 var MODELS: { [key: string]: RootStepCollection<any, any> } = {};
@@ -6,7 +7,7 @@ var CHARACTER_SHEETS: {
 	[key: string]: (source: any, data: any) => JSX.Element;
 } = {};
 
-export function registerBuilderModel<TSource, TData>(
+export function registerBuilderModel<TSource, TData extends ICharacterData>(
 	model: RootStepCollection<TSource, TData>
 ) {
 	console.log(`Registered model for ${model.BuilderKey}`);
@@ -21,7 +22,9 @@ export function registerCharacterSheetRenderer<TSource, TData>(
 	CHARACTER_SHEETS[builderKey] = renderer;
 }
 
-export function getBuilderModel<TSource, TData>(key: string) {
+export function getBuilderModel<TSource, TData extends ICharacterData>(
+	key: string
+) {
 	return MODELS[key] as RootStepCollection<TSource, TData>;
 }
 
