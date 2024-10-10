@@ -1,4 +1,5 @@
 import {
+	ensureNumericEntry,
 	getNumericFieldValueFrom,
 	toNumericFieldValue,
 } from "../../helpers/fieldHelpers";
@@ -120,15 +121,10 @@ export class NumericStep<
 
 		function onChange(evt: React.ChangeEvent<HTMLInputElement>) {
 			var fieldValue = getNumericFieldValueFrom(evt);
-
 			if (fieldValue === undefined) {
 				triggerUpdate(index, { Value: null });
-			} else {
-				if (!isNaN(fieldValue)) {
-					triggerUpdate(index, { Value: fieldValue });
-				} else {
-					evt.preventDefault();
-				}
+			} else if (fieldValue !== undefined) {
+				triggerUpdate(index, { Value: fieldValue });
 			}
 		}
 
@@ -138,11 +134,13 @@ export class NumericStep<
 					{this.Label ? `${this.Label}: ` : ""}
 					<input
 						type="number"
+						inputMode="numeric"
 						value={toNumericFieldValue(stepState.Value)}
 						min={stepState.MinValue}
 						max={stepState.MaxValue}
 						step={stepState.NumericStep}
 						onChange={onChange}
+						onKeyDown={ensureNumericEntry}
 					/>
 				</label>
 			</>

@@ -43,7 +43,9 @@ export function updateEncounterState(state: EncounterBuilder5eData) {
 			if (m.XP === undefined && m.CR !== undefined) m.XP = getMonsterXP(m);
 		});
 
-		state.EncounterMultiplier = getEncounterMultiplier(state.Monsters.length);
+		state.EncounterMultiplier = getEncounterMultiplier(
+			state.Monsters.sum((m) => m.Count || 0) || 0
+		);
 		state.TotalMonsterXP =
 			(state.Monsters.sum((m) => getMonsterXP(m)) || 0) *
 			state.EncounterMultiplier;

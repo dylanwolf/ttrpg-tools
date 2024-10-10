@@ -1,5 +1,6 @@
 import { Encounter5eMonster } from "../data/encounter-builder-5e";
 import {
+	ensureNumericEntry,
 	getNumericFieldValueFrom,
 	getTextFieldValueFrom,
 	toNumericFieldValue,
@@ -145,6 +146,7 @@ export default function EncounterBuilder5eView() {
 						type="number"
 						value={session.Data.CharacterCount || ""}
 						disabled={session.Data.CharacterMode !== "party"}
+						onKeyDown={ensureNumericEntry}
 						min={1}
 						max={10}
 						step={1}
@@ -155,6 +157,7 @@ export default function EncounterBuilder5eView() {
 						type="number"
 						value={session.Data.CharacterLevel || ""}
 						disabled={session.Data.CharacterMode !== "party"}
+						onKeyDown={ensureNumericEntry}
 						min={1}
 						max={20}
 						step={1}
@@ -233,6 +236,7 @@ function MonsterEditor(props: MonsterEditorProps) {
 					step={1}
 					value={toNumericFieldValue(props.monster.Count)}
 					onChange={(e) => onNumberChange("Count", e)}
+					onKeyDown={ensureNumericEntry}
 				/>
 			</div>
 			<div>
@@ -243,6 +247,7 @@ function MonsterEditor(props: MonsterEditorProps) {
 					step={1}
 					value={toNumericFieldValue(props.monster.XP)}
 					onChange={(e) => onNumberChange("XP", e)}
+					onKeyDown={ensureNumericEntry}
 				/>
 			</div>
 			<div>

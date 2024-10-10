@@ -76,13 +76,13 @@ export function SiteNavbar() {
 										Create Ryuutama PC
 									</NavDropdown.Item>
 								</NavDropdown>
-								{/* <NavDropdown title="GM Utilities" onClick={switchToTabView}>
+								<NavDropdown title="GM Utilities" onClick={switchToTabView}>
 									<NavDropdown.Item
 										onClick={onClickCreateEncounterBuilder5eSession}
 									>
 										Create 5e Encounter
 									</NavDropdown.Item>
-								</NavDropdown> */}
+								</NavDropdown>
 							</>
 						) : (
 							<></>
