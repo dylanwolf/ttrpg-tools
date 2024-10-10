@@ -117,7 +117,6 @@ registerBuilderModel(
 				"StartingAbilityScores",
 				"Starting Stat Dice",
 				(src, data) => {
-					//console.log(getCharacterTemplate(src, data.CharacterTemplate));
 					var filter =
 						getCharacterTemplate(src, data)?.StartingAbilityScoreFilter || [];
 					return src.StartingAbilityScores.filter((x) =>

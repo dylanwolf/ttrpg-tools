@@ -10,7 +10,7 @@ var CHARACTER_SHEETS: {
 export function registerBuilderModel<TSource, TData extends ICharacterData>(
 	model: RootStepCollection<TSource, TData>
 ) {
-	console.log(`Registered model for ${model.BuilderKey}`);
+	console.debug(`Registered model for ${model.BuilderKey}`);
 	MODELS[model.BuilderKey] = model;
 }
 
@@ -18,7 +18,7 @@ export function registerCharacterSheetRenderer<TSource, TData>(
 	builderKey: string,
 	renderer: (src: TSource, data: TData) => JSX.Element
 ) {
-	console.log(`Registered character sheet for ${builderKey}`);
+	console.debug(`Registered character sheet for ${builderKey}`);
 	CHARACTER_SHEETS[builderKey] = renderer;
 }
 
@@ -29,7 +29,7 @@ export function getBuilderModel<TSource, TData extends ICharacterData>(
 }
 
 export async function getBuilderSource<TSource>(key: string) {
-	console.log(`getBuilderData(${key})`);
+	console.debug(`getBuilderData(${key})`);
 	if (!SOURCES[key]) {
 		SOURCES[key] = (await (await fetch(`/${key}.json`))?.json()) as TSource;
 	}

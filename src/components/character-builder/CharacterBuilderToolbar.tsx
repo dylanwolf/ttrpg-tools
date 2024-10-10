@@ -1,4 +1,7 @@
-import { saveAsBuilderJson } from "../../data/JsonFileUtils";
+import {
+	JSON_UTILITY_KEYS,
+	downloadAsLoadableJson,
+} from "../../helpers/JsonFileUtils";
 import { useAppSelector } from "../../state/AppStore";
 
 import Navbar from "react-bootstrap/Navbar";
@@ -8,6 +11,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons/faDownload";
 import { faDiceD20 } from "@fortawesome/free-solid-svg-icons/faDiceD20";
 import { characterBuilderSessionSelector } from "../../state/character-builder/BuilderTabSessions";
+import { downloadCharacterBuilderJson } from "../../data/CharacterBuilder";
 
 export interface CharacterBuilderToolbarProps {
 	sessionKey: string;
@@ -20,12 +24,6 @@ export function CharacterBuilderToolbar(props: CharacterBuilderToolbarProps) {
 		characterBuilderSessionSelector(props.sessionKey)
 	);
 
-	function saveAsJson() {
-		if (state) {
-			saveAsBuilderJson(state?.Model.BuilderKey, state?.Character);
-		}
-	}
-
 	function toggleMobileView() {
 		props.setShowCharacterSheetMobile(!props.showCharacterSheetMobile);
 	}
@@ -35,7 +33,10 @@ export function CharacterBuilderToolbar(props: CharacterBuilderToolbarProps) {
 			<Navbar.Toggle aria-controls="character-toolbar"></Navbar.Toggle>
 			<Navbar.Collapse id="character-toolbar">
 				<Nav>
-					<Button variant="primary" onClick={saveAsJson}>
+					<Button
+						variant="primary"
+						onClick={() => downloadCharacterBuilderJson(state)}
+					>
 						<FontAwesomeIcon icon={faDownload} />
 						Download as JSON
 					</Button>

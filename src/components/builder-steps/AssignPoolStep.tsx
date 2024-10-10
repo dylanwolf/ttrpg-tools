@@ -1,5 +1,6 @@
 import {
-	ensureNumericEntry,
+	ensureIntegerEntry,
+	ensureIntegerPaste,
 	getNumericFieldValueFrom,
 	toNumericFieldValue,
 } from "../../helpers/fieldHelpers";
@@ -167,7 +168,8 @@ export class AssignPoolStep<
 								onChange={function (e) {
 									onChange(p.Name, p.MaxValue, e);
 								}}
-								onKeyDown={ensureNumericEntry}
+								onKeyDown={ensureIntegerEntry}
+								onPaste={ensureIntegerPaste}
 								min={0}
 								max={p.MaxValue}
 							/>

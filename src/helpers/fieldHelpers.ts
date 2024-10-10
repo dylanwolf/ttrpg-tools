@@ -1,5 +1,3 @@
-import { isNumeric } from "./mathHelpers";
-
 export function getTextFieldValueFrom(
 	evt: React.ChangeEvent<any>
 ): string | undefined {
@@ -14,15 +12,26 @@ export function getNumericFieldValueFrom(
 	return Number(strValue);
 }
 
-export function ensureNumericEntry(evt: React.KeyboardEvent<HTMLInputElement>) {
+export function ensureIntegerPaste(
+	evt: React.ClipboardEvent<HTMLInputElement>
+) {
+	var value = evt.clipboardData.getData("text");
+	if (value && value.match(/[^0-9]/)) {
+		evt.preventDefault();
+		evt.stopPropagation();
+		return false;
+	}
+}
+
+export function ensureIntegerEntry(evt: React.KeyboardEvent<HTMLInputElement>) {
 	if (
-		evt.key !== "Backspace" &&
-		evt.key !== "Delete" &&
+		evt.key.length === 1 &&
 		!evt.altKey &&
 		!evt.ctrlKey &&
 		evt.key.match(/[^0-9]/)
 	) {
 		evt.preventDefault();
+		evt.stopPropagation();
 		return false;
 	}
 }

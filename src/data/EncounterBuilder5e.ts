@@ -1,6 +1,10 @@
+import {
+	downloadAsLoadableJson,
+	JSON_UTILITY_KEYS,
+} from "../helpers/JsonFileUtils";
 import { clamp, isNumeric } from "../helpers/mathHelpers";
 
-type EncounterDifficulty = "Easy" | "Medium" | "Hard" | "Deadly" | "N/A";
+type EncounterDifficulty = "Easy" | "Medium" | "Hard" | "Deadly";
 
 export interface EncounterBuilder5eData {
 	Title: string | undefined;
@@ -15,10 +19,18 @@ export interface EncounterBuilder5eData {
 	ExpectedDifficulty: EncounterDifficulty | undefined;
 }
 
+export function downloadEncounterBuilder5eJson(state: EncounterBuilder5eData) {
+	downloadAsLoadableJson(
+		JSON_UTILITY_KEYS.ENCOUNTER_BUILDER_5E,
+		state,
+		`${state.Title || "Encounter"}-Encounter5e.json`
+	);
+}
+
 export function getInitialState(): EncounterBuilder5eData {
 	return {
 		Title: "New Encounter",
-		CharacterMode: "individual",
+		CharacterMode: "party",
 		CharacterCount: 4,
 		CharacterLevel: 1,
 		Characters: [],
@@ -41,6 +53,7 @@ export function updateEncounterState(state: EncounterBuilder5eData) {
 		state.Monsters.forEach((m) => {
 			if (m.CR === undefined && m.XP !== undefined) m.CR = getMonsterCR(m);
 			if (m.XP === undefined && m.CR !== undefined) m.XP = getMonsterXP(m);
+			m.TotalXP = m.XP !== undefined ? m.XP * (m.Count || 0) : undefined;
 		});
 
 		state.EncounterMultiplier = getEncounterMultiplier(
@@ -54,16 +67,33 @@ export function updateEncounterState(state: EncounterBuilder5eData) {
 	// Calculate difficulty thresholds
 	switch (state.CharacterMode) {
 		case "individual":
-			state.DifficultyThresholds = getDifficultyThresholdByIndividual(
-				state.Characters || []
-			);
+			if (
+				state.Characters &&
+				state.Characters.any((x) => x.Level !== undefined)
+			) {
+				state.Characters.forEach((c) => {
+					c.XPBudget = getDifficultyThreshold(c.Level, c.Count || 0);
+				});
+
+				state.DifficultyThresholds = {
+					Easy: state.Characters.sum((c) => c.XPBudget?.Easy || 0) || 0,
+					Medium: state.Characters.sum((c) => c.XPBudget?.Medium || 0) || 0,
+					Hard: state.Characters.sum((c) => c.XPBudget?.Hard || 0) || 0,
+					Deadly: state.Characters.sum((c) => c.XPBudget?.Deadly || 0) || 0,
+				};
+			}
 			break;
 
 		case "party":
-			state.DifficultyThresholds = getDifficultyThreshold(
-				state.CharacterLevel || 1,
-				state.CharacterCount || 0
-			);
+			if (
+				state.CharacterLevel !== undefined &&
+				state.CharacterCount !== undefined
+			) {
+				state.DifficultyThresholds = getDifficultyThreshold(
+					state.CharacterLevel,
+					state.CharacterCount
+				);
+			}
 	}
 
 	if (state.DifficultyThresholds && state.TotalMonsterXP) {
@@ -75,13 +105,15 @@ export function updateEncounterState(state: EncounterBuilder5eData) {
 			state.ExpectedDifficulty = "Medium";
 		else if (state.TotalMonsterXP >= state.DifficultyThresholds.Easy)
 			state.ExpectedDifficulty = "Easy";
-		else state.ExpectedDifficulty = "N/A";
+		else state.ExpectedDifficulty = "Easy";
 	}
 }
 
 export interface Encounter5eCharacter {
 	Name?: string | undefined;
 	Level: number;
+	Count?: number | undefined;
+	XPBudget?: DifficultyThreshold | undefined;
 }
 
 export interface Encounter5eMonster {
@@ -89,6 +121,7 @@ export interface Encounter5eMonster {
 	Count: number | undefined;
 	CR?: string | undefined;
 	XP?: number | undefined;
+	TotalXP?: number | undefined;
 }
 
 interface DifficultyThreshold {
@@ -179,18 +212,6 @@ function getDifficultyThreshold(
 		Medium: MEDIUM_XP[level - 1] * count,
 		Hard: HARD_XP[level - 1] * count,
 		Deadly: DEADLY_XP[level - 1] * count,
-	};
-}
-
-function getDifficultyThresholdByIndividual(
-	characters: Encounter5eCharacter[]
-): DifficultyThreshold {
-	var thresholds = characters.map((x) => getDifficultyThreshold(x.Level));
-	return {
-		Easy: thresholds.sum((x) => x.Easy) || 0,
-		Medium: thresholds.sum((x) => x.Medium) || 0,
-		Hard: thresholds.sum((x) => x.Hard) || 0,
-		Deadly: thresholds.sum((x) => x.Deadly) || 0,
 	};
 }
 

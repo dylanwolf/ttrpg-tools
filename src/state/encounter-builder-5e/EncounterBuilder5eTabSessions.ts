@@ -2,7 +2,7 @@ import {
 	EncounterBuilder5eData,
 	getInitialState,
 	updateEncounterState,
-} from "../../data/encounter-builder-5e";
+} from "../../data/EncounterBuilder5e";
 import { getNewSessionId } from "../../helpers/sessionHelpers";
 import { RootState, store } from "../AppStore";
 import {
@@ -16,9 +16,11 @@ export interface EncounterBuilder5eState {
 	Data: EncounterBuilder5eData;
 }
 
-export function createEncounterBuilder5eSession() {
+export function createEncounterBuilder5eSession(
+	data?: EncounterBuilder5eData | undefined
+) {
 	const sessionKey = getNewSessionId();
-	var initialData = getInitialState();
+	var initialData = data || getInitialState();
 	updateEncounterState(initialData);
 
 	store.dispatch(

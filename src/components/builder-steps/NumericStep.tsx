@@ -1,5 +1,6 @@
 import {
-	ensureNumericEntry,
+	ensureIntegerEntry,
+	ensureIntegerPaste,
 	getNumericFieldValueFrom,
 	toNumericFieldValue,
 } from "../../helpers/fieldHelpers";
@@ -140,7 +141,8 @@ export class NumericStep<
 						max={stepState.MaxValue}
 						step={stepState.NumericStep}
 						onChange={onChange}
-						onKeyDown={ensureNumericEntry}
+						onKeyDown={ensureIntegerEntry}
+						onPaste={ensureIntegerPaste}
 					/>
 				</label>
 			</>

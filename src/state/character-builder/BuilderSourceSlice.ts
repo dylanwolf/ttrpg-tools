@@ -29,7 +29,7 @@ export const characterBuilderSourceData = createSlice({
 	initialState,
 	reducers: {
 		beginLoadingSourceData(state, action: PayloadAction<string>) {
-			console.log(`beginLoadingSourceData(${action.payload})`);
+			console.debug(`beginLoadingSourceData(${action.payload})`);
 			if (!state.Sources[action.payload]) {
 				state.Sources[action.payload] = {
 					IsLoading: true,
@@ -40,7 +40,7 @@ export const characterBuilderSourceData = createSlice({
 			state,
 			action: PayloadAction<CharacterBuilderSourceLoadingFinishedPayload>
 		) {
-			console.log(`finishLoadingSourceData(${action.payload.Key})`);
+			console.debug(`finishLoadingSourceData(${action.payload.Key})`);
 
 			state.Sources[action.payload.Key].Data = action.payload.Data;
 			state.Sources[action.payload.Key].IsLoading = false;

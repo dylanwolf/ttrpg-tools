@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap');
+
+.encounter-builder-5e-header {
+    border: 1px solid #000;
+    border-radius: 4px;
+    margin: 0.5em;
+    padding: 0.5em;
+    background: #ccc;
+    color: #000;
+}
+
+.encounter-builder-5e {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 0.25em;
+}
+
+.encounter-builder-5e input[type="number"] {
+    max-width: 75px;
+}
+
+.encounter-builder-5e tr:not(.table-primary) th,
+.encounter-builder-5e tr:not(.table-primary) td {
+    background: #ccc;
+    color: #000;
+}
+
+.encounter-builder-5e .name-field {
+    width: 100%;
+    min-width: 50px;
+}
+
+.encounter-builder-5e .box {
+    border: 1px solid #000;
+    border-radius: 4px;
+    padding: 0.5em;
+    background: #ccc;
+    color: #000;
+    margin: 0.25em;
+}
+
+.encounter-builder-5e .party-box {
+    flex-grow: 1
+}
+
+.encounter-builder-5e .monster-box {
+    flex-grow: 1
+}
+
+.encounter-builder-5e .box .indicator {
+    margin-right: 0.25em;
+}

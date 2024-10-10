@@ -157,19 +157,19 @@ export class StepRunner<TSource, TData extends ICharacterData> {
 		var startStep = changedStep;
 		var endStep = startStep + 1;
 
-		console.log(
+		console.debug(
 			`${this.Name} onStepUpdated(${changedStep}, ${startStep}, ${endStep})`
 		);
-		//console.log(state);
-		//console.log(newData);
+		//console.debug(state);
+		//console.debug(newData);
 
 		var inCompleted = true;
 		for (var idx = 0; idx < state.Steps.length; idx++) {
 			var step = this.ByIndex[idx];
-			console.log(
+			console.debug(
 				`${this.Name} Processing step ${idx} (${startStep} - ${endStep})`
 			);
-			//console.log(step);
+			console.debug(step);
 
 			// If no matching step, continue
 			if (!step) {
@@ -181,13 +181,13 @@ export class StepRunner<TSource, TData extends ICharacterData> {
 				state.Steps[idx],
 				(idx === changedStep && stepUpdates) || undefined
 			);
-			//console.log(stepState);
+			console.debug(stepState);
 
 			// Re-process steps that may be affected
 			if (idx >= startStep && idx <= endStep) {
 				step.updateState(source, newData, stepState);
-				//console.log(stepState);
-				//console.log(newData);
+				console.debug(stepState);
+				console.debug(newData);
 			}
 			step.UpdateCharacter(source, stepState, newData);
 

@@ -1,3 +1,14 @@
+.command {
+    cursor: pointer;
+}
+
+input[type="number"] {
+    text-align: right;
+}
+
+input::-webkit-outer-spin-button, 
+input::-webkit-inner-spin-button { margin-left: 20px; } 
+
 #toplevel-navbar {
     z-index: 10000;
 }

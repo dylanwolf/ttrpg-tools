@@ -232,19 +232,3 @@ export async function createCharacterBuilderSession(
 			};
 		});
 }
-
-export async function openCharacterBuilderJsonFile(fileData: any) {
-	if (fileData) {
-		if (fileData.BuilderKey && fileData.CharacterData) {
-			return createCharacterBuilderSession(
-				fileData.BuilderKey,
-				fileData.CharacterData
-			);
-		} else {
-			return Promise.reject({
-				Title: "Error opening character builder",
-				Message: `This doesn't appear to be a valid character builder file.`,
-			});
-		}
-	}
-}
