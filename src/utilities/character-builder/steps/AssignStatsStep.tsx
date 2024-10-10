@@ -1,6 +1,6 @@
-import { getNumericFieldValueFrom } from "../../helpers/fieldHelpers";
-import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
-import { StepModel, StepState } from "../../state/character-builder/StepModel";
+import { getNumericFieldValueFrom } from "../../../helpers/fieldHelpers";
+import { ICharacterData } from "../BuilderFactory";
+import { StepModel, StepState } from "../StepModel";
 import "./AssignStatsStep.css";
 
 export interface StatDefinition<TChoice> {

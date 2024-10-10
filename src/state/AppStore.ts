@@ -1,5 +1,5 @@
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
-import builderSourceReducer from "./character-builder/BuilderSourceSlice";
+import builderSourceReducer from "../utilities/character-builder/BuilderSourceSlice";
 import modalUiReducer from "./modal-ui/ModalUISlice";
 import tabSessionReducer from "./tab-sessions/TabSessionSlice";
 import { useDispatch, useSelector } from "react-redux";

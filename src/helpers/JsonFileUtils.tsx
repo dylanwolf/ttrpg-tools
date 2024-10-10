@@ -1,12 +1,7 @@
 import React from "react";
-import { createCharacterBuilderSession } from "../state/character-builder/BuilderTabSessions";
-import { createEncounterBuilder5eSession } from "../state/encounter-builder-5e/EncounterBuilder5eTabSessions";
+import { createCharacterBuilderSession } from "../utilities/character-builder/BuilderTabSessions";
 import { MessageWindowArgs } from "../state/modal-ui/ModalUISlice";
-
-export const JSON_UTILITY_KEYS = {
-	CHARACTER_BUILDER: "character-builder",
-	ENCOUNTER_BUILDER_5E: "encounter-builder-5e",
-};
+import { createTabSessionForUtility, UtilityKey } from "../utilities";
 
 export function downloadAsJson(filename: string, output: any) {
 	const json = JSON.stringify(output, null, 2);
@@ -24,7 +19,7 @@ export function downloadAsJson(filename: string, output: any) {
 }
 
 export function downloadAsLoadableJson(
-	utilityKey: string,
+	utilityKey: UtilityKey,
 	data: any,
 	filename: string
 ) {
@@ -36,7 +31,7 @@ export function downloadAsLoadableJson(
 }
 
 export interface JsonFileResult {
-	Utility: "character-builder" | "encounter-builder-5e";
+	Utility: UtilityKey;
 	Data: any;
 }
 
@@ -89,37 +84,32 @@ export class JsonFileLoader extends React.Component<JsonFileLoaderProps> {
 		}
 	}
 
-	loadEncounterBuilder5e(fileContent: JsonFileResult) {
-		const data = fileContent.Data;
-		if (data) {
-			try {
-				createEncounterBuilder5eSession(data);
-				this.triggerOnLoadCompleted(fileContent);
-			} catch (ex) {
-				this.triggerOnError({
-					Title: "Error loading JSON file",
-					Message: `The following error occurred loading the file. It may not be a JSON file or a file associated with this app.\n\n${ex}`,
-				});
-			}
-		}
-	}
+	// loadEncounterBuilder5e(fileContent: JsonFileResult) {
+	// 	const data = fileContent.Data;
+	// 	if (data) {
+	// 		try {
+	// 			createEncounterBuilder5eSession(data);
+	// 			this.triggerOnLoadCompleted(fileContent);
+	// 		} catch (ex) {
+	// 			this.triggerOnError({
+	// 				Title: "Error loading JSON file",
+	// 				Message: `The following error occurred loading the file. It may not be a JSON file or a file associated with this app.\n\n${ex}`,
+	// 			});
+	// 		}
+	// 	}
+	// }
 
 	handleFileLoad(fileContent: JsonFileResult) {
 		if (fileContent.Utility && fileContent.Data) {
-			switch (fileContent.Utility) {
-				case "character-builder":
-					this.loadCharacterBuilder(fileContent);
-					return;
-				case "encounter-builder-5e":
-					this.loadEncounterBuilder5e(fileContent);
-					return;
-			}
+			createTabSessionForUtility(fileContent.Utility, fileContent.Data)
+				.then(() => this.triggerOnLoadCompleted(fileContent))
+				.catch((ex) => this.triggerOnError(ex));
+		} else {
+			this.triggerOnError({
+				Title: "Error loading file",
+				Message: `The file type was not recognized. It may not be a file associated with this application.`,
+			});
 		}
-
-		this.triggerOnError({
-			Title: "Error loading file",
-			Message: `The file type was not recognized. It may not be a file associated with this application.`,
-		});
 	}
 
 	onFileRead(evt: ProgressEvent<FileReader>) {

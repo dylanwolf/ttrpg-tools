@@ -3,7 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons/faCircleInfo";
 import Popover from "react-bootstrap/Popover";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import { CharacterBuilderUpdate, ICharacterData } from "./BuilderTabSessions";
+import { CharacterBuilderUpdate } from "./BuilderTabSessions";
+import { ICharacterData } from "./BuilderFactory";
 
 export interface StepRunnerState {
 	CurrentStep: number;

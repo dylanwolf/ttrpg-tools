@@ -1,4 +1,4 @@
-import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
+import { ICharacterData } from "../../BuilderFactory";
 import { SourceData } from "./SourceData";
 
 export interface CharacterState extends ICharacterData {

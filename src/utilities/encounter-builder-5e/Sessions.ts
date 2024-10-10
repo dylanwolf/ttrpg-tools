@@ -2,14 +2,14 @@ import {
 	EncounterBuilder5eData,
 	getInitialState,
 	updateEncounterState,
-} from "../../data/EncounterBuilder5e";
+} from "./Data";
 import { getNewSessionId } from "../../helpers/sessionHelpers";
-import { RootState, store } from "../AppStore";
+import { RootState, store } from "../../state/AppStore";
 import {
 	createTabSession,
 	TabSessionState,
 	updateTabSession,
-} from "../tab-sessions/TabSessionSlice";
+} from "../../state/tab-sessions/TabSessionSlice";
 
 export interface EncounterBuilder5eState {
 	SessionKey: string;

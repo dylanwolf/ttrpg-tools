@@ -1,5 +1,8 @@
-import { ICharacterData } from "./BuilderTabSessions";
 import { RootStepCollection } from "./StepModel";
+
+export interface ICharacterData {
+	Title: string;
+}
 
 var MODELS: { [key: string]: RootStepCollection<any, any> } = {};
 var SOURCES: { [key: string]: any } = {};

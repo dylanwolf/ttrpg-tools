@@ -1,7 +1,7 @@
-import { SelectItem } from "../../helpers/builderHelpers";
-import { getTextFieldValueFrom } from "../../helpers/fieldHelpers";
-import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
-import { StepModel, StepState } from "../../state/character-builder/StepModel";
+import { SelectItem } from "../../../helpers/builderHelpers";
+import { getTextFieldValueFrom } from "../../../helpers/fieldHelpers";
+import { ICharacterData } from "../BuilderFactory";
+import { StepModel, StepState } from "../StepModel";
 
 interface StringDropDownStepState extends StepState {
 	SelectList: SelectItem[];

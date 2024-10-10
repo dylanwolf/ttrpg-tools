@@ -1,6 +1,10 @@
 import { getNewSessionId } from "../../helpers/sessionHelpers";
-import { store, AppDispatch, RootState } from "../AppStore";
-import { getBuilderModel, getBuilderSource } from "./BuilderFactory";
+import { store, AppDispatch, RootState } from "../../state/AppStore";
+import {
+	getBuilderModel,
+	getBuilderSource,
+	ICharacterData,
+} from "./BuilderFactory";
 import {
 	beginLoadingSourceData,
 	finishLoadingSourceData,
@@ -11,11 +15,8 @@ import {
 	createTabSession,
 	TabSessionState,
 	updateTabSession,
-} from "../tab-sessions/TabSessionSlice";
-
-export interface ICharacterData {
-	Title: string;
-}
+} from "../../state/tab-sessions/TabSessionSlice";
+import { UtilityKey } from "..";
 
 export interface CharacterBuilderSessionState<TData extends ICharacterData> {
 	BuilderKey: string;
@@ -83,7 +84,8 @@ export const characterBuilderSessionSelector =
 		var session = state.tabSessions.Sessions[sessionKey] as TabSessionState<
 			CharacterBuilderSessionState<TData>
 		>;
-		if (!session || session.TabType !== "character-builder") return undefined;
+		if (!session || session.TabType !== UtilityKey.CHARACTER_BUILDER)
+			return undefined;
 
 		var builderKey = session.Content.BuilderKey;
 		var sourceData = state?.builderSources?.Sources[builderKey]?.Data;
@@ -147,7 +149,7 @@ const createCharacterBuilderStateInternal =
 				createTabSession({
 					SessionKey: sessionKey,
 					IsBusy: true,
-					TabType: "character-builder",
+					TabType: UtilityKey.CHARACTER_BUILDER,
 					Title: "Loading...",
 					Content: undefined,
 				})
@@ -221,7 +223,7 @@ export async function createCharacterBuilderSession(
 		});
 	}
 
-	return import(`../../data/${builderKey}/index.ts`)
+	return import(`./builders/${builderKey}/index.ts`)
 		.then(() =>
 			createCharacterBuilderSessionInternal(builderKey, true, initialData)
 		)

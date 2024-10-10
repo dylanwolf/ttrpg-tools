@@ -1,4 +1,4 @@
-import { createCharacterBuilderSession } from "../state/character-builder/BuilderTabSessions";
+import { createCharacterBuilderSession } from "../utilities/character-builder/BuilderTabSessions";
 import "./BlankTab.scss";
 
 export default function BlankTab() {

@@ -3,9 +3,9 @@ import {
 	StepRunner,
 	StepRunnerState,
 	StepState,
-} from "../../state/character-builder/StepModel";
-import { mergeStateWithUpdates } from "../../helpers/builderHelpers";
-import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
+} from "../StepModel";
+import { mergeStateWithUpdates } from "../../../helpers/builderHelpers";
+import { ICharacterData } from "../BuilderFactory";
 
 interface ContainerStepState extends StepState, StepRunnerState {
 	//StepUpdated: number | undefined;

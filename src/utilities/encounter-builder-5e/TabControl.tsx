@@ -4,14 +4,13 @@ import {
 	getNumericFieldValueFrom,
 	getTextFieldValueFrom,
 	toNumericFieldValue,
-} from "../helpers/fieldHelpers";
-import { useAppSelector } from "../state/AppStore";
+} from "../../helpers/fieldHelpers";
+import { useAppSelector } from "../../state/AppStore";
 import {
 	encounterBuilder5eSessionSelector,
 	updateEncounterBuilder5eSession,
-} from "../state/encounter-builder-5e/EncounterBuilder5eTabSessions";
-import { DumpObject } from "./DumpObject";
-import "./EncounterBuilder5e.css";
+} from "./Sessions";
+import { DumpObject } from "../../components/DumpObject";
 import Navbar from "react-bootstrap/Navbar";
 import Button from "react-bootstrap/Button";
 import Nav from "react-bootstrap/Nav";
@@ -23,7 +22,8 @@ import { faAnglesRight } from "@fortawesome/free-solid-svg-icons/faAnglesRight";
 import { faUser } from "@fortawesome/free-solid-svg-icons/faUser";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons/faCircleInfo";
 import { faDownload } from "@fortawesome/free-solid-svg-icons/faDownload";
-import { downloadEncounterBuilder5eJson } from "../data/EncounterBuilder5e";
+import { downloadEncounterBuilder5eJson } from "./Data";
+import "./TabControl.css";
 
 export default function EncounterBuilder5eView() {
 	const session = useAppSelector(encounterBuilder5eSessionSelector());

@@ -1,8 +1,8 @@
 import { CharacterBuilderProcess } from "./CharacterBuilderProcess";
-import { useAppSelector } from "../../state/AppStore";
+import { useAppSelector } from "../../../state/AppStore";
 import "./CharacterBuilderView.css";
-import { DumpObject } from "../DumpObject";
-import { characterBuilderSessionSelector } from "../../state/character-builder/BuilderTabSessions";
+import { DumpObject } from "../../../components/DumpObject";
+import { characterBuilderSessionSelector } from "../BuilderTabSessions";
 
 export default function CharacterBuilderView() {
 	const session = useAppSelector(characterBuilderSessionSelector());

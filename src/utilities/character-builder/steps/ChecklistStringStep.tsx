@@ -1,6 +1,6 @@
-import { SelectItem } from "../../helpers/builderHelpers";
-import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
-import { StepModel, StepState } from "../../state/character-builder/StepModel";
+import { SelectItem } from "../../../helpers/builderHelpers";
+import { ICharacterData } from "../BuilderFactory";
+import { StepModel, StepState } from "../StepModel";
 
 interface ChecklistStringStepState extends StepState {
 	SelectList: SelectItem[];

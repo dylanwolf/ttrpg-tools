@@ -1,5 +1,5 @@
-import { isNumeric } from "../../helpers/mathHelpers";
-import { ICharacterBuilderSourceData } from "../../state/character-builder/BuilderSourceSlice";
+import { isNumeric } from "../../../../helpers/mathHelpers";
+import { ICharacterBuilderSourceData } from "../../BuilderSourceSlice";
 
 export const BUILDER_KEY = "ryuutama";
 

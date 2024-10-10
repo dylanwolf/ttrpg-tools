@@ -1,8 +1,4 @@
-import {
-	JSON_UTILITY_KEYS,
-	downloadAsLoadableJson,
-} from "../../helpers/JsonFileUtils";
-import { useAppSelector } from "../../state/AppStore";
+import { useAppSelector } from "../../..//state/AppStore";
 
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
@@ -10,8 +6,8 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons/faDownload";
 import { faDiceD20 } from "@fortawesome/free-solid-svg-icons/faDiceD20";
-import { characterBuilderSessionSelector } from "../../state/character-builder/BuilderTabSessions";
-import { downloadCharacterBuilderJson } from "../../data/CharacterBuilder";
+import { characterBuilderSessionSelector } from "../BuilderTabSessions";
+import { downloadCharacterBuilderJson } from "../Json";
 
 export interface CharacterBuilderToolbarProps {
 	sessionKey: string;

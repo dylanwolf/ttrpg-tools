@@ -1,15 +1,13 @@
-import {
-	downloadAsLoadableJson,
-	JSON_UTILITY_KEYS,
-} from "../helpers/JsonFileUtils";
-import { CharacterBuilderState } from "../state/character-builder/BuilderTabSessions";
+import { downloadAsLoadableJson } from "../../helpers/JsonFileUtils";
+import { CharacterBuilderState } from "./BuilderTabSessions";
+import { UtilityKey } from "..";
 
 export function downloadCharacterBuilderJson(
 	state: CharacterBuilderState<any, any> | undefined
 ) {
 	if (state) {
 		downloadAsLoadableJson(
-			JSON_UTILITY_KEYS.CHARACTER_BUILDER,
+			UtilityKey.CHARACTER_BUILDER,
 			{
 				BuilderKey: state.Model.BuilderKey,
 				CharacterData: state.Character,

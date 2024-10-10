@@ -1,12 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppDispatch, RootState, store } from "../AppStore";
 import { setBrowserTitle } from "../../layout/BrowserUtils";
 
 /* ----------------------------------------------------------------------------------------
 State
 ---------------------------------------------------------------------------------------- */
-export type TabType = "character-builder" | "encounter-builder-5e";
-
 export interface TabSessionStateCollection {
 	Sessions: { [key: string]: TabSessionState<unknown> };
 	CurrentSessionKey?: string | undefined;
@@ -15,7 +12,7 @@ export interface TabSessionStateCollection {
 export interface TabSessionState<TData> {
 	SessionKey: string;
 	IsBusy: boolean;
-	TabType: TabType;
+	TabType: string;
 	Title: string;
 	Content: TData;
 }
@@ -31,7 +28,7 @@ export interface TabSessionUpdatePayload<TData> {
 export interface TabSessionCreatePayload<TData> {
 	SessionKey: string;
 	IsBusy: boolean;
-	TabType: TabType;
+	TabType: string;
 	Title: string;
 	Content: TData;
 	SelectTab?: boolean | undefined;

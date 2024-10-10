@@ -2,12 +2,14 @@ import React from "react";
 import { useAppSelector } from "../../state/AppStore";
 import { currentTabSessionSelector } from "../../state/tab-sessions/TabSessions";
 import { LoadingPage } from "../../pages/LoadingPage";
+import { UtilityKey } from "../../utilities";
 
 const LazyCharacterBuilderView = React.lazy(
-	() => import("../character-builder/CharacterBuilderView")
+	() =>
+		import("../../utilities/character-builder/components/CharacterBuilderView")
 );
 const LazyEncounterBuilder5eView = React.lazy(
-	() => import("../EncounterBuilder5e")
+	() => import("../../utilities/encounter-builder-5e/TabControl")
 );
 
 const LazyEmptyPage = React.lazy(() => import("../../pages/BlankTab"));
@@ -18,13 +20,13 @@ export function TabContentRouter() {
 	if (currentTab && currentTab.IsBusy) return <LoadingPage />;
 
 	switch (currentTab?.TabType) {
-		case "character-builder":
+		case UtilityKey.CHARACTER_BUILDER:
 			return (
 				<React.Suspense fallback={<LoadingPage />}>
 					<LazyCharacterBuilderView />
 				</React.Suspense>
 			);
-		case "encounter-builder-5e":
+		case UtilityKey.ENCOUNTER_BUILDER_5E:
 			return (
 				<React.Suspense fallback={<LoadingPage />}>
 					<LazyEncounterBuilder5eView />

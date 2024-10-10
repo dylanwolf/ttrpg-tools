@@ -1,6 +1,6 @@
 import Markdown from "react-markdown";
-import { StepModel, StepState } from "../../state/character-builder/StepModel";
-import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
+import { StepModel, StepState } from "../StepModel";
+import { ICharacterData } from "../BuilderFactory";
 
 interface StaticTextStepState extends StepState {
 	Value: string;

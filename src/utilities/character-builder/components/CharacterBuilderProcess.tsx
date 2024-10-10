@@ -1,14 +1,14 @@
 import { Fragment } from "react/jsx-runtime";
-import { BusyIcon } from "../BusyIcon";
+import { BusyIcon } from "../../../components/BusyIcon";
 import "./CharacterBuilderProcess.css";
-import { renderCharacterSheet } from "../../state/character-builder/BuilderFactory";
+import { renderCharacterSheet } from "../BuilderFactory";
 import { CharacterBuilderToolbar } from "./CharacterBuilderToolbar";
 import { useState } from "react";
 import {
 	characterBuilderSessionSelector,
 	updateCharacterBuilderSession,
-} from "../../state/character-builder/BuilderTabSessions";
-import { useAppSelector } from "../../state/AppStore";
+} from "..//BuilderTabSessions";
+import { useAppSelector } from "../../../state/AppStore";
 
 export interface CharacterBuilderProcessProps {
 	sessionKey: string;

@@ -1,6 +1,6 @@
-import { getTextFieldValueFrom } from "../../helpers/fieldHelpers";
-import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
-import { StepModel, StepState } from "../../state/character-builder/StepModel";
+import { getTextFieldValueFrom } from "../../../helpers/fieldHelpers";
+import { ICharacterData } from "../BuilderFactory";
+import { StepModel, StepState } from "../StepModel";
 
 interface StringEntryStepState extends StepState {
 	Value: string | undefined;

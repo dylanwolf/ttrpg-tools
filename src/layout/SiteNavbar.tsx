@@ -5,10 +5,9 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { JsonFileLoader } from "../helpers/JsonFileUtils";
 import { BusyIcon } from "../components/BusyIcon";
-import { createCharacterBuilderSession } from "../state/character-builder/BuilderTabSessions";
 import { openMessageWindow } from "../state/modal-ui/ModalUI";
-import { createEncounterBuilder5eSession } from "../state/encounter-builder-5e/EncounterBuilder5eTabSessions";
 import { DOMAIN_NAME } from "./BrowserUtils";
+import { createTabSessionForUtility, UtilityKey } from "../utilities";
 
 export function SiteNavbar() {
 	const openJsonFileRef = useRef(null);
@@ -27,13 +26,11 @@ export function SiteNavbar() {
 	function onClickCreateCharacterBuilderSession(builderKey: string) {
 		navigate("/");
 		setIsBusy(true);
-		createCharacterBuilderSession(builderKey)
+		createTabSessionForUtility(UtilityKey.CHARACTER_BUILDER, {
+			BuilderKey: builderKey,
+		})
 			.catch((ex) => openMessageWindow(ex))
 			.finally(() => setIsBusy(false));
-	}
-
-	function onClickCreateEncounterBuilder5eSession() {
-		createEncounterBuilder5eSession();
 	}
 
 	return (
@@ -70,7 +67,11 @@ export function SiteNavbar() {
 									</NavDropdown.Item>
 									<NavDropdown.Divider />
 									<NavDropdown.Item
-										onClick={onClickCreateEncounterBuilder5eSession}
+										onClick={() =>
+											createTabSessionForUtility(
+												UtilityKey.ENCOUNTER_BUILDER_5E
+											)
+										}
 									>
 										Create 5e Encounter
 									</NavDropdown.Item>

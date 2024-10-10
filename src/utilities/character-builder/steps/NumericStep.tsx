@@ -3,9 +3,9 @@ import {
 	ensureIntegerPaste,
 	getNumericFieldValueFrom,
 	toNumericFieldValue,
-} from "../../helpers/fieldHelpers";
-import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
-import { StepModel, StepState } from "../../state/character-builder/StepModel";
+} from "../../../helpers/fieldHelpers";
+import { ICharacterData } from "../BuilderFactory";
+import { StepModel, StepState } from "../StepModel";
 
 interface NumericStepState extends StepState {
 	MinValue?: number | undefined;
