@@ -11,6 +11,7 @@ import {
 } from "../state/character-builder/BuilderTabSessions";
 import { openMessageWindow } from "../state/modal-ui/ModalUI";
 import { createEncounterBuilder5eSession } from "../state/encounter-builder-5e/EncounterBuilder5eTabSessions";
+import { DOMAIN_NAME } from "./BrowserUtils";
 
 export function SiteNavbar() {
 	const openCharacterJsonRef = useRef(null);
@@ -49,7 +50,7 @@ export function SiteNavbar() {
 		<>
 			<Navbar expand="lg" bg="primary" data-bs-theme="dark">
 				<Navbar.Brand as={Link} to="/">
-					ttrpgbuilder.dylanwolf.com
+					{DOMAIN_NAME}
 				</Navbar.Brand>
 				<Navbar.Toggle aria-controls="toplevel-navbar"></Navbar.Toggle>
 				<Navbar.Collapse id="toplevel-navbar">
@@ -72,16 +73,16 @@ export function SiteNavbar() {
 											onClickCreateCharacterBuilderSession("ryuutama")
 										}
 									>
-										New Ryuutama PC
+										Create Ryuutama PC
 									</NavDropdown.Item>
 								</NavDropdown>
 								{/* <NavDropdown title="GM Utilities" onClick={switchToTabView}>
-							<NavDropdown.Item
-								onClick={onClickCreateEncounterBuilder5eSession}
-							>
-								New 5e Encounter Builder
-							</NavDropdown.Item>
-						</NavDropdown> */}
+									<NavDropdown.Item
+										onClick={onClickCreateEncounterBuilder5eSession}
+									>
+										Create 5e Encounter
+									</NavDropdown.Item>
+								</NavDropdown> */}
 							</>
 						) : (
 							<></>

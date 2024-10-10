@@ -9,6 +9,8 @@ declare global {
 		first(predicate?: (obj: T) => boolean | undefined): T | undefined;
 		last(predicate?: (obj: T) => boolean | undefined): T | undefined;
 		orderBy<TKey>(sortFunc: (obj: T) => TKey): T[];
+		min(selectFunc?: (obj: T) => any): T | undefined;
+		max(selectFunc?: (obj: T) => any): T | undefined;
 		sum(selectFunc?: (obj: T) => number | undefined): number | undefined;
 	}
 }
@@ -111,18 +113,64 @@ export function registerArrayHelpers() {
 	}
 
 	if (!Array.prototype.sum) {
-		Array.prototype.sum = function orderBy<T, TKey>(
-			sortFunc?: (obj: T) => TKey | undefined
+		Array.prototype.sum = function <T>(
+			selectFunc?: (obj: T) => number | undefined
 		): number | undefined {
 			if (this.length === 0) return 0;
 
-			var values = this.map((x) => (sortFunc ? sortFunc(x) : x));
+			var values = this.map((x) => (selectFunc ? selectFunc(x) : x));
 			if (!values.any((x) => isNumeric(x))) return undefined;
 
 			return values.reduce(
 				(prev, cur) => prev + (isNumeric(cur) ? Number(cur) : 0),
 				0
 			);
+		};
+	}
+
+	if (!Array.prototype.min) {
+		Array.prototype.min = function orderBy<T, TKey>(
+			selectFunc?: (obj: T) => any
+		): any | undefined {
+			if (this.length === 0) return undefined;
+
+			var resultObject: T | undefined = undefined;
+			var resultValue: any = undefined;
+
+			this.forEach((currentObject) => {
+				var currentValue = selectFunc
+					? selectFunc(currentObject)
+					: currentObject;
+				if (resultObject === undefined || resultValue > currentObject) {
+					resultObject = currentObject;
+					resultValue = currentValue;
+				}
+			});
+
+			return resultObject;
+		};
+	}
+
+	if (!Array.prototype.max) {
+		Array.prototype.max = function orderBy<T, TKey>(
+			selectFunc?: (obj: T) => any
+		): any | undefined {
+			if (this.length === 0) return undefined;
+
+			var resultObject: T | undefined = undefined;
+			var resultValue: any = undefined;
+
+			this.forEach((currentObject) => {
+				var currentValue = selectFunc
+					? selectFunc(currentObject)
+					: currentObject;
+				if (resultObject === undefined || resultValue < currentObject) {
+					resultObject = currentObject;
+					resultValue = currentValue;
+				}
+			});
+
+			return resultObject;
 		};
 	}
 }

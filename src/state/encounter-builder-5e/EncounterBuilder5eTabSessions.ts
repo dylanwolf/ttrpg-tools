@@ -4,7 +4,6 @@ import {
 	updateEncounterState,
 } from "../../data/encounter-builder-5e";
 import { getNewSessionId } from "../../helpers/sessionHelpers";
-import { setBrowserTitle } from "../../layout/BrowserUtils";
 import { RootState, store } from "../AppStore";
 import {
 	createTabSession,
@@ -20,6 +19,7 @@ export interface EncounterBuilder5eState {
 export function createEncounterBuilder5eSession() {
 	const sessionKey = getNewSessionId();
 	var initialData = getInitialState();
+	updateEncounterState(initialData);
 
 	store.dispatch(
 		createTabSession({
@@ -39,11 +39,8 @@ export function updateEncounterBuilder5eSession(
 	updateFunc: (newData: EncounterBuilder5eData) => void
 ) {
 	var newData = structuredClone(data);
-	console.log(newData);
 	updateFunc(newData);
-	console.log(newData);
 	updateEncounterState(newData);
-	console.log(newData);
 
 	var newTitle = `${newData.Title} (5e Encounter)`;
 

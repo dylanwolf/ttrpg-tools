@@ -1,3 +1,4 @@
+import { getTextFieldValueFrom } from "../../helpers/fieldHelpers";
 import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
 import { StepModel, StepState } from "../../state/character-builder/StepModel";
 
@@ -66,10 +67,7 @@ export class StringEntryStep<
 		var index = this.Index;
 
 		function onChange(evt: React.ChangeEvent<HTMLInputElement>) {
-			var field = evt.currentTarget;
-			var newValue = field.value;
-
-			triggerUpdate(index, { Value: newValue });
+			triggerUpdate(index, { Value: getTextFieldValueFrom(evt) });
 		}
 
 		return (

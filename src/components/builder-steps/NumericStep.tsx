@@ -1,3 +1,7 @@
+import {
+	getNumericFieldValueFrom,
+	toNumericFieldValue,
+} from "../../helpers/fieldHelpers";
 import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
 import { StepModel, StepState } from "../../state/character-builder/StepModel";
 
@@ -115,14 +119,13 @@ export class NumericStep<
 		var index = this.Index;
 
 		function onChange(evt: React.ChangeEvent<HTMLInputElement>) {
-			var field = evt.currentTarget;
-			if (field.value.trim() === "") {
+			var fieldValue = getNumericFieldValueFrom(evt);
+
+			if (fieldValue === undefined) {
 				triggerUpdate(index, { Value: null });
 			} else {
-				var newValue = Number(field.value);
-
-				if (newValue !== undefined && !isNaN(newValue)) {
-					triggerUpdate(index, { Value: newValue });
+				if (!isNaN(fieldValue)) {
+					triggerUpdate(index, { Value: fieldValue });
 				} else {
 					evt.preventDefault();
 				}
@@ -135,7 +138,7 @@ export class NumericStep<
 					{this.Label ? `${this.Label}: ` : ""}
 					<input
 						type="number"
-						value={stepState.Value !== null ? stepState.Value : ""}
+						value={toNumericFieldValue(stepState.Value)}
 						min={stepState.MinValue}
 						max={stepState.MaxValue}
 						step={stepState.NumericStep}

@@ -3,10 +3,10 @@ import React from "react";
 import { store } from "./state/AppStore";
 import { SiteLayoutFrame } from "./layout/SiteLayoutFrame";
 import "bootswatch/dist/darkly/bootstrap.min.css";
-import "./App.css";
+import "./App.scss";
 import { Outlet } from "react-router";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { LoadingPage } from "./routing/LoadingPage";
+import { LoadingPage } from "./pages/LoadingPage";
 import { registerArrayHelpers } from "./helpers/arrayHelpers";
 
 //(window as any).__DEBUG__ = true;
@@ -14,10 +14,8 @@ import { registerArrayHelpers } from "./helpers/arrayHelpers";
 registerArrayHelpers();
 
 /* Build routes */
-const LazyTabSessionsPage = React.lazy(
-	() => import("./routing/TabSessionsPage")
-);
-const LazyAboutPage = React.lazy(() => import("./routing/AboutPage"));
+const LazyTabSessionsPage = React.lazy(() => import("./pages/TabSessionsPage"));
+const LazyAboutPage = React.lazy(() => import("./pages/AboutPage"));
 
 const router = createBrowserRouter([
 	{

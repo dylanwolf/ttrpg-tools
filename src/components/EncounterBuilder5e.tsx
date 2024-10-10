@@ -1,3 +1,9 @@
+import { Encounter5eMonster } from "../data/encounter-builder-5e";
+import {
+	getNumericFieldValueFrom,
+	getTextFieldValueFrom,
+	toNumericFieldValue,
+} from "../helpers/fieldHelpers";
 import { useAppSelector } from "../state/AppStore";
 import {
 	encounterBuilder5eSessionSelector,
@@ -14,12 +20,10 @@ export default function EncounterBuilder5eView() {
 		evt: React.ChangeEvent<HTMLInputElement>
 	) {
 		if (!session?.Data) return;
-		var field = evt.currentTarget;
-		var newValue = field.value;
 		updateEncounterBuilder5eSession(
 			session.SessionKey,
 			session.Data,
-			(data) => ((data as any)[name] = newValue)
+			(data) => ((data as any)[name] = getTextFieldValueFrom(evt))
 		);
 	}
 
@@ -28,26 +32,97 @@ export default function EncounterBuilder5eView() {
 		evt: React.ChangeEvent<HTMLInputElement>
 	) {
 		if (!session?.Data) return;
-		var field = evt.currentTarget;
-		var strValue = (field.value || "").trim();
-		var newValue = strValue === "" ? undefined : Number(strValue);
-
-		console.log(`${name} = ${newValue}`);
 		updateEncounterBuilder5eSession(
 			session.SessionKey,
 			session.Data,
 			(data) => {
-				console.log(data);
-				console.log(name);
-				console.log(newValue);
-				(data as any)[name] = newValue;
-				console.log(data);
+				(data as any)[name] = getNumericFieldValueFrom(evt);
+			}
+		);
+	}
+
+	function onAddMonster() {
+		if (!session?.Data) return;
+
+		updateEncounterBuilder5eSession(
+			session.SessionKey,
+			session.Data,
+			(data) => {
+				if (data && data.Monsters) data.Monsters.push({ Count: 1 });
+			}
+		);
+	}
+
+	function onRemoveMonster(index: number) {
+		if (!session?.Data) return;
+
+		updateEncounterBuilder5eSession(
+			session.SessionKey,
+			session.Data,
+			(data) => {
+				if (data && data.Monsters) data.Monsters.splice(index, 1);
+			}
+		);
+	}
+
+	function onMonstersValueChange(
+		index: number,
+		name: string,
+		value: string | number | undefined
+	) {
+		if (!session?.Data) return;
+
+		updateEncounterBuilder5eSession(
+			session.SessionKey,
+			session.Data,
+			(data) => {
+				if (data && data.Monsters) {
+					(data.Monsters[index] as any)[name] = value;
+					if (name === "CR") data.Monsters[index].XP = undefined;
+					if (name === "XP") data.Monsters[index].CR = undefined;
+				}
 			}
 		);
 	}
 
 	return (
 		<div>
+			{session.Data.DifficultyThresholds ? (
+				<div>
+					Difficulty Thresholds:
+					<div>
+						Easy: {session.Data.DifficultyThresholds.Easy.toLocaleString()}
+					</div>
+					<div>
+						Medium: {session.Data.DifficultyThresholds.Medium.toLocaleString()}
+					</div>
+					<div>
+						Hard: {session.Data.DifficultyThresholds.Hard.toLocaleString()}
+					</div>
+					<div>
+						Deadly: {session.Data.DifficultyThresholds.Deadly.toLocaleString()}
+					</div>
+				</div>
+			) : (
+				<></>
+			)}
+			{session.Data.EncounterMultiplier ? (
+				<div>Encounter Multiplier: x{session.Data.EncounterMultiplier}</div>
+			) : (
+				<></>
+			)}
+			{session.Data.TotalMonsterXP ? (
+				<div>
+					Total Monster XP: {session.Data.TotalMonsterXP.toLocaleString()}
+				</div>
+			) : (
+				<></>
+			)}
+			{session.Data.ExpectedDifficulty ? (
+				<div>Expected Difficulty: {session.Data.ExpectedDifficulty}</div>
+			) : (
+				<></>
+			)}
 			<div>
 				Title:
 				<input
@@ -97,9 +172,97 @@ export default function EncounterBuilder5eView() {
 					Individual
 				</label>
 			</div>
+			<div>Monsters:</div>
+			{session.Data.Monsters?.map((m, idx) => {
+				return (
+					<MonsterEditor
+						key={`Monster-${idx}`}
+						monster={m}
+						index={idx}
+						onItemRemove={() => onRemoveMonster(idx)}
+						onValueChange={(name, value) =>
+							onMonstersValueChange(idx, name, value)
+						}
+					/>
+				);
+			})}
+			<div>
+				<a className="btn btn-primary" onClick={onAddMonster}>
+					Add Monster
+				</a>
+			</div>
 			<DumpObject object={session.Data} />
 		</div>
 	);
+}
 
-	return <DumpObject object={session?.Data} />;
+interface MonsterEditorProps {
+	monster: Encounter5eMonster;
+	index: number;
+	onValueChange: (name: string, value: string | number | undefined) => void;
+	onItemRemove: () => void;
+}
+
+var CR_OPTIONS = ["0", "1/8", "1/4", "1/2"];
+for (var i = 1; i <= 30; i++) CR_OPTIONS.push(i.toString());
+
+function MonsterEditor(props: MonsterEditorProps) {
+	function onTextChange(name: string, evt: React.ChangeEvent<any>) {
+		props.onValueChange(name, getTextFieldValueFrom(evt));
+	}
+
+	function onNumberChange(name: string, evt: React.ChangeEvent<any>) {
+		props.onValueChange(name, getNumericFieldValueFrom(evt));
+	}
+
+	return (
+		<div>
+			<div>
+				Name:{" "}
+				<input
+					type="text"
+					value={props.monster.Name || ""}
+					onChange={(e) => onTextChange("Name", e)}
+				/>
+			</div>
+			<div>
+				Count:{" "}
+				<input
+					type="number"
+					min={0}
+					step={1}
+					value={toNumericFieldValue(props.monster.Count)}
+					onChange={(e) => onNumberChange("Count", e)}
+				/>
+			</div>
+			<div>
+				XP per Monster:{" "}
+				<input
+					type="number"
+					min={0}
+					step={1}
+					value={toNumericFieldValue(props.monster.XP)}
+					onChange={(e) => onNumberChange("XP", e)}
+				/>
+			</div>
+			<div>
+				CR per Monster:{" "}
+				<select
+					value={props.monster.CR || "0"}
+					onChange={(e) => onTextChange("CR", e)}
+				>
+					{CR_OPTIONS.map((cr) => (
+						<option key={`MonsterCR-${props.index}-${cr}`} value={cr}>
+							{cr}
+						</option>
+					))}
+				</select>
+			</div>
+			<div>
+				<a className="btn btn-primary" onClick={props.onItemRemove}>
+					Remove
+				</a>
+			</div>
+		</div>
+	);
 }

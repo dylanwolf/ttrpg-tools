@@ -7,8 +7,8 @@ export interface EncounterBuilder5eData {
 	CharacterMode: "individual" | "party" | undefined;
 	CharacterCount: number | undefined;
 	CharacterLevel: number | undefined;
-	Characters: Character[] | undefined;
-	Monsters: Monster[] | undefined;
+	Characters: Encounter5eCharacter[] | undefined;
+	Monsters: Encounter5eMonster[] | undefined;
 	DifficultyThresholds: DifficultyThreshold | undefined;
 	EncounterMultiplier: number | undefined;
 	TotalMonsterXP: number | undefined;
@@ -77,14 +77,14 @@ export function updateEncounterState(state: EncounterBuilder5eData) {
 	}
 }
 
-interface Character {
+export interface Encounter5eCharacter {
 	Name?: string | undefined;
 	Level: number;
 }
 
-interface Monster {
+export interface Encounter5eMonster {
 	Name?: string | undefined;
-	Count: number;
+	Count: number | undefined;
 	CR?: string | undefined;
 	XP?: number | undefined;
 }
@@ -118,11 +118,14 @@ const CR_XP = [
 	41000, 50000, 62000, 75000, 90000, 105000, 135000, 155000,
 ];
 
-export function getMonsterXP(monster: Monster): number | undefined {
-	// TODO: Calculate monster XP
-	if (monster.XP !== undefined) return monster.XP;
+export function getMonsterXP(monster: Encounter5eMonster): number | undefined {
+	if (monster.XP !== undefined) return monster.XP * (monster.Count || 0);
 	if (monster.CR === undefined) return undefined;
-	return calculateXPFromCR(monster.CR);
+
+	var xpFromCr = calculateXPFromCR(monster.CR);
+	if (xpFromCr === undefined) return undefined;
+
+	return xpFromCr * (monster.Count || 0);
 }
 
 function calculateXPFromCR(cr: string): number | undefined {
@@ -136,7 +139,7 @@ function calculateXPFromCR(cr: string): number | undefined {
 	} else return undefined;
 }
 
-export function getMonsterCR(monster: Monster): string | undefined {
+export function getMonsterCR(monster: Encounter5eMonster): string | undefined {
 	if (monster.CR !== undefined) return monster.CR;
 	if (monster.XP === undefined) return undefined;
 	return calculateCRFromXP(monster.XP);
@@ -145,7 +148,7 @@ export function getMonsterCR(monster: Monster): string | undefined {
 function calculateCRFromXP(xp: number): string | undefined {
 	if (xp <= CR_XP[0]) return "0";
 	for (var idx = 1; idx < CR_XP.length; idx++) {
-		if (xp > CR_XP[idx]) {
+		if (xp < CR_XP[idx]) {
 			switch (idx) {
 				case 1:
 					return "0";
@@ -178,7 +181,7 @@ function getDifficultyThreshold(
 }
 
 function getDifficultyThresholdByIndividual(
-	characters: Character[]
+	characters: Encounter5eCharacter[]
 ): DifficultyThreshold {
 	var thresholds = characters.map((x) => getDifficultyThreshold(x.Level));
 	return {

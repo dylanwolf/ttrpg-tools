@@ -1,3 +1,7 @@
+import {
+	getNumericFieldValueFrom,
+	toNumericFieldValue,
+} from "../../helpers/fieldHelpers";
 import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
 import { StepModel, StepState } from "../../state/character-builder/StepModel";
 import "./AssignPoolStep.css";
@@ -126,24 +130,22 @@ export class AssignPoolStep<
 			maxValue: number | undefined,
 			evt: React.ChangeEvent<HTMLInputElement>
 		) {
-			var field = evt.currentTarget;
-
+			var fieldValue = getNumericFieldValueFrom(evt);
 			var newValues = structuredClone(stepState.Values || {});
-			if (field.value.trim() === "") {
+
+			if (fieldValue === undefined) {
 				newValues[name] = null;
-				console.log(newValues);
 				triggerUpdate(index, { Values: newValues });
 			} else {
-				var newValue = Number(field.value);
 				var currentValue =
 					(stepState.Values && stepState.Values[name]) || undefined;
 
 				if (
-					newValue >= 0 &&
-					(maxValue === undefined || maxValue >= newValue) &&
-					newValue - (currentValue || 0) <= stepState.Remaining
+					fieldValue >= 0 &&
+					(maxValue === undefined || maxValue >= fieldValue) &&
+					fieldValue - (currentValue || 0) <= stepState.Remaining
 				) {
-					newValues[name] = newValue;
+					newValues[name] = fieldValue;
 					triggerUpdate(index, { Values: newValues });
 				}
 			}
@@ -158,11 +160,9 @@ export class AssignPoolStep<
 							{p.Name}:{" "}
 							<input
 								type="number"
-								value={
-									stepState.Values && stepState.Values[p.Name] !== null
-										? stepState.Values[p.Name] || 0
-										: ""
-								}
+								value={toNumericFieldValue(
+									stepState.Values && stepState.Values[p.Name]
+								)}
 								onChange={function (e) {
 									onChange(p.Name, p.MaxValue, e);
 								}}

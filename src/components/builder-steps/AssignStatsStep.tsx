@@ -1,3 +1,4 @@
+import { getNumericFieldValueFrom } from "../../helpers/fieldHelpers";
 import { ICharacterData } from "../../state/character-builder/BuilderTabSessions";
 import { StepModel, StepState } from "../../state/character-builder/StepModel";
 import "./AssignStatsStep.css";
@@ -186,8 +187,7 @@ export class AssignStatsStep<
 			stat: SelectListState<TChoice>,
 			evt: React.ChangeEvent<HTMLSelectElement>
 		) {
-			var field = evt.currentTarget;
-			var newIndex = Number(field.value);
+			var newIndex = getNumericFieldValueFrom(evt);
 
 			var newValues: { [name: string]: TChoice } = {};
 			Object.keys(values).forEach((key) => {
@@ -196,7 +196,7 @@ export class AssignStatsStep<
 				}
 			});
 
-			if (stat.Options[newIndex]) {
+			if (newIndex && stat.Options[newIndex]) {
 				newValues[stat.Name] = stat.Options[newIndex];
 			}
 

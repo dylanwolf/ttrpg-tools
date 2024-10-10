@@ -33,6 +33,8 @@ export function TabNavbar() {
 		return false;
 	}
 
+	if (Object.values(sessions.Sessions).length === 0) return <></>;
+
 	return (
 		<Nav
 			variant="tabs"
