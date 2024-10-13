@@ -1,5 +1,4 @@
 import { createCharacterBuilderSession } from "../utilities/character-builder/BuilderTabSessions";
-import "./BlankTab.scss";
 
 export default function BlankTab() {
 	function onClickCreateCharacterBuilder(builderKey: string, evt: any) {
@@ -9,7 +8,7 @@ export default function BlankTab() {
 	}
 
 	return (
-		<div className="blank-tab">
+		<div className="m-4">
 			<h2>Get Started</h2>
 			<ul>
 				<li>

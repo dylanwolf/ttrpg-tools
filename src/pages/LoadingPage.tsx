@@ -1,9 +1,8 @@
 import { BusyIcon } from "../components/BusyIcon";
-import "./LoadingPage.css";
 
 export function LoadingPage() {
 	return (
-		<div className="loading-page-content">
+		<div className="my-5 text-center">
 			<BusyIcon />
 		</div>
 	);

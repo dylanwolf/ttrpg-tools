@@ -27,6 +27,7 @@ interface CharacterSheetData {
 	SeasonalMagics: string[];
 	StatusEffectImmunity: string | undefined;
 	SeasonalDragon: string | undefined;
+	CraftingSpecializations: string[];
 	AbilityScores: {
 		STR: number | undefined;
 		DEX: number | undefined;
@@ -211,6 +212,10 @@ function collectCharacterSheetData(
 		Level1Class: data.Level1Class,
 		Level5Class: data.Level5Class,
 		Types: groupedTypes.map((x) => x.Type.Name).distinct(),
+		CraftingSpecializations: [
+			data.Level1Specialization,
+			data.Level5Specialization,
+		].filter((x) => x) as string[],
 		AbilityScores: {
 			STR: originalStr && adjustedStr,
 			DEX: originalDex && adjustedDex,
@@ -306,6 +311,16 @@ function characterSheetRenderer(source: SourceData, data: CharacterState) {
 					<div className="block seasonal-dragon">
 						<div className="title">Favor of the Seasonal Dragon</div>
 						<div className="content">{cs.SeasonalDragon}</div>
+					</div>
+				) : (
+					<></>
+				)}
+				{cs.CraftingSpecializations.length > 0 ? (
+					<div className="block crafting-specializations">
+						<div className="title">Crafting Specialization</div>
+						<div className="content">
+							{cs.CraftingSpecializations.join(", ")}
+						</div>
 					</div>
 				) : (
 					<></>

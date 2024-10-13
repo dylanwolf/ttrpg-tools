@@ -125,7 +125,7 @@ const updateCharacterBuilderSessionInternal =
 		dispatch(
 			updateTabSession({
 				SessionKey: sessionKey,
-				Title: `${updateObj.NewCharacterData.Title} (${session.BuilderKey})`,
+				Title: `${updateObj.NewCharacterData.Title} (${sourceData.__NAME__})`,
 				Content: mergeCharacterBuilderUpdates(session, updateObj),
 			})
 		);

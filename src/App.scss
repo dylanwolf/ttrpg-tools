@@ -1,3 +1,9 @@
+@import "../node_modules/bootstrap/scss/functions";
+@import "../node_modules/bootstrap/scss/variables";
+@import "../node_modules/bootstrap/scss/variables-dark";
+@import "../node_modules/bootstrap/scss/maps";
+@import "../node_modules/bootstrap/scss/mixins";
+
 .command {
     cursor: pointer;
 }
@@ -10,7 +16,7 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button { margin-left: 20px; } 
 
 #toplevel-navbar {
-    z-index: 10000;
+    z-index: 1030 !important;
 }
 
 .nav.nav-tabs {
@@ -24,7 +30,7 @@ input::-webkit-inner-spin-button { margin-left: 20px; }
 }
 
 .nav.nav-tabs a.active {
-    background: #333;
+    background: rgba(var(--bs-secondary-rgb));
 }
 
 .navbar-nav .btn {

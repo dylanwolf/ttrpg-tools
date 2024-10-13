@@ -39,23 +39,24 @@ export function TabNavbar() {
 		<Nav
 			variant="tabs"
 			activeKey={sessions.CurrentSessionKey}
-			className="margin-left"
+			className="mt-4"
 			id="tab-navbar"
 		>
 			{Object.values(sessions.Sessions).map((session) => {
 				return (
 					<Nav.Link
+						className="d-flex"
 						key={`BuilderTab-${session.SessionKey}`}
 						eventKey={session.SessionKey}
 						onClick={() => onSelected(session.SessionKey)}
 					>
-						{session.Title}
-						<span
+						<div>{session.Title}</div>
+						<div
 							className="close-button"
 							onClick={(e) => onRemoved(session.SessionKey, e)}
 						>
 							<FontAwesomeIcon icon={faXmark} />
-						</span>
+						</div>
 					</Nav.Link>
 				);
 			})}

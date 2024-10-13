@@ -67,7 +67,7 @@ registerBuilderModel(
 		[
 			new StaticTextStep<SourceData, CharacterState>(
 				"Version",
-				"Character Builder Version",
+				"Character Builder Data Version",
 				false,
 				(src, data) => src.Version,
 				(src, state, newData) => (newData.Version = src.Version)
@@ -291,6 +291,26 @@ registerBuilderModel(
 						.withHelp(
 							"Gives you an extra mastered weapon. You do not take HP penalties for attacking with a mastered weapon."
 						),
+					new StringDropDownStep<SourceData, CharacterState, string>(
+						"Level1Specialization",
+						"Crafting Specialization",
+						(src, data) =>
+							getLevel1Skills(src, data)
+								.map((s) => s.Specialization || [])
+								.flat()
+								.distinct()
+								.orderBy((x) => x),
+						(itm) => itm,
+						(itm) => itm,
+						(src, data, lst) => valueIfInList(data.Level1Specialization, lst),
+						(src, state, data) =>
+							(data.Level1Specialization = state.Value || "")
+					).onlyShowWhen(
+						(src, data) =>
+							getLevel1Skills(src, data)
+								.map((s) => s.Specialization || [])
+								.flat().length > 0
+					),
 				]
 			),
 			new StringDropDownStep<SourceData, CharacterState, string>(
@@ -385,6 +405,27 @@ registerBuilderModel(
 						.withHelp(
 							"Gives you an extra mastered weapon. You do not take HP penalties for attacking with a mastered weapon."
 						),
+					new StringDropDownStep<SourceData, CharacterState, string>(
+						"Level5Specialization",
+						"Crafting Specialization",
+						(src, data) =>
+							getLevel5Skills(src, data)
+								.map((s) => s.Specialization || [])
+								.flat()
+								.distinct()
+								.filter((x) => x != data.Level1Specialization)
+								.orderBy((x) => x),
+						(itm) => itm,
+						(itm) => itm,
+						(src, data, lst) => valueIfInList(data.Level5Specialization, lst),
+						(src, state, data) =>
+							(data.Level5Specialization = state.Value || "")
+					).onlyShowWhen(
+						(src, data) =>
+							getLevel5Skills(src, data)
+								.map((s) => s.Specialization || [])
+								.flat().length > 0
+					),
 				]
 			).onlyShowWhen((src, data) => data.Level >= 5),
 			new ContainerStep<SourceData, CharacterState>("Level6TypeContainer", "", [

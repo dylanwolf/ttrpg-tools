@@ -14,6 +14,7 @@ export interface CharacterState extends ICharacterData {
 	Level1Class?: string | undefined;
 	Level1SideJob?: string | undefined;
 	Level1WeaponGrace?: string | undefined;
+	Level1Specialization?: string | undefined;
 	Level1Type?: string | undefined;
 	Level1WeaponFocus?: string | undefined;
 	Level1SeasonalMagic?: string | undefined;
@@ -22,6 +23,7 @@ export interface CharacterState extends ICharacterData {
 	Level5Class?: string | undefined;
 	Level5SideJob?: string | undefined;
 	Level5WeaponGrace?: string | undefined;
+	Level5Specialization?: string | undefined;
 	Level6Type?: string | undefined;
 	Level6WeaponFocus?: string | undefined;
 	Level7WeatherTerrainSpecialty?: string | undefined;
