@@ -12,6 +12,7 @@ import {
 	getSessionRangeForLevel,
 } from "./CharacterData";
 import { SourceData } from "./SourceData";
+import "./SessionAndLevelStep.css";
 
 export interface SessionAndLevelStepState extends StepState {
 	SessionValue: number | undefined;
