@@ -20,6 +20,17 @@ export default function BlankTab() {
 						Create a Ryuutama PC
 					</a>
 				</li>
+				<li>
+					{" "}
+					<a
+						href="#"
+						onClick={(e) =>
+							onClickCreateCharacterBuilder("ryuutama-ryuujin", e)
+						}
+					>
+						Create a Ryuutama Ryuujin (GM character)
+					</a>
+				</li>
 			</ul>
 		</div>
 	);

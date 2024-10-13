@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap');
+
+.ryuujin-character-sheet .character-name {
+    font-size: 175%;
+    margin-bottom: 0.5em;
+}
+
+.ryuujin-character-sheet .blocks {
+    display: flex;
+    flex-wrap: wrap;
+    white-space: nowrap;
+    gap: 0.5em;
+}
+
+.ryuujin-character-sheet .blocks .block {
+    border: 1px solid #999;
+    border-radius: 16px;
+    background: #eee;
+    color: #000;
+    min-width: 75px;
+    flex-grow: 1
+}
+
+.ryuujin-character-sheet .blocks .block .title {
+    border-bottom: 1px solid #000;
+    font-style: italic;
+    padding: 0.25em 0.5em 0 0.5em
+}
+
+.ryuujin-character-sheet .blocks .block .content {
+    font-size: 150%;
+    padding: 0.25em 0.5em
+}
+
+.ryuujin-character-sheet .blocks .centered .content {
+    text-align: center;
+}
+
+/* .ryuujin-character-sheet .blocks.stats {
+    margin-top: 2em;
+}
+
+.ryuujin-character-sheet .blocks.stats .block {
+    background-color: #ccc;
+} */
+
+.ryuujin-character-sheet .table-section {
+    margin-top: 2em;
+}
+
+.ryuujin-character-sheet .table-section .title {
+    font-size: 150%;
+}
+
+.ryuujin-character-sheet .blocks .block .content {
+    font-family: Caveat
+}

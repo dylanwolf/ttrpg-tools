@@ -1,4 +1,6 @@
 {
+	"Version": "2024-10-13",
+	"__NAME__": "Ryuutama Ryuujin",
 	"AdditionalSources": [],
 	"RyuujinTypes": [
 		{
@@ -45,15 +47,47 @@
 		},
 		{
 			"Name": "Sextant",
-			"Description": "This artefact indicates the GM has created a few original rules and will be using them."
+			"Description": "You have created a few original rules and will be using them."
 		},
 		{
 			"Name": "Torch",
-			"Description": "At the end of each session, all of the experience granted by PCs is doubled."
+			"Description": "Double all experience at the end of each session."
 		},
 		{
 			"Name": "Crystal",
-			"Description": "All of the PCs can survive damage that reduces them as far as -20 HP. They will not die until their HP reaches -21."
+			"Description": "PCs can survive damage up to -20 HP; they will not die until their HP reaches -21."
+		},
+		{
+			"Name": "Ring",
+			"Description": "Indicates all of the PCs are relatives, students, or disciples."
+		},
+		{
+			"Name": "Mascot",
+			"Description": "The Ryuujin can accompany the travelers in their shapechanged form."
+		},
+		{
+			"Name": "Greatsword",
+			"Description": "During the battle setup phase, you can include twice as many objects as normal."
+		},
+		{
+			"Name": "Longspear",
+			"Description": "Indicates ll the PCs are members of an army, and they are traveling in order to fulfill a mission for that army."
+		},
+		{
+			"Name": "Longbow",
+			"Description": "In battle scenes, initiative is only used for turn order. Instead, before each strike the defender rolls [DEX+INT] to attempt to dodge the attack."
+		},
+		{
+			"Name": "Chalice",
+			"Description": "Indicates that all of the PCs have a dark past."
+		},
+		{
+			"Name": "Dagger",
+			"Description": "Once per journey, an NPC can die (no roll required)."
+		},
+		{
+			"Name": "Mirror",
+			"Description": "Any time the PCs experience fear, make a [SPI+SPI] fear check with target number 6. On a failure, a PC gains the Shock: 4 status effect."
 		}
 	],
 	"Benedictions": [
@@ -63,12 +97,114 @@
 		},
 		{
 			"Name": "The Tale of Nostalgia",
-			"Description": "If the PCs roleplay having nostalgia for home, they can ignore all negative effects of mind-based status effects for the rest of the session; this affects up to two PCs at once if they meet the conditions."
+			"Description": "Up to two PCs who roleplay nostalgia for home can ignore all negative effects of mind-based status effects for the rest of the session."
 		},
 		{
 			"Name": "The Tale of the Traveler's Journal",
 			"Description": "At the end of the session, up to two PCs who write about their journey in a travel diary will receive their character level x 300 in gold."
+		},
+		{
+			"Name": "The Tale of Kindness",
+			"Description": "Up to two PCs who help others expecting no gain or reward can raise their spirit score by one level for the rest of the session."
+		},
+		{
+			"Name": "The Tale of Love",
+			"Description": "Up to two PCs who are in love gain 1 point of armor for the rest of the session."
+		},
+		{
+			"Name": "The Tale of the Heart",
+			"Description": "Hand out five chips to each player. A player can award a chip to another player who roleplays in a way that moves someone's heart. A player can exchange an awarded chip for a Fumble Point, which can be used immediately."
+		},
+		{
+			"Name": "The Tale of the Hero",
+			"Description": "Allows a mortally wounded PC to cheat death. If this is used when a PC would have died, all PCs' HP is immediately restored to full. (Can only be used once per session.)"
+		},
+		{
+			"Name": "The Tale of the Challenge",
+			"Description": "Each PC who has a rival or adversary can raise their STR by one die size for the rest of the session."
+		},
+		{
+			"Name": "The Tale of Revival",
+			"Description": "Any PC who who ends up with negative HP and then heals above 0 can raise one ability score by one step for the rest of the session. (Can only be used once per PC per session.)"
+		},
+		{
+			"Name": "The Tale of Revenge",
+			"Description": "Up to two PCs who act with hatred for the purpose of revenge gain a +1 bonus to any action for the rest of the session."
+		},
+		{
+			"Name": "The Tale of Guidance",
+			"Description": "A PC who cooperates with another PC can add a +1 bonus to their Condition for the rest of the session."
+		},
+		{
+			"Name": "The Tale of Slaughter",
+			"Description": "For the rest of the session, any PC who kills a creature or living thing large than 1 meter tall/long regains 2 MP."
+		},
+		{
+			"Name": "Fortune",
+			"Description": "Before the dice are rolled, make a skill check a critical success.",
+			"IsCommon": true
+		},
+		{
+			"Name": "Misfortune",
+			"Description": "Before the dice are rolled, make a skill check a fumble.",
+			"IsCommon": true
+		},
+		{
+			"Name": "Elite Enemy",
+			"Description": "Increase a monster's HP by (level x 3) and make it immune to all status effects (curing any status effects it currently has).",
+			"IsCommon": true
+		},
+		{
+			"Name": "Murder of Crows",
+			"Description": "Treat a group of creatures of the same type as a single enemy. For every 3 monsters in the mob, increase its Attack and Damage checks by +1 each.",
+			"IsCommon": true
+		},
+		{
+			"Name": "Surprise Attack",
+			"Description": "The PCs are automatically surprised in combat.",
+			"IsCommon": true
+		},
+		{
+			"Name": "We Meet Again",
+			"Description": "A single NPC who is supposed to have died returns, no longer dead.",
+			"IsCommon": true
+		},
+		{
+			"Name": "Run Away",
+			"Description": "A single NPC runs away from the PCs (no check is needed).",
+			"IsCommon": true
 		}
 	],
-	"Reveils": []
+	"Reveils": [
+		{
+			"Name": "Guidance of the Dragon",
+			"LPCost": 2,
+			"Description": "If the PCs are lost, change a failed Direction Check into a success."
+		},
+		{
+			"Name": "Berth of the Dragon",
+			"LPCost": 2,
+			"Description": "Change a failed Camping Check into a success."
+		},
+		{
+			"Name": "Gift of the Dragon",
+			"LPCost": 2,
+			"Description": "You give the party enough food to last them for 3 days of travel."
+		},
+		{
+			"Name": "Roar of the Dragon",
+			"LPCost": 1,
+			"Description": "All objects in combat which have been expended become usable once again."
+		},
+		{
+			"Name": "Protection of the Dragon",
+			"LPCost": 2,
+			"Description": "When one or more PCs is about to take damage, the Ryuujin jumps in and takes the damage instead, nullifying it."
+		},
+		{
+			"Name": "Fury of the Dragon",
+			"LPCost": 3,
+			"Description": "One enemy receives d6 + d6 damage which cannot be avoided or reduced. However, the dragon will not finish the enemy off; if the enemy would be reduced to 0 HP or lower, they instead end up at 1 HP."
+		}
+	]
 }

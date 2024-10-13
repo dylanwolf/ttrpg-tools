@@ -1,4 +1,3 @@
-// TODO: Self credits
 // TODO: Create content page style
 // TODO: Add acknowledgement for Elderberry Inn icons if used
 
@@ -13,7 +12,7 @@ export default function AboutPage() {
 					<a href="https://bootswatch.com/darkly/">Darkly Bootswatch theme</a>
 				</li>
 				<li>
-					Icons from <a href="https://fontawesome.com/">Font Awesome</a>,
+					Icons from <a href="https://fontawesome.com/">Font Awesome</a>,{" "}
 					<a href="https://game-icons.net/">Game-Icons.net</a>, and{" "}
 					<a href="https://uiball.com/ldrs/">LDRS</a>
 				</li>

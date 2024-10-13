@@ -79,8 +79,6 @@ registerBuilderModel(
 				(itm) => itm,
 				(itm) => itm,
 				(src, data, lst) => src.AdditionalSources,
-				(src, data) => undefined,
-				(src, data) => undefined,
 				(src, state, data) => (data.AdditionalSources = state.Values || [])
 			).withHelp(
 				"Allows you to use content from books other than the core rulebook."

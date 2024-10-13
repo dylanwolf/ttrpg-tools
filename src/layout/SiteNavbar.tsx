@@ -60,6 +60,13 @@ export function SiteNavbar() {
 									>
 										Create Ryuutama PC
 									</NavDropdown.Item>
+									<NavDropdown.Item
+										onClick={() =>
+											onClickCreateCharacterBuilderSession("ryuutama-ryuujin")
+										}
+									>
+										Create Ryuutama Ryuujin
+									</NavDropdown.Item>
 								</NavDropdown>
 								<NavDropdown title="GM Utilities" onClick={switchToTabView}>
 									<NavDropdown.Item onClick={onClickOpenJsonFile}>

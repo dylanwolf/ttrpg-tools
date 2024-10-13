@@ -2,7 +2,7 @@ export function getTextFieldValueFrom(
 	evt: React.ChangeEvent<any>
 ): string | undefined {
 	var value = evt.currentTarget.value;
-	return value.trim() ? value : undefined;
+	return value.trim()! ? value : undefined;
 }
 
 export function getNumericFieldValueFrom(

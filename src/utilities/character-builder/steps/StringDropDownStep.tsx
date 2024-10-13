@@ -2,10 +2,12 @@ import { SelectItem } from "../../../helpers/builderHelpers";
 import { getTextFieldValueFrom } from "../../../helpers/fieldHelpers";
 import { ICharacterData } from "../BuilderFactory";
 import { StepModel, StepState } from "../StepModel";
+import { BuilderMobileDescription } from "../components/BuilderMobileDescription";
 
 interface StringDropDownStepState extends StepState {
 	SelectList: SelectItem[];
 	Value: string | undefined;
+	MobileDescription?: string | undefined;
 }
 
 export class StringDropDownStep<
@@ -22,6 +24,8 @@ export class StringDropDownStep<
 		data: TData,
 		lst: string[]
 	) => string | undefined;
+	GetMobileDescription: ((item: TItem) => string | undefined) | undefined;
+	MobileDescriptionMarkdown?: boolean | undefined;
 
 	constructor(
 		name: string,
@@ -52,6 +56,15 @@ export class StringDropDownStep<
 		return "stringdropdown";
 	}
 
+	withMobileDescription(
+		getMobileDescription: ((item: TItem) => string | undefined) | undefined,
+		useMarkdown?: boolean | undefined
+	) {
+		this.GetMobileDescription = getMobileDescription;
+		this.MobileDescriptionMarkdown = useMarkdown;
+		return this;
+	}
+
 	initializeState(): StringDropDownStepState {
 		return {
 			IsCompleted: false,
@@ -75,7 +88,8 @@ export class StringDropDownStep<
 			this.clearState(newState);
 			newState.IsCompleted = true;
 		} else {
-			var selectList = this.GetSelectList(source, data).map((itm) => {
+			var selectListSource = this.GetSelectList(source, data);
+			var selectList = selectListSource.map((itm) => {
 				return {
 					Text: this.GetText(itm),
 					Value: this.GetValue(itm),
@@ -94,6 +108,14 @@ export class StringDropDownStep<
 					selectList.map((x) => x.Value)
 				);
 			}
+
+			newState.MobileDescription = this.GetMobileDescription
+				? this.GetMobileDescription(
+						selectListSource.filter(
+							(x) => this.GetValue(x) === newState.Value
+						)[0]
+				  )
+				: undefined;
 
 			newState.IsCompleted = newState.Value ? true : false;
 		}
@@ -124,6 +146,10 @@ export class StringDropDownStep<
 						))}
 					</select>
 				</label>
+				<BuilderMobileDescription
+					text={stepState.MobileDescription}
+					useMarkdown={this.MobileDescriptionMarkdown}
+				/>
 			</>
 		);
 	}

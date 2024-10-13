@@ -57,7 +57,11 @@ export class StringEntryStep<
 				newState.Value = this.GetDefaultValue(source, data);
 			}
 
-			newState.IsCompleted = newState.Value ? true : false;
+			newState.IsCompleted = this.IsRequired
+				? newState.Value
+					? true
+					: false
+				: true;
 		}
 	}
 	renderInternal(
@@ -67,7 +71,7 @@ export class StringEntryStep<
 		var index = this.Index;
 
 		function onChange(evt: React.ChangeEvent<HTMLInputElement>) {
-			triggerUpdate(index, { Value: getTextFieldValueFrom(evt) });
+			triggerUpdate(index, { Value: getTextFieldValueFrom(evt) || "" });
 		}
 
 		return (

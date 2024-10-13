@@ -18,8 +18,12 @@ export class ChecklistStringStep<
 	GetSelectList: (src: TSource, data: TData) => TItem[];
 	GetValue: (item: TItem) => string;
 	GetText: (item: TItem) => string;
-	GetMinimumSelectCount: (src: TSource, data: TData) => number | undefined;
-	GetMaximumSelectCount: (src: TSource, data: TData) => number | undefined;
+	GetMinimumSelectCount:
+		| ((src: TSource, data: TData) => number | undefined)
+		| undefined;
+	GetMaximumSelectCount:
+		| ((src: TSource, data: TData) => number | undefined)
+		| undefined;
 	GetDefaultValue: (
 		source: TSource,
 		data: TData,
@@ -36,8 +40,6 @@ export class ChecklistStringStep<
 			data: TData,
 			lst: string[]
 		) => string[] | undefined,
-		getMinimumSelectCount: (src: TSource, data: TData) => number | undefined,
-		getMaximumSelectCount: (src: TSource, data: TData) => number | undefined,
 		updateCharacter: (
 			source: TSource,
 			state: ChecklistStringStepState,
@@ -49,9 +51,21 @@ export class ChecklistStringStep<
 		this.GetSelectList = getSelectList;
 		this.GetValue = getValue;
 		this.GetText = getText;
-		this.GetMinimumSelectCount = getMinimumSelectCount;
-		this.GetMaximumSelectCount = getMaximumSelectCount;
 		this.GetDefaultValue = getDefaultValue;
+	}
+
+	requiresMinimumSelections(
+		getMinimumSelectCount: (src: TSource, data: TData) => number | undefined
+	) {
+		this.GetMinimumSelectCount = getMinimumSelectCount;
+		return this;
+	}
+
+	requiresMaximumSelections(
+		getMaximumSelectCount: (src: TSource, data: TData) => number | undefined
+	) {
+		this.GetMaximumSelectCount = getMaximumSelectCount;
+		return this;
 	}
 
 	controlTypeId(): string {
@@ -106,8 +120,12 @@ export class ChecklistStringStep<
 					selectListValues.includes(x)
 				);
 
-			newState.MinimumSelectCount = this.GetMinimumSelectCount(source, data);
-			newState.MaximumSelectCount = this.GetMaximumSelectCount(source, data);
+			newState.MinimumSelectCount = this.GetMinimumSelectCount
+				? this.GetMinimumSelectCount(source, data)
+				: undefined;
+			newState.MaximumSelectCount = this.GetMaximumSelectCount
+				? this.GetMaximumSelectCount(source, data)
+				: undefined;
 
 			newState.IsCompleted = this.IsRequired
 				? !newState.MinimumSelectCount ||

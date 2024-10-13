@@ -155,7 +155,7 @@ export class AssignPoolStep<
 
 		return (
 			<>
-				<div className="available">Available: {stepState.Remaining}</div>
+				<div className="available">Remaining: {stepState.Remaining}</div>
 				<div className="pools">
 					{stepState.Pools.map((p) => (
 						<div className="pool" key={`AssignPool-${this.Name}-${p.Name}`}>

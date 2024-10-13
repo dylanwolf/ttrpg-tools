@@ -187,8 +187,8 @@ export class StepRunner<TSource, TData extends ICharacterData> {
 			// Re-process steps that may be affected
 			if (idx >= startStep && idx <= endStep) {
 				step.updateState(source, newData, stepState);
-				console.debug(stepState);
-				console.debug(newData);
+				// console.debug(stepState);
+				// console.debug(newData);
 			}
 			step.UpdateCharacter(source, stepState, newData);
 

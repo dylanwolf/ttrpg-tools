@@ -1,3 +1,5 @@
+import { CharacterState } from "./builders/ryuutama-ryuujin/CharacterData";
+import { SourceData } from "./builders/ryuutama-ryuujin/SourceData";
 import { RootStepCollection } from "./StepModel";
 
 export interface ICharacterData {
