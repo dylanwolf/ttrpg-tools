@@ -261,7 +261,7 @@ function characterSheetRenderer(source: SourceData, data: CharacterState) {
 		<div className="character-sheet ryuutama-character-sheet">
 			<div className="character-name">{data.Title}</div>
 			<div className="blocks">
-				<div className="block level centered">
+				<div className="block level text-center">
 					<div className="title">Level</div>
 					<div className="content">{data.Level}</div>
 				</div>
@@ -327,43 +327,43 @@ function characterSheetRenderer(source: SourceData, data: CharacterState) {
 				)}
 			</div>
 			<div className="blocks stats">
-				<div className="block stat stat-str centered">
+				<div className="block stat stat-str text-center">
 					<div className="title">STR</div>
 					<div className="content">
 						{cs.AbilityScores.STR ? `d${cs.AbilityScores.STR}` : ""}
 					</div>
 				</div>
-				<div className="block stat stat-dex centered">
+				<div className="block stat stat-dex text-center">
 					<div className="title">DEX</div>
 					<div className="content">
 						{cs.AbilityScores.DEX ? `d${cs.AbilityScores.DEX}` : ""}
 					</div>
 				</div>
-				<div className="block stat stat-int centered">
+				<div className="block stat stat-int text-center">
 					<div className="title">INT</div>
 					<div className="content">
 						{cs.AbilityScores.INT ? `d${cs.AbilityScores.INT}` : ""}
 					</div>
 				</div>
-				<div className="block stat stat-spi centered">
+				<div className="block stat stat-spi text-center">
 					<div className="title">SPI</div>
 					<div className="content">
 						{cs.AbilityScores.SPI ? `d${cs.AbilityScores.SPI}` : ""}
 					</div>
 				</div>
-				<div className="block stat stat-hp centered">
+				<div className="block stat stat-hp text-center">
 					<div className="title">HP</div>
 					<div className="content">
 						{cs.Derived.HP ? cs.Derived.HP.toString() : ""}
 					</div>
 				</div>
-				<div className="block stat stat-mp centered">
+				<div className="block stat stat-mp text-center">
 					<div className="title">MP</div>
 					<div className="content">
 						{cs.Derived.MP ? cs.Derived.MP.toString() : ""}
 					</div>
 				</div>
-				<div className="block stat stat-carrying centered">
+				<div className="block stat stat-carrying text-center">
 					<div className="title">Carrying Capacity</div>
 					<div className="content">
 						{cs.AbilityScores.STR && cs.Derived.CarryingCapacity
@@ -457,14 +457,14 @@ function renderOtherBonuses(bonuses: { [stat: string]: string }) {
 				<thead>
 					<tr>
 						<th>Roll or Stat</th>
-						<th className="text-center">Bonus</th>
+						<th className="text-end">Bonus</th>
 					</tr>
 				</thead>
 				<tbody>
 					{keys.map((k) => (
 						<tr key={`Ryuutama-OtherBonus-${k}`}>
 							<td>{k}</td>
-							<td className="text-center">{bonuses[k]}</td>
+							<td className="text-end">{bonuses[k]}</td>
 						</tr>
 					))}
 				</tbody>

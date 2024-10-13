@@ -2,12 +2,17 @@ import { SelectItem } from "../../../helpers/builderHelpers";
 import { getTextFieldValueFrom } from "../../../helpers/fieldHelpers";
 import { ICharacterData } from "../BuilderFactory";
 import { StepModel, StepState } from "../StepModel";
-import { BuilderMobileDescription } from "../components/BuilderMobileDescription";
+import { BuilderDetailText } from "../components/BuilderDetailText";
 
 interface StringDropDownStepState extends StepState {
 	SelectList: SelectItem[];
 	Value: string | undefined;
-	MobileDescription?: string | undefined;
+	DetailText?: string | undefined;
+}
+
+interface DetailTextOptions {
+	OnlyShowOnMobile?: boolean | undefined;
+	UseMarkdown?: boolean | undefined;
 }
 
 export class StringDropDownStep<
@@ -24,8 +29,8 @@ export class StringDropDownStep<
 		data: TData,
 		lst: string[]
 	) => string | undefined;
-	GetMobileDescription: ((item: TItem) => string | undefined) | undefined;
-	MobileDescriptionMarkdown?: boolean | undefined;
+	GetDetailText: ((item: TItem) => string | undefined) | undefined;
+	DetailTextOptions?: DetailTextOptions | undefined;
 
 	constructor(
 		name: string,
@@ -56,12 +61,12 @@ export class StringDropDownStep<
 		return "stringdropdown";
 	}
 
-	withMobileDescription(
-		getMobileDescription: ((item: TItem) => string | undefined) | undefined,
-		useMarkdown?: boolean | undefined
+	withDetailText(
+		getDetailText: ((item: TItem) => string | undefined) | undefined,
+		opts?: DetailTextOptions | undefined
 	) {
-		this.GetMobileDescription = getMobileDescription;
-		this.MobileDescriptionMarkdown = useMarkdown;
+		this.GetDetailText = getDetailText;
+		this.DetailTextOptions = opts;
 		return this;
 	}
 
@@ -109,8 +114,8 @@ export class StringDropDownStep<
 				);
 			}
 
-			newState.MobileDescription = this.GetMobileDescription
-				? this.GetMobileDescription(
+			newState.DetailText = this.GetDetailText
+				? this.GetDetailText(
 						selectListSource.filter(
 							(x) => this.GetValue(x) === newState.Value
 						)[0]
@@ -146,9 +151,10 @@ export class StringDropDownStep<
 						))}
 					</select>
 				</label>
-				<BuilderMobileDescription
-					text={stepState.MobileDescription}
-					useMarkdown={this.MobileDescriptionMarkdown}
+				<BuilderDetailText
+					text={stepState.DetailText}
+					useMarkdown={this.DetailTextOptions?.UseMarkdown}
+					onlyOnMobile={this.DetailTextOptions?.OnlyShowOnMobile}
 				/>
 			</>
 		);

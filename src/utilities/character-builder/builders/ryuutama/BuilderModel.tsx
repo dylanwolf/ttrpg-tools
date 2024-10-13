@@ -105,9 +105,11 @@ registerBuilderModel(
 				(itm) => itm.Name,
 				(src, data, lst) => valueIfInList(data.CharacterTemplate, lst),
 				(src, state, newData) => (newData.CharacterTemplate = state.Value || "")
-			).withHelp(
-				"Determines what options for starting stat dice you have, and may grant additional abilities."
-			),
+			)
+				.withHelp(
+					"Determines what options for starting stat dice you have, and may grant additional abilities."
+				)
+				.withDetailText((itm) => itm.Description),
 			new StringDropDownStep<SourceData, CharacterState, StartingAbilityScore>(
 				"StartingAbilityScores",
 				"Starting Stat Dice",
@@ -124,7 +126,9 @@ registerBuilderModel(
 					valueIfInList(data.StartingAbilityScores, lst) || "",
 				(src, state, newData) =>
 					(newData.StartingAbilityScores = state.Value || "")
-			).withHelp("Determines the dice you get to assign to stats at level 1."),
+			)
+				.withHelp("Determines the dice you get to assign to stats at level 1.")
+				.withDetailText((itm) => itm.Description),
 			new AssignStatsStep<SourceData, CharacterState, StartingDice>(
 				"AssignAbilityScores",
 				"Assign Stat Dice",
@@ -177,9 +181,21 @@ registerBuilderModel(
 				(itm) => itm.Name,
 				(src, data, lst) => valueIfInList(data.Level1WeaponMastery, lst),
 				(src, state, data) => (data.Level1WeaponMastery = state.Value || "")
-			).withHelp(
-				"Determines your character's starting mastered weapon. You get this weapon for free, and you do not take HP penalties for attacking with it."
-			),
+			)
+				.withHelp(
+					"Determines your character's starting mastered weapon. You get this weapon for free, and you do not take HP penalties for attacking with it."
+				)
+				.withDetailText(
+					(itm) =>
+						[
+							itm.Description,
+							`Accuracy: ${itm.Accuracy}`,
+							`Damage: ${itm.Damage}`,
+						]
+							.filter((x) => x)
+							.join(" / "),
+					{ OnlyShowOnMobile: true }
+				),
 			new ContainerStep<SourceData, CharacterState>("Level1TypeContainer", "", [
 				new StringDropDownStep<SourceData, CharacterState, CharacterType>(
 					"Level1Type",
@@ -190,7 +206,7 @@ registerBuilderModel(
 					(src, data, lst) => valueIfInList(data.Level1Type, lst),
 					(src, state, data) => (data.Level1Type = state.Value || "")
 				),
-				new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
+				new StringDropDownStep<SourceData, CharacterState, Weapon>(
 					"Level1WeaponFocus",
 					"Weapon Focus",
 					(src, data) => isInSelectedSource(data, src.Weapons),
@@ -206,6 +222,17 @@ registerBuilderModel(
 					)
 					.withHelp(
 						"Gives you an extra mastered weapon. You do not take HP penalties for attacking with a mastered weapon."
+					)
+					.withDetailText(
+						(itm) =>
+							[
+								itm.Description,
+								`Accuracy: ${itm.Accuracy}`,
+								`Damage: ${itm.Damage}`,
+							]
+								.filter((x) => x)
+								.join(" / "),
+						{ OnlyShowOnMobile: true }
 					),
 				new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
 					"Level1SeasonalMagic",
@@ -239,7 +266,9 @@ registerBuilderModel(
 						(src, state, data) => {
 							data.Level1Class = state.Value || "";
 						}
-					),
+					).withDetailText((itm) => `Skills: ${itm.Skills.join(", ")}`, {
+						OnlyShowOnMobile: true,
+					}),
 					new StringDropDownStep<SourceData, CharacterState, CharacterSkill>(
 						"Level1SideJob",
 						"Side-Job",
@@ -268,16 +297,18 @@ registerBuilderModel(
 						.withHelp(
 							"Gain a Skill from another class. You take a -1 penalty to the associated roll (if there is one), which will be figured in on your character sheet."
 						),
-					new StringDropDownStep<SourceData, CharacterState, string>(
+					new StringDropDownStep<SourceData, CharacterState, Weapon>(
 						"Level1WeaponGrace",
 						"Weapon Grace",
 						(src, data) =>
-							getLevel1Skills(src, data)
-								.map((s) => s.ExtraMasteredWeapon || [])
-								.flat()
-								.distinct(),
-						(itm) => itm,
-						(itm) => itm,
+							src.Weapons.filter((w) =>
+								getLevel1Skills(src, data)
+									.map((s) => s.ExtraMasteredWeapon || [])
+									.flat()
+									.includes(w.Name)
+							),
+						(itm) => itm.Name,
+						(itm) => itm.Name,
 						(src, data, lst) => valueIfInList(data.Level1WeaponGrace, lst),
 						(src, state, data) => (data.Level1WeaponGrace = state.Value || "")
 					)
@@ -288,6 +319,17 @@ registerBuilderModel(
 						})
 						.withHelp(
 							"Gives you an extra mastered weapon. You do not take HP penalties for attacking with a mastered weapon."
+						)
+						.withDetailText(
+							(itm) =>
+								[
+									itm.Description,
+									`Accuracy: ${itm.Accuracy}`,
+									`Damage: ${itm.Damage}`,
+								]
+									.filter((x) => x)
+									.join(" / "),
+							{ OnlyShowOnMobile: true }
 						),
 					new StringDropDownStep<SourceData, CharacterState, string>(
 						"Level1Specialization",
@@ -353,7 +395,9 @@ registerBuilderModel(
 						(src, state, data) => {
 							data.Level5Class = state.Value || "";
 						}
-					),
+					).withDetailText((itm) => `Skills: ${itm.Skills.join(", ")}`, {
+						OnlyShowOnMobile: true,
+					}),
 					new StringDropDownStep<SourceData, CharacterState, CharacterSkill>(
 						"Level5SideJob",
 						"Side-Job",
@@ -382,16 +426,18 @@ registerBuilderModel(
 						.withHelp(
 							"Gain a Skill from another class. You take a -1 penalty to the associated roll (if there is one), which will be figured in on your character sheet."
 						),
-					new StringDropDownStep<SourceData, CharacterState, string>(
+					new StringDropDownStep<SourceData, CharacterState, Weapon>(
 						"Level5WeaponGrace",
 						"Weapon Grace",
 						(src, data) =>
-							getLevel5Skills(src, data)
-								.map((s) => s.ExtraMasteredWeapon || [])
-								.flat()
-								.distinct(),
-						(itm) => itm,
-						(itm) => itm,
+							src.Weapons.filter((w) =>
+								getLevel5Skills(src, data)
+									.map((s) => s.ExtraMasteredWeapon || [])
+									.flat()
+									.includes(w.Name)
+							),
+						(itm) => itm.Name,
+						(itm) => itm.Name,
 						(src, data, lst) => valueIfInList(data.Level5WeaponGrace, lst),
 						(src, state, data) => (data.Level5WeaponGrace = state.Value || "")
 					)
@@ -402,6 +448,17 @@ registerBuilderModel(
 						})
 						.withHelp(
 							"Gives you an extra mastered weapon. You do not take HP penalties for attacking with a mastered weapon."
+						)
+						.withDetailText(
+							(itm) =>
+								[
+									itm.Description,
+									`Accuracy: ${itm.Accuracy}`,
+									`Damage: ${itm.Damage}`,
+								]
+									.filter((x) => x)
+									.join(" / "),
+							{ OnlyShowOnMobile: true }
 						),
 					new StringDropDownStep<SourceData, CharacterState, string>(
 						"Level5Specialization",
@@ -436,7 +493,7 @@ registerBuilderModel(
 					(src, data, lst) => valueIfInList(data.Level6Type, lst),
 					(src, state, data) => (data.Level6Type = state.Value || "")
 				),
-				new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
+				new StringDropDownStep<SourceData, CharacterState, Weapon>(
 					"Level6WeaponFocus",
 					"Weapon Focus",
 					(src, data) => isInSelectedSource(data, src.Weapons),
@@ -452,6 +509,17 @@ registerBuilderModel(
 					)
 					.withHelp(
 						"Gives you an extra mastered weapon. You do not take HP penalties for attacking with a mastered weapon."
+					)
+					.withDetailText(
+						(itm) =>
+							[
+								itm.Description,
+								`Accuracy: ${itm.Accuracy}`,
+								`Damage: ${itm.Damage}`,
+							]
+								.filter((x) => x)
+								.join(" / "),
+						{ OnlyShowOnMobile: true }
 					),
 				new StringDropDownStep<SourceData, CharacterState, SeasonalMagic>(
 					"Level6SeasonalMagic",

@@ -45,6 +45,7 @@ export interface SourceData extends ICharacterBuilderSourceData {
 
 export interface CharacterTemplate extends IFromSource {
 	Name: string;
+	Description?: string | undefined;
 	DisplayValue: string | undefined | null;
 	StartingAbilityScoreFilter: string[];
 	Skills: string[];
@@ -52,6 +53,7 @@ export interface CharacterTemplate extends IFromSource {
 
 export interface StartingAbilityScore {
 	Name: string;
+	Description?: string | undefined;
 	Dice: StartingDice[];
 }
 

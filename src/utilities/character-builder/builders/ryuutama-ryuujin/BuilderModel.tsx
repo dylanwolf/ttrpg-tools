@@ -81,7 +81,7 @@ registerBuilderModel(
 				(itm) => itm.Name,
 				(src, data, lst) => valueIfInList(data.Level1Artefact, lst),
 				(src, state, newData) => (newData.Level1Artefact = state.Value)
-			).withMobileDescription((itm) => itm.Description),
+			).withDetailText((itm) => itm.Description, { OnlyShowOnMobile: true }),
 			new StringDropDownStep<SourceData, CharacterState, Benediction>(
 				"Level2Benediction",
 				"Level 2 Benediction",
@@ -97,7 +97,7 @@ registerBuilderModel(
 				(src, state, newData) => (newData.Level2Benediction = state.Value)
 			)
 				.onlyShowWhen((src, data) => data.Level >= 2)
-				.withMobileDescription((itm) => itm.Description),
+				.withDetailText((itm) => itm.Description, { OnlyShowOnMobile: true }),
 			new StringDropDownStep<SourceData, CharacterState, Benediction>(
 				"Level3Benediction",
 				"Level 3 Benediction",
@@ -115,7 +115,7 @@ registerBuilderModel(
 				.withHelp(
 					"At level 3, the Ryuujin may select one Diverse Benediction, which can be from any list."
 				)
-				.withMobileDescription((itm) => itm.Description),
+				.withDetailText((itm) => itm.Description, { OnlyShowOnMobile: true }),
 			new StringDropDownStep<SourceData, CharacterState, Benediction>(
 				"Level4Benediction",
 				"Level 4 Benediction",
@@ -133,7 +133,7 @@ registerBuilderModel(
 				(src, state, newData) => (newData.Level2Benediction = state.Value)
 			)
 				.onlyShowWhen((src, data) => data.Level >= 4)
-				.withMobileDescription((itm) => itm.Description),
+				.withDetailText((itm) => itm.Description, { OnlyShowOnMobile: true }),
 			new StringDropDownStep<SourceData, CharacterState, Artefact>(
 				"Level4Artefact",
 				"Level 4 Artefact Gift",
@@ -154,7 +154,7 @@ registerBuilderModel(
 				.withHelp(
 					"The Ryuujin's Artefact Gift comes from another Ryuujin type's artefact list."
 				)
-				.withMobileDescription((itm) => itm.Description),
+				.withDetailText((itm) => itm.Description, { OnlyShowOnMobile: true }),
 			new StringDropDownStep<SourceData, CharacterState, Benediction>(
 				"Level5Benediction",
 				"Level 5 Benediction",
@@ -172,7 +172,7 @@ registerBuilderModel(
 				(src, state, newData) => (newData.Level5Benediction = state.Value)
 			)
 				.onlyShowWhen((src, data) => data.Level >= 5)
-				.withMobileDescription((itm) => itm.Description),
+				.withDetailText((itm) => itm.Description, { OnlyShowOnMobile: true }),
 			new RyuujinReveilSelectorStep("Reveils"),
 		],
 		() => {

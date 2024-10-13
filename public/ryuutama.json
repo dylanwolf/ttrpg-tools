@@ -5,11 +5,13 @@
 	"CharacterTemplates": [
 		{
 			"Name": "Human / Humanoid",
+			"Description": "A standard Ryuutama character.",
 			"DisplayValue": null,
 			"StartingAbilityScoreFilter": ["Average", "Standard", "Specialized"]
 		},
 		{
 			"Name": "Koneko Goblin",
+			"Description": "A cat-like goblin. This grants you extra abilities but restricts your starting ability scores.",
 			"DisplayValue": "Koneko Goblin",
 			"DataSource": "Holiday 2015 Package",
 			"StartingAbilityScoreFilter": ["Koneko Goblin"],
@@ -23,14 +25,17 @@
 	"StartingAbilityScores": [
 		{
 			"Name": "Average",
+			"Description": "d6, d6, d6, d6",
 			"Dice": [{ "Value": 6 }, { "Value": 6 }, { "Value": 6 }, { "Value": 6 }]
 		},
 		{
 			"Name": "Standard",
+			"Description": "d4, d6, d6, d8",
 			"Dice": [{ "Value": 4 }, { "Value": 6 }, { "Value": 6 }, { "Value": 8 }]
 		},
 		{
 			"Name": "Specialized",
+			"Description": "d4, d4, d8, d8",
 			"Dice": [{ "Value": 4 }, { "Value": 4 }, { "Value": 8 }, { "Value": 8 }]
 		},
 		{
@@ -46,12 +51,10 @@
 	"Classes": [
 		{
 			"Name": "Minstrel",
-			"Description": "*A traveler among travelers, who roams from town to town performing songs or dances. The Minstrel has a wide array of skills that can help the party in a variety of situations*",
 			"Skills": ["Well-Traveled", "Knowledge of Tradition", "Music"]
 		},
 		{
 			"Name": "Merchant",
-			"Description": "*A traveling tradesman who exchanges goods from various locales for gold and jewels. The Merchant has skills that allow them to buy goods cheaply and sell them for a higher price. They are also good at negotiations using conversational skills.*",
 			"Skills": ["Well-Spoken", "Animal Owner", "Trader"]
 		},
 		{
@@ -64,7 +67,6 @@
 		},
 		{
 			"Name": "Farmer",
-			"Description": "*A worker who lives in harmony with the bounty of nature. In order to reap their harvest, they must set their hand to a number of different tasks, giving them practice with a single skill from another class.*",
 			"Skills": ["Robust", "Animal Owner", "Side-Job"]
 		},
 		{
