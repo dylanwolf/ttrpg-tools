@@ -1,7 +1,8 @@
 export function getTextFieldValueFrom(
 	evt: React.ChangeEvent<any>
 ): string | undefined {
-	return evt.currentTarget.value?.trim() || undefined;
+	var value = evt.currentTarget.value;
+	return value.trim() ? value : undefined;
 }
 
 export function getNumericFieldValueFrom(
