@@ -1,3 +1,4 @@
+import { createTabSessionForUtility, UtilityKey } from "../utilities";
 import { createCharacterBuilderSession } from "../utilities/character-builder/BuilderTabSessions";
 
 export default function BlankTab() {
@@ -12,7 +13,6 @@ export default function BlankTab() {
 			<h2>Get Started</h2>
 			<ul>
 				<li>
-					{" "}
 					<a
 						href="#"
 						onClick={(e) => onClickCreateCharacterBuilder("ryuutama", e)}
@@ -21,7 +21,6 @@ export default function BlankTab() {
 					</a>
 				</li>
 				<li>
-					{" "}
 					<a
 						href="#"
 						onClick={(e) =>
@@ -29,6 +28,16 @@ export default function BlankTab() {
 						}
 					>
 						Create a Ryuutama Ryuujin (GM character)
+					</a>
+				</li>
+				<li>
+					<a
+						href="#"
+						onClick={(e) =>
+							createTabSessionForUtility(UtilityKey.ENCOUNTER_BUILDER_5E)
+						}
+					>
+						Create a 5E Encounter
 					</a>
 				</li>
 			</ul>

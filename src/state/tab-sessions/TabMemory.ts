@@ -4,8 +4,6 @@ import {
 	createTabSessionForUtility,
 	UtilityKey,
 } from "../../utilities";
-import { store } from "../AppStateStorage";
-import { TabSessionStateCollection } from "./TabSessionSlice";
 
 export interface TabMemory {
 	Tabs: TabSavedState[];
@@ -57,3 +55,18 @@ export function saveTabMemory(sessions: any) {
 		});
 	}
 }
+
+export const tabSessionStorageMiddleware =
+	(store: any) => (next: any) => (action: any) => {
+		let result = next(action);
+		if (
+			[
+				"TabSessions/createTabSession",
+				"TabSessions/updateTabSession",
+				"TabSessions/closeTabSession",
+			].includes(action.type)
+		) {
+			saveTabMemory(store.getState()?.tabSessions?.Sessions);
+		}
+		return result;
+	};

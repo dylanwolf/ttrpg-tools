@@ -1,13 +1,8 @@
 import { getNewSessionId } from "../../helpers/sessionHelpers";
 import { store, AppDispatch, RootState } from "../../state/AppStateStorage";
+import { getBuilderModel, ICharacterData } from "./BuilderFactory";
 import {
-	getBuilderModel,
-	getBuilderSource,
-	ICharacterData,
-} from "./BuilderFactory";
-import {
-	beginLoadingSourceData,
-	finishLoadingSourceData,
+	getBuilderSourceData,
 	ICharacterBuilderSourceData,
 } from "./BuilderSourceSlice";
 import { RootStepCollection, RootStepCollectionState } from "./StepModel";
@@ -140,43 +135,35 @@ const createCharacterBuilderStateInternal =
 	) =>
 	async (dispatch: AppDispatch, getState: () => RootState) => {
 		var state = getState();
-		var wasCreated = false;
 
 		// Create a tab session if one doesn't already exist
 		if (!state.tabSessions.Sessions[sessionKey]) {
-			wasCreated = true;
 			dispatch(
 				createTabSession({
 					SessionKey: sessionKey,
 					IsBusy: true,
 					TabType: UtilityKey.CHARACTER_BUILDER,
-					Title: "Loading...",
+					Title: `Loading... (${builderKey})`,
 					Content: undefined,
+					SelectTab: autoSelect,
 				})
 			);
 		}
 
+		await import(`./builders/${builderKey}/index.ts`);
+
 		// Load builder source data if not already loaded
-		var builderData: TSource;
-		var builderDataState = state.builderSources.Sources[builderKey];
-		if (!builderDataState?.Data && !builderDataState?.IsLoading) {
-			dispatch(beginLoadingSourceData(builderKey));
-			builderData = await getBuilderSource<TSource>(builderKey);
-			dispatch(finishLoadingSourceData({ Key: builderKey, Data: builderData }));
-		} else {
-			builderData = state.builderSources.Sources[builderKey].Data;
-		}
+		var builderData: TSource = await getBuilderSourceData(builderKey);
+		if (builderData) {
+			// Create builder model data
+			var model = getBuilderModel<any, any>(builderKey);
 
-		// Create builder model data
-		var model = getBuilderModel<TSource, TData>(builderKey);
-
-		if (wasCreated) {
 			var initialStepState = model.initializeRootState(sessionKey);
-			var initialCharacterData = initialData || model.GetInitialCharacterData();
+			if (!initialData) initialData = model.GetInitialCharacterData();
 
-			var initialBuilderState: CharacterBuilderSessionState<TData> = {
-				BuilderKey: builderKey,
-				Character: initialCharacterData,
+			var initialBuilderState: CharacterBuilderSessionState<any> = {
+				BuilderKey: model.BuilderKey,
+				Character: initialData,
 				StepState: initialStepState,
 			};
 
@@ -184,7 +171,7 @@ const createCharacterBuilderStateInternal =
 			dispatch(
 				updateTabSession({
 					SessionKey: sessionKey,
-					Title: `${initialCharacterData.Title} (${builderData.__NAME__})`,
+					Title: `${initialData?.Title} (${model.BuilderKey})`,
 					IsBusy: false,
 					Content: initialBuilderState,
 				})
@@ -192,12 +179,7 @@ const createCharacterBuilderStateInternal =
 
 			var updateObj = mergeCharacterBuilderUpdates(
 				initialBuilderState,
-				model.onRootStepUpdated(
-					builderData,
-					initialCharacterData,
-					initialStepState,
-					-1
-				)
+				model.onRootStepUpdated(builderData, initialData, initialStepState, -1)
 			);
 
 			dispatch(
@@ -205,7 +187,6 @@ const createCharacterBuilderStateInternal =
 					SessionKey: sessionKey,
 					Title: `${updateObj.Character.Title} (${builderData.__NAME__})`,
 					Content: updateObj,
-					SelectTab: autoSelect,
 				})
 			);
 		}
@@ -223,14 +204,12 @@ export async function createCharacterBuilderSession(
 		});
 	}
 
-	return import(`./builders/${builderKey}/index.ts`)
-		.then(() =>
-			createCharacterBuilderSessionInternal(builderKey, true, initialData)
-		)
-		.catch((ex) => {
-			throw {
-				Title: "Error loading character builder data",
-				Message: `${ex}`,
-			};
-		});
+	try {
+		await createCharacterBuilderSessionInternal(builderKey, true, initialData);
+	} catch (ex) {
+		throw {
+			Title: "Error loading character builder data",
+			Message: `${ex}`,
+		};
+	}
 }

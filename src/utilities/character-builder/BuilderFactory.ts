@@ -1,3 +1,4 @@
+import { getNewSessionId } from "../../helpers/sessionHelpers";
 import { CharacterState } from "./builders/ryuutama-ryuujin/CharacterData";
 import { SourceData } from "./builders/ryuutama-ryuujin/SourceData";
 import { RootStepCollection } from "./StepModel";
@@ -33,10 +34,13 @@ export function getBuilderModel<TSource, TData extends ICharacterData>(
 	return MODELS[key] as RootStepCollection<TSource, TData>;
 }
 
-export async function getBuilderSource<TSource>(key: string) {
+export async function fetchBuilderSource<TSource>(key: string) {
+	// random ?v= parameter prevents caching
 	console.debug(`getBuilderData(${key})`);
 	if (!SOURCES[key]) {
-		SOURCES[key] = (await (await fetch(`/${key}.json`))?.json()) as TSource;
+		SOURCES[key] = (await (
+			await fetch(`/${key}.json?v=${getNewSessionId()}`)
+		)?.json()) as TSource;
 	}
 	return SOURCES[key];
 }

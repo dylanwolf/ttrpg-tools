@@ -8,11 +8,17 @@ import { BusyIcon } from "../components/BusyIcon";
 import { openMessageWindow } from "../state/modal-ui/ModalUI";
 import { DOMAIN_NAME } from "./BrowserUtils";
 import { createTabSessionForUtility, UtilityKey } from "../utilities";
+import { useAppSelector } from "../state/AppStateStorage";
+import { tabSessionSelector } from "../state/tab-sessions/TabSessions";
 
 export function SiteNavbar() {
 	const openJsonFileRef = useRef(null);
 	const [isBusy, setIsBusy] = useState(false);
 	const navigate = useNavigate();
+	const tabs = useAppSelector(tabSessionSelector());
+
+	const combinedIsBusy =
+		isBusy || Object.values(tabs?.Sessions).any((x) => x.IsBusy);
 
 	function switchToTabView() {
 		navigate("/");
@@ -42,8 +48,8 @@ export function SiteNavbar() {
 				<Navbar.Toggle aria-controls="toplevel-navbar"></Navbar.Toggle>
 				<Navbar.Collapse id="toplevel-navbar">
 					<Nav activeKey={window.location.pathname}>
-						{isBusy ? <BusyIcon /> : <></>}
-						{!isBusy ? (
+						{combinedIsBusy ? <BusyIcon /> : <></>}
+						{!combinedIsBusy ? (
 							<>
 								<NavDropdown
 									title="Character Builder"

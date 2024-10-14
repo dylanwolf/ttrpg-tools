@@ -16,6 +16,10 @@ export default function AboutPage() {
 					<a href="https://game-icons.net/">Game-Icons.net</a>, and{" "}
 					<a href="https://uiball.com/ldrs/">LDRS</a>
 				</li>
+				<li>
+					Fonts from Google Fonts (
+					<a href="https://fonts.google.com/specimen/Caveat">Caveat</a>)
+				</li>
 			</ul>
 		</div>
 	);

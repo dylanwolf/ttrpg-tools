@@ -4,7 +4,7 @@ import {
 	updateEncounterState,
 } from "./Data";
 import { getNewSessionId } from "../../helpers/sessionHelpers";
-import { RootState, store } from "../../state/AppStateStorage";
+import { AppDispatch, RootState, store } from "../../state/AppStateStorage";
 import {
 	createTabSession,
 	TabSessionState,
@@ -20,20 +20,35 @@ export function createEncounterBuilder5eSession(
 	data?: EncounterBuilder5eData | undefined
 ) {
 	const sessionKey = getNewSessionId();
-	var initialData = data || getInitialState();
-	updateEncounterState(initialData);
-
-	store.dispatch(
-		createTabSession({
-			SessionKey: sessionKey,
-			Title: `${initialData.Title} (5e Encounter)`,
-			TabType: "encounter-builder-5e",
-			IsBusy: false,
-			SelectTab: true,
-			Content: initialData,
-		})
-	);
+	store.dispatch(createEncounterBuilder5eSessionInternal(sessionKey, data));
 }
+
+const createEncounterBuilder5eSessionInternal =
+	(sessionKey: string, initialData: EncounterBuilder5eData | undefined) =>
+	async (dispatch: AppDispatch, getState: () => RootState) => {
+		dispatch(
+			createTabSession({
+				SessionKey: sessionKey,
+				Title: "Loading... (5e Encounter)",
+				TabType: "encounter-builder-5e",
+				IsBusy: true,
+				SelectTab: true,
+				Content: undefined,
+			})
+		);
+
+		if (!initialData) initialData = getInitialState();
+		updateEncounterState(initialData);
+
+		dispatch(
+			updateTabSession({
+				SessionKey: sessionKey,
+				Title: `${initialData.Title} (5e Encounter)`,
+				IsBusy: false,
+				Content: initialData,
+			})
+		);
+	};
 
 export function updateEncounterBuilder5eSession(
 	sessionKey: string,

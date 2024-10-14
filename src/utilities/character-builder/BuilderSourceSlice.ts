@@ -1,4 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { store } from "../../state/AppStateStorage";
+import { fetchBuilderSource } from "./BuilderFactory";
+import { setTimeoutAsync } from "../../helpers/setTimeoutHelper";
 
 export interface ICharacterBuilderSourceData {
 	__NAME__: string;
@@ -45,8 +48,53 @@ export const characterBuilderSourceData = createSlice({
 			state.Sources[action.payload.Key].Data = action.payload.Data;
 			state.Sources[action.payload.Key].IsLoading = false;
 		},
+		removeSourceData(state, action: PayloadAction<string>) {
+			delete state.Sources[action.payload];
+		},
 	},
 });
+
+const BUILDER_DATA_POLL_MS = 500;
+const BUILDER_DATA_POLL_COUNT = 5;
+
+export async function getBuilderSourceData(builderKey: string) {
+	var sourceData = store.getState().builderSources.Sources[builderKey];
+
+	if (!sourceData) {
+		store.dispatch(beginLoadingSourceData(builderKey));
+		try {
+			var builderData = await fetchBuilderSource<any>(builderKey);
+		} catch (ex) {
+			store.dispatch(
+				characterBuilderSourceData.actions.removeSourceData(builderKey)
+			);
+			throw ex;
+		}
+		store.dispatch(
+			finishLoadingSourceData({ Key: builderKey, Data: builderData })
+		);
+		return builderData;
+	} else if (sourceData.IsLoading) {
+		var count = BUILDER_DATA_POLL_COUNT;
+
+		while (count > 0) {
+			await setTimeoutAsync(BUILDER_DATA_POLL_MS);
+			sourceData = store.getState().builderSources.Sources[builderKey];
+
+			if (!sourceData) return getBuilderSourceData(builderKey);
+			else if (!sourceData.IsLoading) return sourceData.Data;
+
+			count--;
+		}
+
+		store.dispatch(
+			characterBuilderSourceData.actions.removeSourceData(builderKey)
+		);
+		return getBuilderSourceData(builderKey);
+	} else if (!sourceData.IsLoading) {
+		return sourceData.Data;
+	}
+}
 
 export const { beginLoadingSourceData, finishLoadingSourceData } =
 	characterBuilderSourceData.actions;

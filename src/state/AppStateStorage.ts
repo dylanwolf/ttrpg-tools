@@ -3,26 +3,11 @@ import builderSourceReducer from "../utilities/character-builder/BuilderSourceSl
 import modalUiReducer from "./modal-ui/ModalUISlice";
 import tabSessionReducer from "./tab-sessions/TabSessionSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { saveTabMemory } from "./tab-sessions/TabMemory";
+import { tabSessionStorageMiddleware } from "./tab-sessions/TabMemory";
 
 /* ----------------------------------------------------------------------
 Redux data store
 ---------------------------------------------------------------------- */
-
-const tabSessionStorage = (store: any) => (next: any) => (action: any) => {
-	let result = next(action);
-	if (
-		[
-			"TabSessions/createTabSession",
-			"TabSessions/updateTabSession",
-			"TabSessions/closeTabSession",
-		].includes(action.type)
-	) {
-		console.log("saving tab memory");
-		saveTabMemory(store.getState()?.tabSessions?.Sessions);
-	}
-	return result;
-};
 
 export const store = configureStore({
 	reducer: {
@@ -31,7 +16,7 @@ export const store = configureStore({
 		modalUI: modalUiReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
-		getDefaultMiddleware().concat(tabSessionStorage),
+		getDefaultMiddleware().concat([tabSessionStorageMiddleware]),
 });
 
 export type AppStateStorage = typeof store;
