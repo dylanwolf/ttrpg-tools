@@ -1,6 +1,6 @@
 import { Provider } from "react-redux";
 import React from "react";
-import { store } from "./state/AppStore";
+import { store } from "./state/AppStateStorage";
 import { SiteLayoutFrame } from "./layout/SiteLayoutFrame";
 import "bootswatch/dist/darkly/bootstrap.min.css";
 import "./App.scss";
@@ -8,6 +8,7 @@ import { Outlet } from "react-router";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { LoadingPage } from "./pages/LoadingPage";
 import { registerArrayHelpers } from "./helpers/arrayHelpers";
+import { loadTabMemory, saveTabMemory } from "./state/tab-sessions/TabMemory";
 
 //(window as any).__DEBUG__ = true;
 
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
 		],
 	},
 ]);
+
+document.addEventListener("readystatechange", function () {
+	if (document.readyState === "complete") loadTabMemory();
+});
 
 function App() {
 	return (

@@ -1,5 +1,5 @@
-import { UtilityKey } from "..";
-import { downloadAsLoadableJson } from "../../helpers/JsonFileUtils";
+import { createTabSavedState, UtilityKey } from "..";
+import { downloadAsJson } from "../../helpers/JsonFileUtils";
 import { clamp, isNumeric } from "../../helpers/mathHelpers";
 
 type EncounterDifficulty = "Easy" | "Medium" | "Hard" | "Deadly";
@@ -18,10 +18,9 @@ export interface EncounterBuilder5eData {
 }
 
 export function downloadEncounterBuilder5eJson(state: EncounterBuilder5eData) {
-	downloadAsLoadableJson(
-		UtilityKey.ENCOUNTER_BUILDER_5E,
-		state,
-		`${state.Title || "Encounter"}-Encounter5e.json`
+	downloadAsJson(
+		`${state.Title || "Encounter"}-Encounter5e.json`,
+		createTabSavedState(UtilityKey.ENCOUNTER_BUILDER_5E, state)
 	);
 }
 

@@ -1,18 +1,14 @@
-import { downloadAsLoadableJson } from "../../helpers/JsonFileUtils";
 import { CharacterBuilderState } from "./BuilderTabSessions";
-import { UtilityKey } from "..";
+import { createTabSavedState, UtilityKey } from "..";
+import { downloadAsJson } from "../../helpers/JsonFileUtils";
 
 export function downloadCharacterBuilderJson(
 	state: CharacterBuilderState<any, any> | undefined
 ) {
 	if (state) {
-		downloadAsLoadableJson(
-			UtilityKey.CHARACTER_BUILDER,
-			{
-				BuilderKey: state.Model.BuilderKey,
-				CharacterData: state.Character,
-			},
-			`${state.Character.Title}-${state.Model.BuilderKey}.json`
+		downloadAsJson(
+			`${state.Character.Title}-${state.Model.BuilderKey}.json`,
+			createTabSavedState(UtilityKey.CHARACTER_BUILDER, state)
 		);
 	}
 }

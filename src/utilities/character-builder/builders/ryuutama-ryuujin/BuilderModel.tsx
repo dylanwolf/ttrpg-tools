@@ -130,7 +130,7 @@ registerBuilderModel(
 				(itm) => itm.Name,
 				(itm) => itm.Name,
 				(src, data, lst) => valueIfInList(data.Level4Benediction, lst),
-				(src, state, newData) => (newData.Level2Benediction = state.Value)
+				(src, state, newData) => (newData.Level4Benediction = state.Value)
 			)
 				.onlyShowWhen((src, data) => data.Level >= 4)
 				.withDetailText((itm) => itm.Description, { OnlyShowOnMobile: true }),

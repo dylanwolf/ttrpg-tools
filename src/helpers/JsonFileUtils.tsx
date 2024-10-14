@@ -3,7 +3,9 @@ import { createCharacterBuilderSession } from "../utilities/character-builder/Bu
 import { MessageWindowArgs } from "../state/modal-ui/ModalUISlice";
 import { createTabSessionForUtility, UtilityKey } from "../utilities";
 
-function downloadAsJson(filename: string, output: any) {
+export function downloadAsJson(filename: string, output: any) {
+	if (!output) return;
+
 	const json = JSON.stringify(output, null, 2);
 	const blob = new Blob([json], { type: "application/json " });
 	const href = URL.createObjectURL(blob);
@@ -18,26 +20,14 @@ function downloadAsJson(filename: string, output: any) {
 	URL.revokeObjectURL(href);
 }
 
-export function downloadAsLoadableJson(
-	utilityKey: UtilityKey,
-	data: any,
-	filename: string
-) {
-	const output = {
-		Utility: utilityKey,
-		Data: data,
-	};
-	downloadAsJson(filename, output);
-}
-
-export interface JsonFileResult {
+export interface TabSavedState {
 	Utility: UtilityKey;
 	Data: any;
 }
 
 export interface JsonFileLoaderProps {
 	onLoadStarted?: (() => void) | undefined;
-	onLoadCompleted?: ((obj: JsonFileResult) => void) | undefined;
+	onLoadCompleted?: ((obj: TabSavedState) => void) | undefined;
 	onError?: ((ex: MessageWindowArgs) => void) | undefined;
 }
 
@@ -61,7 +51,7 @@ export class JsonFileLoader extends React.Component<JsonFileLoaderProps> {
 		if (this.props.onLoadStarted) this.props.onLoadStarted();
 	}
 
-	triggerOnLoadCompleted(fileContent: JsonFileResult) {
+	triggerOnLoadCompleted(fileContent: TabSavedState) {
 		if (this.props.onLoadCompleted) this.props.onLoadCompleted(fileContent);
 	}
 
@@ -70,36 +60,7 @@ export class JsonFileLoader extends React.Component<JsonFileLoaderProps> {
 		if (this.props.onError) this.props.onError(ex);
 	}
 
-	loadCharacterBuilder(fileContent: JsonFileResult) {
-		const data = fileContent.Data;
-		if (data.BuilderKey && data.CharacterData) {
-			createCharacterBuilderSession(data.BuilderKey, data.CharacterData)
-				.then(() => this.triggerOnLoadCompleted(fileContent))
-				.catch((ex) =>
-					this.triggerOnError({
-						Title: "Error loading JSON file",
-						Message: `The following error occurred loading the file. It may not be a JSON file or a file associated with this app.\n\n${ex}`,
-					})
-				);
-		}
-	}
-
-	// loadEncounterBuilder5e(fileContent: JsonFileResult) {
-	// 	const data = fileContent.Data;
-	// 	if (data) {
-	// 		try {
-	// 			createEncounterBuilder5eSession(data);
-	// 			this.triggerOnLoadCompleted(fileContent);
-	// 		} catch (ex) {
-	// 			this.triggerOnError({
-	// 				Title: "Error loading JSON file",
-	// 				Message: `The following error occurred loading the file. It may not be a JSON file or a file associated with this app.\n\n${ex}`,
-	// 			});
-	// 		}
-	// 	}
-	// }
-
-	handleFileLoad(fileContent: JsonFileResult) {
+	handleFileLoad(fileContent: TabSavedState) {
 		if (fileContent.Utility && fileContent.Data) {
 			createTabSessionForUtility(fileContent.Utility, fileContent.Data)
 				.then(() => this.triggerOnLoadCompleted(fileContent))
@@ -116,7 +77,7 @@ export class JsonFileLoader extends React.Component<JsonFileLoaderProps> {
 		if (evt.target && evt.target.result) {
 			const json = evt.target.result as string;
 			try {
-				const obj = JSON.parse(json) as JsonFileResult;
+				const obj = JSON.parse(json) as TabSavedState;
 				if (obj) this.handleFileLoad(obj);
 			} catch (ex) {
 				this.triggerOnError({

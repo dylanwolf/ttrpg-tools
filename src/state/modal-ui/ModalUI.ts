@@ -1,4 +1,4 @@
-import { RootState, store } from "../AppStore";
+import { RootState, store } from "../AppStateStorage";
 import {
 	closeModalWindow as closeModalWindowInternal,
 	showModalMessageWindow as openMessageWindowInternal,

@@ -4,7 +4,7 @@ import {
 	updateEncounterState,
 } from "./Data";
 import { getNewSessionId } from "../../helpers/sessionHelpers";
-import { RootState, store } from "../../state/AppStore";
+import { RootState, store } from "../../state/AppStateStorage";
 import {
 	createTabSession,
 	TabSessionState,

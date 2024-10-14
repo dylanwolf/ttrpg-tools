@@ -1,5 +1,5 @@
 import { setBrowserTitle } from "../../layout/BrowserUtils";
-import { useAppSelector } from "../../state/AppStore";
+import { useAppSelector } from "../../state/AppStateStorage";
 import {
 	closeTabSession,
 	setCurrentTabSession,

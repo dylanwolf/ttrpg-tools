@@ -5,7 +5,7 @@ import {
 	getTextFieldValueFrom,
 	toNumericFieldValue,
 } from "../../helpers/fieldHelpers";
-import { useAppSelector } from "../../state/AppStore";
+import { useAppSelector } from "../../state/AppStateStorage";
 import {
 	encounterBuilder5eSessionSelector,
 	updateEncounterBuilder5eSession,

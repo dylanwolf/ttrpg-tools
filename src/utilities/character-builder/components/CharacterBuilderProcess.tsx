@@ -8,7 +8,7 @@ import {
 	characterBuilderSessionSelector,
 	updateCharacterBuilderSession,
 } from "..//BuilderTabSessions";
-import { useAppSelector } from "../../../state/AppStore";
+import { useAppSelector } from "../../../state/AppStateStorage";
 
 export interface CharacterBuilderProcessProps {
 	sessionKey: string;

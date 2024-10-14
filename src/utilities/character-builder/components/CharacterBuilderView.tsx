@@ -1,5 +1,5 @@
 import { CharacterBuilderProcess } from "./CharacterBuilderProcess";
-import { useAppSelector } from "../../../state/AppStore";
+import { useAppSelector } from "../../../state/AppStateStorage";
 import "./CharacterBuilderView.css";
 import { DumpObject } from "../../../components/DumpObject";
 import { characterBuilderSessionSelector } from "../BuilderTabSessions";

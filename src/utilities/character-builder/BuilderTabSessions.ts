@@ -1,5 +1,5 @@
 import { getNewSessionId } from "../../helpers/sessionHelpers";
-import { store, AppDispatch, RootState } from "../../state/AppStore";
+import { store, AppDispatch, RootState } from "../../state/AppStateStorage";
 import {
 	getBuilderModel,
 	getBuilderSource,
