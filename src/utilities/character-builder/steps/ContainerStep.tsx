@@ -7,9 +7,7 @@ import {
 import { mergeStateWithUpdates } from "../../../helpers/builderHelpers";
 import { ICharacterData } from "../BuilderFactory";
 
-interface ContainerStepState extends StepState, StepRunnerState {
-	//StepUpdated: number | undefined;
-}
+export interface ContainerStepState extends StepState, StepRunnerState {}
 
 export class ContainerStep<
 	TSource,
@@ -80,7 +78,6 @@ export class ContainerStep<
 
 		function triggerChildUpdate(index: number, stepUpdates: any) {
 			triggerUpdate(parentIndex, {
-				StepUpdated: index,
 				Steps: stepState.Steps.map((s, idx) =>
 					mergeStateWithUpdates(s, (idx === index && stepUpdates) || undefined)
 				),

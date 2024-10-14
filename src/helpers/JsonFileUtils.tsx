@@ -3,7 +3,7 @@ import { createCharacterBuilderSession } from "../utilities/character-builder/Bu
 import { MessageWindowArgs } from "../state/modal-ui/ModalUISlice";
 import { createTabSessionForUtility, UtilityKey } from "../utilities";
 
-export function downloadAsJson(filename: string, output: any) {
+function downloadAsJson(filename: string, output: any) {
 	const json = JSON.stringify(output, null, 2);
 	const blob = new Blob([json], { type: "application/json " });
 	const href = URL.createObjectURL(blob);
