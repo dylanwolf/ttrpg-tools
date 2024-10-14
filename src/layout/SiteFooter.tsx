@@ -14,22 +14,22 @@ export function SiteFooter() {
 			</div>
 			<div className="nav col-md4 justify-content-end list-unstyled d-flex">
 				<li className="ms-3">
-					<a href="https://www.dylanwolf.com">
+					<a href="https://www.dylanwolf.com" target="_blank">
 						<FontAwesomeIcon icon={faGlobe} />
 					</a>
 				</li>
 				<li className="ms-3">
-					<a href="mailto:dylan.wolf@gmail.com">
+					<a href="mailto:dylan.wolf@gmail.com" target="_blank">
 						<FontAwesomeIcon icon={faEnvelope} />
 					</a>
 				</li>
 				<li className="ms-3">
-					<a href="https://bsky.app/profile/dylanwolf.com">
+					<a href="https://bsky.app/profile/dylanwolf.com" target="_blank">
 						<FontAwesomeIcon icon={faBluesky} />
 					</a>
 				</li>
 				<li className="ms-3">
-					<a href="https://links.dylanwolf.com">
+					<a href="https://links.dylanwolf.com" target="_blank">
 						<FontAwesomeIcon icon={faLink} />
 					</a>
 				</li>
