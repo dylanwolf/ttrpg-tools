@@ -1,10 +1,5 @@
 import { StoryObj } from "@storybook/react/*";
-import {
-	createDefaultStepTesterArgs,
-	renderStepTest,
-	TestCharacter,
-	TestSource,
-} from "./StepTester";
+import { createStepTesterArgs, renderStepTest } from "./StepTester";
 import { StaticTextStep } from "../utilities/character-builder/steps/StaticTextStep";
 
 const meta = {
@@ -24,32 +19,40 @@ const meta = {
 export default meta;
 export type Story = StoryObj<typeof meta>;
 
-export const BasicUsage: Story = {
+export const PlainText: Story = {
 	storyName: "Plain Text",
 	args: {
-		...createDefaultStepTesterArgs([
-			new StaticTextStep<TestSource, TestCharacter>(
-				"StringEntryTest",
-				"String Entry Test",
-				false,
-				(src, data) => src.__NAME__ || "",
-				(src, state, newData) => (newData.Title = state.Value || "")
-			),
-		]),
+		...createStepTesterArgs(
+			{ StringSource: "Test plain text value" },
+			{ StringOutput: "" },
+			[
+				new StaticTextStep<any, any>(
+					"StringEntryTest",
+					"String Entry Test",
+					false,
+					(src, data) => src.StringSource || "",
+					(src, state, newData) => (newData.StringOutput = state.Value || "")
+				),
+			]
+		),
 	},
 };
 
-export const MarkdownUsage: Story = {
-	storyName: "Markdown",
+export const Markdown: Story = {
+	storyName: "Plain Text",
 	args: {
-		...createDefaultStepTesterArgs([
-			new StaticTextStep<TestSource, TestCharacter>(
-				"StringEntryTest",
-				"String Entry Test",
-				true,
-				(src, data) => src.MarkdownValue || "",
-				(src, state, newData) => (newData.Title = state.Value || "")
-			),
-		]),
+		...createStepTesterArgs(
+			{ StringSource: "This *value* contains **Markdown**" },
+			{ StringOutput: "" },
+			[
+				new StaticTextStep<any, any>(
+					"StringEntryTest",
+					"String Entry Test",
+					false,
+					(src, data) => src.StringSource || "",
+					(src, state, newData) => (newData.StringOutput = state.Value || "")
+				),
+			]
+		),
 	},
 };

@@ -1,11 +1,7 @@
 import { StoryObj } from "@storybook/react/*";
 import { StringEntryStep } from "../utilities/character-builder/steps/StringEntryStep";
-import {
-	createDefaultStepTesterArgs,
-	renderStepTest,
-	TestCharacter,
-	TestSource,
-} from "./StepTester";
+import { createStepTesterArgs, renderStepTest } from "./StepTester";
+import { fn } from "@storybook/test";
 
 const meta = {
 	title: "Builder Steps - String Entry",
@@ -19,6 +15,9 @@ const meta = {
 	parameters: {
 		layout: "centered",
 	},
+	args: {
+		onUpdate: fn(),
+	},
 };
 
 export default meta;
@@ -27,8 +26,8 @@ export type Story = StoryObj<typeof meta>;
 export const BasicUsage: Story = {
 	storyName: "Basic Usage",
 	args: {
-		...createDefaultStepTesterArgs([
-			new StringEntryStep<TestSource, TestCharacter>(
+		...createStepTesterArgs({}, { SimpleTextValue: "Initial value" }, [
+			new StringEntryStep<any, any>(
 				"StringEntryTest",
 				"String Entry Test",
 				(src, data) => data.SimpleTextValue || "",

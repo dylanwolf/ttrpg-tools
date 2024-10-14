@@ -5,37 +5,15 @@ import {
 	StepRunner,
 } from "../utilities/character-builder/StepModel";
 import { useArgs } from "storybook/internal/preview-api";
-import { fn } from "@storybook/test";
 
-export interface TestSource {
-	__NAME__: string;
-	MarkdownValue: string;
-}
-
-export interface TestCharacter extends ICharacterData {
-	SimpleTextValue: string;
-}
-
-function createDefaultTestSource(): TestSource {
-	return {
-		__NAME__: "Test Source Data",
-		MarkdownValue: "This *value* contains **Markdown**.",
-	};
-}
-
-function createDefaultTestCharacter(): TestCharacter {
-	return {
-		Title: "",
-		SimpleTextValue: "Initial value.",
-	};
-}
-
-export function createDefaultStepTesterArgs(
-	steps: StepModel<TestSource, TestCharacter, any>[]
-): StepTesterArgs {
+export function createStepTesterArgs(
+	sourceData: any,
+	character: any,
+	steps: StepModel<any, any, any>[]
+) {
 	var runner = new StepRunner<any, any>("Test Runner", steps);
-	var sourceData = createDefaultTestSource();
-	var character = createDefaultTestCharacter();
+	var sourceData = sourceData;
+	var character = character;
 	var stepState = runner.initializeState();
 
 	var stateUpdates = runner.onStepUpdated(sourceData, character, stepState, -1);
@@ -45,7 +23,6 @@ export function createDefaultStepTesterArgs(
 		Character: stateUpdates.NewCharacterData,
 		StepRunnerState: stateUpdates.NewStepState,
 		Runner: runner,
-		onUpdate: fn(),
 	};
 }
 interface StepTesterArgs {
