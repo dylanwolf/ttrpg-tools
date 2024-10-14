@@ -57,7 +57,7 @@ export const characterBuilderSourceData = createSlice({
 const BUILDER_DATA_POLL_MS = 500;
 const BUILDER_DATA_POLL_COUNT = 5;
 
-export async function getBuilderSourceData(builderKey: string) {
+export async function getBuilderSourceData(builderKey: string): Promise<any> {
 	var sourceData = store.getState().builderSources.Sources[builderKey];
 
 	if (!sourceData) {
@@ -81,7 +81,7 @@ export async function getBuilderSourceData(builderKey: string) {
 			await setTimeoutAsync(BUILDER_DATA_POLL_MS);
 			sourceData = store.getState().builderSources.Sources[builderKey];
 
-			if (!sourceData) return getBuilderSourceData(builderKey);
+			if (!sourceData) return await getBuilderSourceData(builderKey);
 			else if (!sourceData.IsLoading) return sourceData.Data;
 
 			count--;
