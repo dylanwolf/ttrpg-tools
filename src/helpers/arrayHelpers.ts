@@ -2,24 +2,78 @@ import { isNumeric } from "./mathHelpers";
 
 declare global {
 	interface Array<T> {
+		/**
+		 * Groups an array by the results of the given field.
+		 * @param keyFunc The function that returns the key for grouping
+		 */
 		groupBy(keyFunc: (obj: T) => string): GroupByResult<T>[];
+
+		/**
+		 * Returns true if any item in the array returns true for the predicate function; otherwise, return false.
+		 * @param predicate
+		 */
 		any(predicate: (obj: T) => boolean): boolean;
+
+		/**
+		 * Returns true if all items in the array return true for the predicate function; otherwise, return false.
+		 * @param predicate
+		 */
 		all(predicate: (obj: T) => boolean): boolean;
+
+		/**
+		 * Returns an array of distict values from this array.
+		 */
 		distinct(): T[];
+
+		/**
+		 * Returns the first item in the array for which the predicate function is true.
+		 * @param predicate
+		 */
 		first(predicate?: (obj: T) => boolean | undefined): T | undefined;
+
+		/**
+		 * Returns the last item in the array for which the predicate function is true.
+		 * @param predicate
+		 */
 		last(predicate?: (obj: T) => boolean | undefined): T | undefined;
+
+		/**
+		 * Returns an array that is sorted by the results of the sorting function.
+		 * @param sortFunc
+		 */
 		orderBy<TKey>(sortFunc: (obj: T) => TKey): T[];
+
+		/**
+		 * Returns the minimum value for the select function among items in the array.
+		 * @param selectFunc
+		 */
 		min(selectFunc?: (obj: T) => any): T | undefined;
+
+		/**
+		 * Returns the maximum value for the select function among items in the array.
+		 * @param selectFunc
+		 */
 		max(selectFunc?: (obj: T) => any): T | undefined;
+
+		/**
+		 * Returns the sum of all values of the select function across items in the array. Ignores items that return undefined.
+		 * @param selectFunc
+		 */
 		sum(selectFunc?: (obj: T) => number | undefined): number | undefined;
 	}
 }
 
+/**
+ * Provides the esults of an Array.groupBy function.
+ */
 export interface GroupByResult<T> {
 	key: string;
 	items: T[];
 }
 
+/**
+ * Adds the array helpers to the Array interface.
+ */
 export function registerArrayHelpers() {
 	if (!Array.prototype.any) {
 		Array.prototype.any = function any<T>(

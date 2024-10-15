@@ -1,8 +1,13 @@
 import React from "react";
-import { createCharacterBuilderSession } from "../utilities/character-builder/BuilderTabSessions";
 import { MessageWindowArgs } from "../state/modal-ui/ModalUISlice";
 import { createTabSessionForUtility, UtilityKey } from "../utilities";
 
+/**
+ * Converts an object to JSON and uses the browser File API to download it with the given filename.
+ * @param filename
+ * @param output
+ * @returns
+ */
 export function downloadAsJson(filename: string, output: any) {
 	if (!output) return;
 
@@ -20,17 +25,37 @@ export function downloadAsJson(filename: string, output: any) {
 	URL.revokeObjectURL(href);
 }
 
+/**
+ * Saved state that can be used to recreate a tab later.
+ */
 export interface TabSavedState {
 	Utility: UtilityKey;
 	Data: any;
 }
 
+/**
+ * Props that can be passed into JsonFileLoader to allow opening files as JSON.
+ */
 export interface JsonFileLoaderProps {
+	/**
+	 * Triggers when a file is selected and is being processed.
+	 */
 	onLoadStarted?: (() => void) | undefined;
+	/**
+	 * Triggers when a file is successfully loaded.
+	 */
 	onLoadCompleted?: ((obj: TabSavedState) => void) | undefined;
+	/**
+	 * Triggers when an error occurs.
+	 */
 	onError?: ((ex: MessageWindowArgs) => void) | undefined;
 }
 
+/**
+ * Component used to load a JSON file using an HTML file input element.
+ *
+ * This component will allow for a single file to be opened. If it is successful, it will attempt to read the file, parse it to JSON, find a UtilityKey to match it up to one of the site's tools, and call the appropriate function to create a session.
+ */
 export class JsonFileLoader extends React.Component<JsonFileLoaderProps> {
 	fileInputRef: React.RefObject<HTMLInputElement> =
 		React.createRef<HTMLInputElement>();

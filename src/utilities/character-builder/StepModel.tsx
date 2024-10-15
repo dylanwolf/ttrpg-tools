@@ -6,20 +6,38 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import { CharacterBuilderUpdate } from "./BuilderTabSessions";
 import { ICharacterData } from "./BuilderFactory";
 
+/**
+ * Keeps state for an entire step runner process.
+ */
 export interface StepRunnerState {
 	CurrentStep: number;
 	Steps: StepState[];
 }
 
+/**
+ * Keeps state for a step runner process that will be stored in a tab session.
+ */
 export interface RootStepCollectionState extends StepRunnerState {
 	SessionKey: string;
 }
 
+/**
+ * Basis for state for an individual character builder step.
+ */
 export interface StepState {
+	/**
+	 * Indicates the step is complete, and the process can move on to the next step if it is required.
+	 */
 	IsCompleted: boolean;
+	/**
+	 * Indicates the step is visible.
+	 */
 	IsVisible: boolean;
 }
 
+/**
+ * Base class for a single step in the character builder process.
+ */
 export abstract class StepModel<
 	TSource,
 	TData extends ICharacterData,
@@ -32,6 +50,11 @@ export abstract class StepModel<
 	IsRequired: boolean;
 	HelpComponent: JSX.Element | string | undefined;
 
+	/**
+	 * Create a new StepModel with base values.
+	 * @param name A unique ID for the step.
+	 * @param updateCharacter The function used to apply step state to character data.
+	 */
 	constructor(
 		name: string,
 		updateCharacter: (source: TSource, state: TState, newData: TData) => void
@@ -41,13 +64,25 @@ export abstract class StepModel<
 		this.IsRequired = false;
 	}
 
+	/**
+	 * The unique ID for this step type. Used in CSS styling.
+	 */
 	abstract controlTypeId(): string;
 
+	/**
+	 * Indicates that this step is required, and flow should not continue if it is not complete.
+	 * @returns
+	 */
 	isRequired() {
 		this.IsRequired = true;
 		return this;
 	}
 
+	/**
+	 * If getIsVisisble is specified, indicates that this step should only be shown when the value of the function returns true.
+	 * @param getIsVisible
+	 * @returns
+	 */
 	onlyShowWhen(
 		getIsVisible: ((source: TSource, data: TData) => boolean) | undefined
 	) {
@@ -55,21 +90,45 @@ export abstract class StepModel<
 		return this;
 	}
 
+	/**
+	 * Indicates a help popup should be shown on this step, with the given content visible.
+	 * @param content
+	 * @returns
+	 */
 	withHelp(content: JSX.Element | string | undefined) {
 		this.HelpComponent = content;
 		return this;
 	}
 
+	/**
+	 * Creates a new instance of step state for this step.
+	 */
 	abstract initializeState(): TState;
 
+	/**
+	 * Clears values on newState when this step is not visible.
+	 * @param newState
+	 */
 	abstract clearState(newState: TState): void;
 
+	/**
+	 * Updates this step when it is processed.
+	 * @param source Source data for the character builder.
+	 * @param data Character data for the character builder. This should only be read during this function.
+	 * @param newState New step state for this step. This should be updated to reflect what will be shown to the user after this update completes.
+	 */
 	abstract updateStateInternal(
 		source: TSource,
 		data: TData,
 		newState: TState
 	): void;
 
+	/**
+	 * Updates this step when it is processed.
+	 * @param source Source data for the character builder.
+	 * @param data Character data for the character builder. This should only be read during this function.
+	 * @param newState New step state for this step. This should be updated to reflect what will be shown to the user after this update completes.
+	 */
 	updateState(source: TSource, data: TData, newState: TState): void {
 		newState.IsVisible = this.GetIsVisible
 			? this.GetIsVisible(source, data)
@@ -77,11 +136,22 @@ export abstract class StepModel<
 		this.updateStateInternal(source, data, newState);
 	}
 
+	/**
+	 * Renders the contents of this step.
+	 * @param stepState The step state for this step.
+	 * @param triggerUpdate A function that is called when this step is updated by the user. Includes the index of the step being changed and the step state properties that will change.
+	 */
 	abstract renderInternal(
 		stepState: TState,
 		triggerUpdate: (index: number, stepUpdates: any) => void
 	): JSX.Element;
 
+	/**
+	 * Renders the contents of this step.
+	 * @param stepState The step state for this step.
+	 * @param triggerUpdate A function that is called when this step is updated by the user. Includes the index of the step being changed and the step state properties that will change.
+	 * @returns
+	 */
 	render(
 		stepState: TState,
 		triggerUpdate: (index: number, stepUpdates: any) => void
@@ -118,6 +188,9 @@ export abstract class StepModel<
 	}
 }
 
+/**
+ * Class that runs a series of StepModel objects.
+ */
 export class StepRunner<TSource, TData extends ICharacterData> {
 	Name: string;
 	ByIndex: StepModel<TSource, TData, any>[];
@@ -130,7 +203,6 @@ export class StepRunner<TSource, TData extends ICharacterData> {
 		steps.forEach((step, idx) => {
 			this.ByKey[step.Name] = step;
 			step.Index = idx;
-			//step.Container = this;
 		});
 	}
 
@@ -141,6 +213,15 @@ export class StepRunner<TSource, TData extends ICharacterData> {
 		};
 	}
 
+	/**
+	 * Called whenever a parent object is updated (for containers or foreach steps that run a StepRunner inside the process). This assumes that the character data parameter (newData) has already been cloned.
+	 * @param source
+	 * @param newData
+	 * @param state
+	 * @param changedStep
+	 * @param stepUpdates
+	 * @returns
+	 */
 	onParentStepUpdated(
 		source: TSource,
 		newData: TData,
@@ -213,6 +294,15 @@ export class StepRunner<TSource, TData extends ICharacterData> {
 		};
 	}
 
+	/**
+	 * Called when a step within this step runner is updated. Clones the current character data parameter so that it can be updated and stored in Redux state.
+	 * @param source
+	 * @param data
+	 * @param state
+	 * @param changedStep
+	 * @param stepUpdates
+	 * @returns
+	 */
 	onStepUpdated(
 		source: TSource,
 		data: TData,
@@ -231,6 +321,9 @@ export class StepRunner<TSource, TData extends ICharacterData> {
 	}
 }
 
+/**
+ * StepRunner for the top-level step collection in a character builder.
+ */
 export class RootStepCollection<
 	TSource,
 	TData extends ICharacterData

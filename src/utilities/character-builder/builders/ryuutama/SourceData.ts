@@ -29,7 +29,7 @@ export function collectBonuses(
 
 export interface SourceData extends ICharacterBuilderSourceData {
 	Version: string;
-	AdditionalSources: string[];
+	AdditionalSources: AdditionalSource[];
 	CharacterTemplates: CharacterTemplate[];
 	StartingAbilityScores: StartingAbilityScore[];
 	Classes: CharacterClass[];
@@ -41,6 +41,11 @@ export interface SourceData extends ICharacterBuilderSourceData {
 	TerrainWeatherSpecialty: string[];
 	StatusEffects: string[];
 	SeasonalDragons: string[];
+}
+
+export interface AdditionalSource {
+	Key: string;
+	DisplayText: string;
 }
 
 export interface CharacterTemplate extends IFromSource {

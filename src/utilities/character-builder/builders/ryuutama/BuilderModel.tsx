@@ -22,6 +22,7 @@ import {
 	getStartingAbilityScores,
 } from "./CharacterData";
 import {
+	AdditionalSource,
 	BUILDER_KEY,
 	CharacterClass,
 	CharacterSkill,
@@ -72,17 +73,19 @@ registerBuilderModel(
 				(src, data) => src.Version,
 				(src, state, newData) => (newData.Version = src.Version)
 			),
-			new ChecklistStringStep<SourceData, CharacterState, string>(
+			new ChecklistStringStep<SourceData, CharacterState, AdditionalSource>(
 				"AdditionalSources",
 				"Include Sources",
 				(src, data) => src.AdditionalSources,
-				(itm) => itm,
-				(itm) => itm,
-				(src, data, lst) => src.AdditionalSources,
+				(itm) => itm.Key,
+				(itm) => itm.DisplayText,
+				(src, data, lst) => src.AdditionalSources.map((s) => s.Key),
 				(src, state, data) => (data.AdditionalSources = state.Values || [])
-			).withHelp(
-				"Allows you to use content from books other than the core rulebook."
-			),
+			)
+				.withHelp(
+					"Allows you to use content from books other than the core rulebook."
+				)
+				.useMarkdown(true),
 			new StringEntryStep<SourceData, CharacterState>(
 				"Name",
 				"Name",

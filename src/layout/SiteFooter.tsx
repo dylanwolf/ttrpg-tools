@@ -4,6 +4,10 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons/faEnvelope";
 import { faBluesky } from "@fortawesome/free-brands-svg-icons/faBluesky";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+/**
+ * Renders the page footer for the app.
+ * @returns
+ */
 export function SiteFooter() {
 	return (
 		<footer className="d-flex flex-wrap justify-content-between align-items-center py-4 my-4 mx-3 border-top">

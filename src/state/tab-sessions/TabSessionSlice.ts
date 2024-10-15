@@ -4,11 +4,19 @@ import { setBrowserTitle } from "../../layout/BrowserUtils";
 /* ----------------------------------------------------------------------------------------
 State
 ---------------------------------------------------------------------------------------- */
+
+/**
+ * Interface for data stored in the TabSessions Redux slice.
+ */
+
 export interface TabSessionStateCollection {
 	Sessions: { [key: string]: TabSessionState<unknown> };
 	CurrentSessionKey?: string | undefined;
 }
 
+/**
+ * State of a single tab in TabSessions
+ */
 export interface TabSessionState<TData> {
 	SessionKey: string;
 	IsBusy: boolean;
@@ -17,6 +25,9 @@ export interface TabSessionState<TData> {
 	Content: TData;
 }
 
+/**
+ * Arguments passed to the action to update a session
+ */
 export interface TabSessionUpdatePayload<TData> {
 	SessionKey: string;
 	IsBusy?: boolean | undefined;
@@ -25,6 +36,9 @@ export interface TabSessionUpdatePayload<TData> {
 	SelectTab?: boolean | undefined;
 }
 
+/**
+ * Arguments passed to the action to create a session
+ */
 export interface TabSessionCreatePayload<TData> {
 	SessionKey: string;
 	IsBusy: boolean;
@@ -34,10 +48,18 @@ export interface TabSessionCreatePayload<TData> {
 	SelectTab?: boolean | undefined;
 }
 
+/**
+ * Initial state for the TabSessions Redux slice.
+ */
 const initialState: TabSessionStateCollection = {
 	Sessions: {},
 };
 
+/**
+ * Creates new TabSessionState object from the given payload.
+ * @param payload
+ * @returns
+ */
 function createTabSessionFromPayload(
 	payload: TabSessionCreatePayload<unknown>
 ): TabSessionState<unknown> {
@@ -50,6 +72,11 @@ function createTabSessionFromPayload(
 	};
 }
 
+/**
+ * Updates a TabSessionState object from the given payload.
+ * @param state
+ * @param payload
+ */
 function updateTabSessionStateFromPayload(
 	state: TabSessionState<unknown>,
 	payload: TabSessionUpdatePayload<unknown>
@@ -63,10 +90,18 @@ function updateTabSessionStateFromPayload(
 Slice
 ---------------------------------------------------------------------------------------- */
 
+/**
+ * Redux slice for storing data about tab sessions.
+ */
 export const tabSessionSlice = createSlice({
 	name: "TabSessions",
 	initialState,
 	reducers: {
+		/**
+		 * Create a new tab session
+		 * @param state
+		 * @param action
+		 */
 		createTabSession(
 			state: TabSessionStateCollection,
 			action: PayloadAction<TabSessionCreatePayload<unknown>>
@@ -84,6 +119,11 @@ export const tabSessionSlice = createSlice({
 				}
 			}
 		},
+		/**
+		 * Changes the currently selected tab session
+		 * @param state
+		 * @param action
+		 */
 		setCurrentTabSession(
 			state: TabSessionStateCollection,
 			action: PayloadAction<string>
@@ -96,6 +136,11 @@ export const tabSessionSlice = createSlice({
 				setBrowserTitle(state.Sessions[action.payload].Title);
 			}
 		},
+		/**
+		 * Updates data for the specified tab session
+		 * @param state
+		 * @param action
+		 */
 		updateTabSession(
 			state: TabSessionStateCollection,
 			action: PayloadAction<TabSessionUpdatePayload<unknown>>
@@ -118,6 +163,11 @@ export const tabSessionSlice = createSlice({
 				}
 			}
 		},
+		/**
+		 * Close the specified tab session
+		 * @param state
+		 * @param action
+		 */
 		closeTabSession(
 			state: TabSessionStateCollection,
 			action: PayloadAction<string>

@@ -11,11 +11,18 @@ import {
 	updateTabSession,
 } from "../../state/tab-sessions/TabSessionSlice";
 
+/**
+ * State stored in Redux for an encounter builder 5e session
+ */
 export interface EncounterBuilder5eState {
 	SessionKey: string;
 	Data: EncounterBuilder5eData;
 }
 
+/**
+ * Creates a new encounter builder 5e session and saves it to the Redux store
+ * @param data
+ */
 export function createEncounterBuilder5eSession(
 	data?: EncounterBuilder5eData | undefined
 ) {
@@ -23,6 +30,9 @@ export function createEncounterBuilder5eSession(
 	store.dispatch(createEncounterBuilder5eSessionInternal(sessionKey, data));
 }
 
+/**
+ * Redux thunk to create an encounter builder 5e session
+ */
 const createEncounterBuilder5eSessionInternal =
 	(sessionKey: string, initialData: EncounterBuilder5eData | undefined) =>
 	async (dispatch: AppDispatch, getState: () => RootState) => {
@@ -50,6 +60,12 @@ const createEncounterBuilder5eSessionInternal =
 		);
 	};
 
+/**
+ * Updates an encounter builder session in the Redux store
+ * @param sessionKey
+ * @param data
+ * @param updateFunc
+ */
 export function updateEncounterBuilder5eSession(
 	sessionKey: string,
 	data: EncounterBuilder5eData,
@@ -70,6 +86,11 @@ export function updateEncounterBuilder5eSession(
 	);
 }
 
+/**
+ * Redux selector to retrieve an encounter builder 5e session for a given session key
+ * @param sessionKey The session key to retrieve. If not provided, attempts to retrieve the currently selected session.
+ * @returns
+ */
 export const encounterBuilder5eSessionSelector =
 	(sessionKey?: string | undefined) =>
 	(state: RootState): EncounterBuilder5eState | undefined => {

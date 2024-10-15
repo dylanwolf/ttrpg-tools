@@ -6,15 +6,25 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons/faDownload";
 import { faDiceD20 } from "@fortawesome/free-solid-svg-icons/faDiceD20";
-import { characterBuilderSessionSelector } from "../BuilderTabSessions";
-import { downloadCharacterBuilderJson } from "../Json";
+import {
+	characterBuilderSessionSelector,
+	downloadCharacterBuilderJson,
+} from "../BuilderTabSessions";
 
+/**
+ * Props to be passed into the character builder toolbar
+ */
 export interface CharacterBuilderToolbarProps {
 	sessionKey: string;
 	showCharacterSheetMobile: boolean;
 	setShowCharacterSheetMobile: (value: boolean) => void;
 }
 
+/**
+ * Renders a toolbar above the character builder. The toolbar is sticky when scrolled. It allows the character data to be downloaded as JSON, and (in narrow mobile views) swaps between the character builder and the character sheet.
+ * @param props
+ * @returns
+ */
 export function CharacterBuilderToolbar(props: CharacterBuilderToolbarProps) {
 	const state = useAppSelector(
 		characterBuilderSessionSelector(props.sessionKey)

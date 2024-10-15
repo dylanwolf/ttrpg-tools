@@ -4,6 +4,10 @@ import "./CharacterBuilderView.css";
 import { DumpObject } from "../../../components/DumpObject";
 import { characterBuilderSessionSelector } from "../BuilderTabSessions";
 
+/**
+ * Displays the character builder process and spreadsheet, as well as a dump of data if window.__DEBUG__ is set.
+ * @returns
+ */
 export default function CharacterBuilderView() {
 	const session = useAppSelector(characterBuilderSessionSelector());
 	var sessionKey = session?.StepState.SessionKey;

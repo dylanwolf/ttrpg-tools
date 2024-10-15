@@ -1,7 +1,12 @@
 {
 	"__NAME__": "Ryuutama",
 	"Version": "2024-10-08",
-	"AdditionalSources": ["Holiday 2015 Package"],
+	"AdditionalSources": [
+		{
+			"Key": "Holiday 2015 Package",
+			"DisplayText": "Holiday 2015 Package ([download page](https://kotohi.com/ryuutama/resources/))"
+		}
+	],
 	"CharacterTemplates": [
 		{
 			"Name": "Human / Humanoid",

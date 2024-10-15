@@ -9,6 +9,9 @@ import { tabSessionStorageMiddleware } from "./tab-sessions/TabMemory";
 Redux data store
 ---------------------------------------------------------------------- */
 
+/**
+ * Redux store for application data
+ */
 export const store = configureStore({
 	reducer: {
 		tabSessions: tabSessionReducer,

@@ -1,9 +1,15 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+/**
+ * Interface for data stored in the ModelUI Redux slice.
+ */
 interface ModalUIStackState {
 	States: ModalUIState[];
 }
 
+/**
+ * State of a single UI in ModalUI.
+ */
 export interface ModalUIState {
 	ID?: string | undefined;
 	Title?: string | undefined;
@@ -12,10 +18,16 @@ export interface ModalUIState {
 	CloseButton?: string | undefined;
 }
 
+/**
+ * Arguments passed to the action to close a UI window.
+ */
 export interface UICloseArgs {
 	ID?: string | undefined;
 }
 
+/**
+ * Arguments passed to the action to show a message window.
+ */
 export interface MessageWindowArgs {
 	ID?: string | undefined;
 	Title?: string | undefined;
@@ -23,14 +35,26 @@ export interface MessageWindowArgs {
 	CloseButton?: string | undefined;
 }
 
+/**
+ * Initial state for the ModalUI Redux slice.
+ */
 const initialValue: ModalUIStackState = {
 	States: [],
 };
 
+/**
+ * Redux slice for storing data about modal UI controls.
+ */
 export const modalUiSlice = createSlice({
 	name: "ModalUI",
 	initialState: initialValue,
 	reducers: {
+		/**
+		 * Close either a specific modal UI element, or the latest UI element.
+		 * @param state
+		 * @param action
+		 * @returns
+		 */
 		closeModalWindow(
 			state: ModalUIStackState,
 			action: PayloadAction<UICloseArgs>
@@ -45,6 +69,11 @@ export const modalUiSlice = createSlice({
 
 			state.States.splice(state.States.length - 1, 1);
 		},
+		/**
+		 * Display the modal message window.
+		 * @param state
+		 * @param action
+		 */
 		showModalMessageWindow(
 			state: ModalUIStackState,
 			action: PayloadAction<MessageWindowArgs>

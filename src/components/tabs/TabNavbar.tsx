@@ -10,6 +10,10 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./TabNavbar.css";
 
+/**
+ * Pulls a list of sessions from Redux state and displays a scrolling tab bar.
+ * @returns JSX.Element
+ */
 export function TabNavbar() {
 	const sessions = useAppSelector(tabSessionSelector());
 

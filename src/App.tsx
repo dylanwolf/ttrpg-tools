@@ -8,7 +8,7 @@ import { Outlet } from "react-router";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { LoadingPage } from "./pages/LoadingPage";
 import { registerArrayHelpers } from "./helpers/arrayHelpers";
-import { loadTabMemory, saveTabMemory } from "./state/tab-sessions/TabMemory";
+import { loadTabMemory } from "./state/tab-sessions/TabMemory";
 
 //(window as any).__DEBUG__ = true;
 

@@ -14,6 +14,10 @@ const LazyEncounterBuilder5eView = React.lazy(
 
 const LazyEmptyPage = React.lazy(() => import("../../pages/BlankTab"));
 
+/**
+ * Routes the selected tab from Redux state to the React component that should render it.
+ * @returns JSX.Element
+ */
 export function TabContentRouter() {
 	const currentTab = useAppSelector(currentTabSessionSelector());
 

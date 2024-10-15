@@ -1,6 +1,10 @@
 // TODO: Create content page style
 // TODO: Add acknowledgement for Elderberry Inn icons if used
 
+/**
+ * Static HTML providing information about the app.
+ * @returns
+ */
 export default function AboutPage() {
 	return (
 		<div className="page-content">

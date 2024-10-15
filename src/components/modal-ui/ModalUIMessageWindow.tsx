@@ -5,6 +5,10 @@ import { useDispatch } from "react-redux";
 import { closeModalWindow } from "../../state/modal-ui/ModalUISlice";
 import { uiStateSelector } from "../../state/modal-ui/ModalUI";
 
+/**
+ * Displays a modal Bootstrap message window if Redux state indicates it should appear.
+ * @returns JSX.Element
+ */
 export function ModalUIMessageWindow() {
 	const state = useAppSelector(uiStateSelector());
 	const dispatch = useDispatch();

@@ -1,3 +1,8 @@
+/**
+ * Returns the value of the field that triggered the change event. If the value is blank, returns undefined.
+ * @param evt
+ * @returns
+ */
 export function getTextFieldValueFrom(
 	evt: React.ChangeEvent<any>
 ): string | undefined {
@@ -5,6 +10,11 @@ export function getTextFieldValueFrom(
 	return value.trim()! ? value : undefined;
 }
 
+/**
+ * Returns the value of the field that triggered the change event as a number. If the value is blank or not a number, returns undefined.
+ * @param evt
+ * @returns
+ */
 export function getNumericFieldValueFrom(
 	evt: React.ChangeEvent<any>
 ): number | undefined {
@@ -13,6 +23,11 @@ export function getNumericFieldValueFrom(
 	return Number(strValue);
 }
 
+/**
+ * Can be assigned to an input's onPaste event to prevent pasting non-numeric values.
+ * @param evt
+ * @returns
+ */
 export function ensureIntegerPaste(
 	evt: React.ClipboardEvent<HTMLInputElement>
 ) {
@@ -24,6 +39,11 @@ export function ensureIntegerPaste(
 	}
 }
 
+/**
+ * Can be assigned to an input's onKeyDown event to prevent typing non-numeric values.
+ * @param evt
+ * @returns
+ */
 export function ensureIntegerEntry(evt: React.KeyboardEvent<HTMLInputElement>) {
 	if (
 		evt.key.length === 1 &&
@@ -37,6 +57,11 @@ export function ensureIntegerEntry(evt: React.KeyboardEvent<HTMLInputElement>) {
 	}
 }
 
+/**
+ * Retruns the value as a number, or an empty string if undefined.
+ * @param value
+ * @returns
+ */
 export function toNumericFieldValue(
 	value: number | undefined | null
 ): number | string {

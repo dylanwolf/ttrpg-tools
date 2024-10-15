@@ -7,6 +7,10 @@ import {
 	UICloseArgs,
 } from "./ModalUISlice";
 
+/**
+ * Redux selector to get the current UI state from useAppSelector.
+ * @returns
+ */
 export const uiStateSelector =
 	() =>
 	(state: RootState): ModalUIState | undefined => {
@@ -15,10 +19,18 @@ export const uiStateSelector =
 			: undefined;
 	};
 
+/**
+ * Updates the Redux UI state to close either the current modal window, or a specific modal window.
+ * @param args
+ */
 export function closeModalWindow(args: UICloseArgs) {
 	store.dispatch(closeModalWindowInternal(args));
 }
 
+/**
+ * Updates the Redux UI to open a new modal window.
+ * @param args
+ */
 export function openMessageWindow(args: MessageWindowArgs) {
 	store.dispatch(openMessageWindowInternal(args));
 }

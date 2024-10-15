@@ -1,9 +1,17 @@
 import "./DumpObject.css";
 
+/**
+ * Returns the given property from an object.
+ */
 function getProperty<T>(obj: T, key: string) {
 	return obj[key as keyof T];
 }
 
+/**
+ * Displays the given value as a table of JSON values.
+ * @param props
+ * @returns JSX.Element
+ */
 function DumpObjectValue(props: { value: any }) {
 	var seen: any[] = [];
 	var jsonString = JSON.stringify(

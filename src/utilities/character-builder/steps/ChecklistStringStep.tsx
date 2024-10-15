@@ -1,6 +1,8 @@
 import { SelectItem } from "../../../helpers/builderHelpers";
 import { ICharacterData } from "../BuilderFactory";
 import { StepModel, StepState } from "../StepModel";
+import { MarkdownWrapper } from "../../../helpers/markdownHelpers";
+import "./ChecklistStringStep.css";
 
 interface ChecklistStringStepState extends StepState {
 	SelectList: SelectItem[];
@@ -29,6 +31,8 @@ export class ChecklistStringStep<
 		data: TData,
 		lst: string[]
 	) => string[] | undefined;
+	UseMarkdown?: boolean | undefined;
+
 	constructor(
 		name: string,
 		label: string,
@@ -65,6 +69,11 @@ export class ChecklistStringStep<
 		getMaximumSelectCount: (src: TSource, data: TData) => number | undefined
 	) {
 		this.GetMaximumSelectCount = getMaximumSelectCount;
+		return this;
+	}
+
+	useMarkdown(flag: boolean) {
+		this.UseMarkdown = flag;
 		return this;
 	}
 
@@ -175,7 +184,11 @@ export class ChecklistStringStep<
 								}
 								checked={(stepState.Values || []).includes(i.Value)}
 							/>
-							{i.Text}
+							{this.UseMarkdown ? (
+								<MarkdownWrapper inline={true}>{i.Text}</MarkdownWrapper>
+							) : (
+								i.Text
+							)}
 						</label>
 					))}
 				</div>

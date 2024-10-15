@@ -2,6 +2,10 @@ import { waveform } from "ldrs";
 
 waveform.register();
 
+/**
+ * Displays an animated loading icon.
+ * @returns JSX.Element
+ */
 export function BusyIcon() {
 	return (
 		<div className="busy">

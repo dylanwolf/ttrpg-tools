@@ -4,6 +4,9 @@ import { clamp, isNumeric } from "../../helpers/mathHelpers";
 
 type EncounterDifficulty = "Easy" | "Medium" | "Hard" | "Deadly";
 
+/**
+ * Content for a 5e encounter tab session.
+ */
 export interface EncounterBuilder5eData {
 	Title: string | undefined;
 	CharacterMode: "individual" | "party" | undefined;
@@ -17,6 +20,10 @@ export interface EncounterBuilder5eData {
 	ExpectedDifficulty: EncounterDifficulty | undefined;
 }
 
+/**
+ * Uses the browser's File API to download a saved copy of the encounter 5e as JSON.
+ * @param state
+ */
 export function downloadEncounterBuilder5eJson(state: EncounterBuilder5eData) {
 	downloadAsJson(
 		`${state.Title || "Encounter"}-Encounter5e.json`,
@@ -24,6 +31,10 @@ export function downloadEncounterBuilder5eJson(state: EncounterBuilder5eData) {
 	);
 }
 
+/**
+ * Creates the state for a new encounter 5e.
+ * @returns
+ */
 export function getInitialState(): EncounterBuilder5eData {
 	return {
 		Title: "New Encounter",
@@ -39,6 +50,13 @@ export function getInitialState(): EncounterBuilder5eData {
 	};
 }
 
+/**
+ * Updates the encounter state after a change. This will:
+ 
+ * - Clear the results (encounter multiplier, total monster XP, and expected difficulty)
+ * - Recalculate monsters' XP and/or CR (depending on what changed)
+ * @param state 
+ */
 export function updateEncounterState(state: EncounterBuilder5eData) {
 	state.EncounterMultiplier = undefined;
 	state.TotalMonsterXP = undefined;
@@ -106,6 +124,9 @@ export function updateEncounterState(state: EncounterBuilder5eData) {
 	}
 }
 
+/**
+ * Defines a character group when entering party as individual characters.
+ */
 export interface Encounter5eCharacter {
 	Name?: string | undefined;
 	Level: number;
@@ -113,6 +134,9 @@ export interface Encounter5eCharacter {
 	XPBudget?: DifficultyThreshold | undefined;
 }
 
+/**
+ * Defines a monster group.
+ */
 export interface Encounter5eMonster {
 	Name?: string | undefined;
 	Count: number | undefined;
@@ -121,6 +145,9 @@ export interface Encounter5eMonster {
 	TotalXP?: number | undefined;
 }
 
+/**
+ * Stores the results of difficulty calculations
+ */
 interface DifficultyThreshold {
 	Easy: number;
 	Medium: number;
@@ -128,28 +155,48 @@ interface DifficultyThreshold {
 	Deadly: number;
 }
 
+/**
+ * XP budget for a single character at each level (1-20) in an easy encounter.
+ */
 const EASY_XP = [
 	25, 50, 75, 125, 250, 300, 350, 450, 550, 600, 800, 1000, 110, 1250, 1400,
 	1600, 2000, 2100, 2400, 2800,
 ];
+/**
+ * XP budget for a single character at each level (1-20) in a medium encounter.
+ */
 const MEDIUM_XP = [
 	50, 100, 150, 250, 500, 600, 750, 900, 1100, 1200, 1600, 2000, 2200, 2500,
 	2800, 3200, 3900, 4200, 4900, 5700,
 ];
+/**
+ * XP budget for a single character at each level (1-20) in a hard encounter.
+ */
 const HARD_XP = [
 	75, 150, 225, 375, 750, 900, 1100, 1400, 1600, 1900, 2400, 3000, 3400, 3800,
 	4300, 4800, 5900, 6300, 7300, 8500,
 ];
+/**
+ * XP budget for a single character at each level (1-20) in a deadly encounter.
+ */
 const DEADLY_XP = [
 	100, 200, 400, 500, 1100, 1400, 1700, 2100, 2400, 2800, 3600, 4500, 5100,
 	5700, 6400, 7200, 8800, 9500, 10900, 12700,
 ];
+/**
+ * Table for converting between monster CR and XP. Each index represents CR 0, 1/8, 1/4, 1/2, 1-30.
+ */
 const CR_XP = [
 	10, 25, 50, 100, 200, 450, 700, 1100, 1800, 2300, 2900, 3900, 5000, 5900,
 	7200, 8400, 10000, 11500, 13000, 15000, 18000, 20000, 22000, 25000, 33000,
 	41000, 50000, 62000, 75000, 90000, 105000, 135000, 155000,
 ];
 
+/**
+ * Returns the XP from the given monster, converting CR to XP if necessary.
+ * @param monster
+ * @returns
+ */
 export function getMonsterXP(monster: Encounter5eMonster): number | undefined {
 	if (monster.XP !== undefined) return monster.XP * (monster.Count || 0);
 	if (monster.CR === undefined) return undefined;
@@ -160,6 +207,11 @@ export function getMonsterXP(monster: Encounter5eMonster): number | undefined {
 	return xpFromCr * (monster.Count || 0);
 }
 
+/**
+ * Converts a monster CR to XP.
+ * @param cr
+ * @returns
+ */
 function calculateXPFromCR(cr: string): number | undefined {
 	if (cr === "0") return CR_XP[0];
 	else if (cr === "1/8") return CR_XP[1];
@@ -171,6 +223,11 @@ function calculateXPFromCR(cr: string): number | undefined {
 	} else return undefined;
 }
 
+/**
+ * Returns the CR from the given monster, converting XP to CR if necessary.
+ * @param monster
+ * @returns
+ */
 export function getMonsterCR(monster: Encounter5eMonster): string | undefined {
 	if (monster.CR !== undefined) return monster.CR;
 	if (monster.XP === undefined) return undefined;
@@ -198,6 +255,12 @@ function calculateCRFromXP(xp: number): string | undefined {
 	return "30";
 }
 
+/**
+ * Returns the XP budgets for the given character group.
+ * @param level
+ * @param count
+ * @returns
+ */
 function getDifficultyThreshold(
 	level: number,
 	count?: number | undefined
@@ -212,6 +275,11 @@ function getDifficultyThreshold(
 	};
 }
 
+/**
+ * Returns the encounter multiplier for a total number of monsters.
+ * @param count
+ * @returns
+ */
 function getEncounterMultiplier(count: number) {
 	if (count >= 15) return 4;
 	else if (count >= 11) return 3;

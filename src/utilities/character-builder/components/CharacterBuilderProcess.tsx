@@ -10,10 +10,18 @@ import {
 } from "..//BuilderTabSessions";
 import { useAppSelector } from "../../../state/AppStateStorage";
 
+/**
+ * Props for rendering the character builder step-by-step process.
+ */
 export interface CharacterBuilderProcessProps {
 	sessionKey: string;
 }
 
+/**
+ * Renders the character step-by-step process for the specified tab session.
+ * @param props
+ * @returns
+ */
 export function CharacterBuilderProcess(props: CharacterBuilderProcessProps) {
 	const model = useAppSelector(
 		characterBuilderSessionSelector(props.sessionKey)
@@ -56,6 +64,11 @@ export function CharacterBuilderProcess(props: CharacterBuilderProcessProps) {
 	);
 }
 
+/**
+ * Renders the sequence of steps in the character builder process and routes updates back to the Redux store.
+ * @param props
+ * @returns
+ */
 function BuilderProcessInternal(props: CharacterBuilderProcessProps) {
 	const model = useAppSelector(
 		characterBuilderSessionSelector(props.sessionKey)

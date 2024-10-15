@@ -11,27 +11,42 @@ import {
 	TabSessionState,
 	updateTabSession,
 } from "../../state/tab-sessions/TabSessionSlice";
-import { UtilityKey } from "..";
+import { createTabSavedState, UtilityKey } from "..";
+import { downloadAsJson } from "../../helpers/JsonFileUtils";
 
+/**
+ * Basic state data for the character builder. This is what is stored in the Redux slice.
+ */
 export interface CharacterBuilderSessionState<TData extends ICharacterData> {
 	BuilderKey: string;
 	Character: TData;
 	StepState: RootStepCollectionState;
 }
 
+/**
+ * Args passed into the action that updates character builder state data in the Redux slice. Character and StepState will be replaced with the new values.
+ */
 export interface CharacterBuilderUpdate<TData extends ICharacterData> {
 	NewCharacterData: TData;
 	NewStepState: RootStepCollectionState;
 }
 
-export interface CharacterBuilderState<TSource, TData extends ICharacterData> {
+/**
+ * The full character builder state returned by the selector. Source data is retrieved from the source data Redux slice and the step model is returned from BuilderFactory.
+ */
+export interface CharacterBuilderState<TSource, TData extends ICharacterData>
+	extends CharacterBuilderSessionState<TData> {
 	IsLoading: boolean;
 	SourceData: TSource | undefined;
-	Character: TData;
-	StepState: RootStepCollectionState;
 	Model: RootStepCollection<TSource, TData>;
 }
 
+/**
+ * Creates a new copy of session state and replaces its contents with the new versions provided in the update.
+ * @param state
+ * @param update
+ * @returns
+ */
 function mergeCharacterBuilderUpdates<TData extends ICharacterData>(
 	state: CharacterBuilderSessionState<TData>,
 	update: CharacterBuilderUpdate<TData>
@@ -42,23 +57,13 @@ function mergeCharacterBuilderUpdates<TData extends ICharacterData>(
 	return state;
 }
 
-function createCharacterBuilderSessionInternal(
-	builderKey: string,
-	autoSelect: boolean,
-	initialState?: any
-) {
-	const sessionKey = getNewSessionId();
-	store.dispatch(
-		createCharacterBuilderStateInternal(
-			sessionKey,
-			builderKey,
-			autoSelect,
-			initialState
-		)
-	);
-}
-
-export function updateCharacterBuilderSession<TData extends ICharacterData>(
+/**
+ * Updates the specified session in Redux step state. This will re-process all steps in the builder, return updates, and save them to the slice.
+ * @param sessionKey
+ * @param changedStep
+ * @param stepUpdates
+ */
+export async function updateCharacterBuilderSession(
 	sessionKey: string,
 	changedStep: number,
 	stepUpdates?: any
@@ -68,6 +73,11 @@ export function updateCharacterBuilderSession<TData extends ICharacterData>(
 	);
 }
 
+/**
+ * Redux selector for getting a character builder session. This retrieves not only the data in the Tab Session slice, but the associated source data and step model.
+ * @param sessionKey
+ * @returns
+ */
 export const characterBuilderSessionSelector =
 	<TSource extends ICharacterBuilderSourceData, TData extends ICharacterData>(
 		sessionKey?: string | undefined
@@ -88,6 +98,7 @@ export const characterBuilderSessionSelector =
 		if (!sourceData) return undefined;
 
 		return {
+			BuilderKey: builderKey,
 			IsLoading: sourceData.IsLoading || session.IsBusy,
 			SourceData: sourceData,
 			Character: session?.Content.Character,
@@ -96,6 +107,13 @@ export const characterBuilderSessionSelector =
 		};
 	};
 
+/**
+ * Redux thunk to update a character builder session. This will re-process all steps in the builder, return updates, and save them to the slice.
+ * @param sessionKey
+ * @param changedStep
+ * @param stepUpdates
+ * @returns
+ */
 const updateCharacterBuilderSessionInternal =
 	<TData extends ICharacterData>(
 		sessionKey: string,
@@ -126,6 +144,14 @@ const updateCharacterBuilderSessionInternal =
 		);
 	};
 
+/**
+ * Redux thunk to create a new character builder tab session state. This will create the busy tab session, dynamically load the builder code, load builder source data, and initialize the step model by processing every step.
+ * @param sessionKey
+ * @param builderKey
+ * @param autoSelect
+ * @param initialData
+ * @returns
+ */
 const createCharacterBuilderStateInternal =
 	<TSource extends ICharacterBuilderSourceData, TData extends ICharacterData>(
 		sessionKey: string,
@@ -150,10 +176,12 @@ const createCharacterBuilderStateInternal =
 			);
 		}
 
-		await import(`./builders/${builderKey}/index.ts`);
+		var [importResult, builderData] = await Promise.all([
+			import(`./builders/${builderKey}/index.ts`),
+			getBuilderSourceData(builderKey),
+		]);
 
 		// Load builder source data if not already loaded
-		var builderData: TSource = await getBuilderSourceData(builderKey);
 		if (builderData) {
 			// Create builder model data
 			var model = getBuilderModel<any, any>(builderKey);
@@ -192,6 +220,12 @@ const createCharacterBuilderStateInternal =
 		}
 	};
 
+/**
+ * Creates a new character builder tab session in Redux state.
+ * @param builderKey
+ * @param initialData
+ * @returns
+ */
 export async function createCharacterBuilderSession(
 	builderKey: string,
 	initialData?: any
@@ -205,11 +239,34 @@ export async function createCharacterBuilderSession(
 	}
 
 	try {
-		await createCharacterBuilderSessionInternal(builderKey, true, initialData);
+		const sessionKey = getNewSessionId();
+		await store.dispatch(
+			createCharacterBuilderStateInternal(
+				sessionKey,
+				builderKey,
+				true,
+				initialData
+			)
+		);
 	} catch (ex) {
 		throw {
 			Title: "Error loading character builder data",
 			Message: `${ex}`,
 		};
+	}
+}
+
+/**
+ * Downloads character builder saved state JSON using the browser's File API.
+ * @param state
+ */
+export function downloadCharacterBuilderJson(
+	state: CharacterBuilderState<any, any> | undefined
+) {
+	if (state) {
+		downloadAsJson(
+			`${state.Character.Title}-${state.Model.BuilderKey}.json`,
+			createTabSavedState(UtilityKey.CHARACTER_BUILDER, state)
+		);
 	}
 }

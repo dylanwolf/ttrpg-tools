@@ -25,6 +25,10 @@ import { faDownload } from "@fortawesome/free-solid-svg-icons/faDownload";
 import { downloadEncounterBuilder5eJson } from "./Data";
 import "./TabControl.css";
 
+/**
+ * Renders the currently selected encounter builder 5e session.
+ * @returns
+ */
 export default function EncounterBuilder5eView() {
 	const session = useAppSelector(encounterBuilder5eSessionSelector());
 	if (!session?.Data) return <></>;
@@ -572,5 +576,8 @@ export default function EncounterBuilder5eView() {
 	);
 }
 
+/**
+ * A list of CR options to be displayed in the component: 0, 1/8, 1/4, 1/2, 1-30.
+ */
 var CR_OPTIONS = ["0", "1/8", "1/4", "1/2"];
 for (var i = 1; i <= 30; i++) CR_OPTIONS.push(i.toString());

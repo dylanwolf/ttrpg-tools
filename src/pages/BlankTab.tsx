@@ -1,6 +1,10 @@
 import { createTabSessionForUtility, UtilityKey } from "../utilities";
 import { createCharacterBuilderSession } from "../utilities/character-builder/BuilderTabSessions";
 
+/**
+ * Renders static content when no tab is selected.
+ * @returns
+ */
 export default function BlankTab() {
 	function onClickCreateCharacterBuilder(builderKey: string, evt: any) {
 		createCharacterBuilderSession(builderKey);

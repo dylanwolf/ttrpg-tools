@@ -1,6 +1,6 @@
-import Markdown from "react-markdown";
 import { StepModel, StepState } from "../StepModel";
 import { ICharacterData } from "../BuilderFactory";
+import { MarkdownWrapper } from "../../../helpers/markdownHelpers";
 
 interface StaticTextStepState extends StepState {
 	Value: string;
@@ -67,7 +67,7 @@ export class StaticTextStep<
 					<>
 						<div className="title">{this.Label}</div>
 						<div className="step-markdown">
-							<Markdown>{stepState.Value}</Markdown>
+							<MarkdownWrapper>{stepState.Value}</MarkdownWrapper>
 						</div>
 					</>
 				) : (

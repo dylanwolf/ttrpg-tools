@@ -11,6 +11,10 @@ import { createTabSessionForUtility, UtilityKey } from "../utilities";
 import { useAppSelector } from "../state/AppStateStorage";
 import { tabSessionSelector } from "../state/tab-sessions/TabSessions";
 
+/**
+ * Renders the site navbar. Handles creating new tool sessions and loading files from JSON.
+ * @returns
+ */
 export function SiteNavbar() {
 	const openJsonFileRef = useRef(null);
 	const [isBusy, setIsBusy] = useState(false);
