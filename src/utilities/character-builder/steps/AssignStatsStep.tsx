@@ -5,8 +5,8 @@ import "./AssignStatsStep.css";
 
 export interface StatDefinition<TChoice> {
 	Name: string;
-	Locked: boolean | undefined;
-	FixedValue: TChoice | undefined;
+	Locked?: boolean | undefined;
+	FixedValue?: TChoice | undefined;
 }
 
 export interface SelectListState<TChoice> {
@@ -196,7 +196,7 @@ export class AssignStatsStep<
 				}
 			});
 
-			if (newIndex && stat.Options[newIndex]) {
+			if (newIndex !== undefined && stat.Options[newIndex]) {
 				newValues[stat.Name] = stat.Options[newIndex];
 			}
 
