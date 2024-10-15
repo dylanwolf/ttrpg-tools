@@ -170,26 +170,28 @@ export class ChecklistStringStep<
 				<div className="title">{this.Label}</div>
 				<div className="items">
 					{stepState.SelectList.map((i) => (
-						<label key={`Checklist-${this.Name}-${i.Value}`}>
-							<input
-								onChange={function () {
-									onChange(i.Value);
-								}}
-								type="checkbox"
-								value={i.Value}
-								disabled={
-									!(stepState.Values || []).includes(i.Value) &&
-									stepState.MaximumSelectCount !== undefined &&
-									stepState.SelectList.length >= stepState.MaximumSelectCount
-								}
-								checked={(stepState.Values || []).includes(i.Value)}
-							/>
-							{this.UseMarkdown ? (
-								<MarkdownWrapper inline={true}>{i.Text}</MarkdownWrapper>
-							) : (
-								i.Text
-							)}
-						</label>
+						<div key={`Checklist-${this.Name}-${i.Value}`}>
+							<label>
+								<input
+									onChange={function () {
+										onChange(i.Value);
+									}}
+									type="checkbox"
+									value={i.Value}
+									disabled={
+										!(stepState.Values || []).includes(i.Value) &&
+										stepState.MaximumSelectCount !== undefined &&
+										stepState.SelectList.length >= stepState.MaximumSelectCount
+									}
+									checked={(stepState.Values || []).includes(i.Value)}
+								/>
+								{this.UseMarkdown ? (
+									<MarkdownWrapper inline={true}>{i.Text}</MarkdownWrapper>
+								) : (
+									i.Text
+								)}
+							</label>
+						</div>
 					))}
 				</div>
 			</>

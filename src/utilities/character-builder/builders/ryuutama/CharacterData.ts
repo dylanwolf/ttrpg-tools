@@ -2,7 +2,7 @@ import { ICharacterData } from "../../BuilderFactory";
 import { SourceData } from "./SourceData";
 
 export interface CharacterState extends ICharacterData {
-	AdditionalSources: string[];
+	AdditionalSources: string[] | undefined;
 	Version: string;
 	Level: number;
 	CharacterTemplate?: string | undefined;
@@ -34,7 +34,7 @@ export interface CharacterState extends ICharacterData {
 
 const initialCharacterData: CharacterState = {
 	Title: "New Character",
-	AdditionalSources: [],
+	AdditionalSources: undefined,
 	Version: "",
 	Level: 1,
 	AbilityScoreAssignments: {},

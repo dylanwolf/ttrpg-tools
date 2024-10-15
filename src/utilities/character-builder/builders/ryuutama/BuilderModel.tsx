@@ -79,7 +79,10 @@ registerBuilderModel(
 				(src, data) => src.AdditionalSources,
 				(itm) => itm.Key,
 				(itm) => itm.DisplayText,
-				(src, data, lst) => src.AdditionalSources.map((s) => s.Key),
+				(src, data, lst) =>
+					data.AdditionalSources !== undefined
+						? data.AdditionalSources
+						: src.AdditionalSources.map((x) => x.Key) || [],
 				(src, state, data) => (data.AdditionalSources = state.Values || [])
 			)
 				.withHelp(
