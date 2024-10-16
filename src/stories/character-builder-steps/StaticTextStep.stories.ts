@@ -1,6 +1,6 @@
 import { StoryObj } from "@storybook/react/*";
 import { createStepTesterArgs, renderStepTest } from "./StepTester";
-import { StaticTextStep } from "../utilities/character-builder/steps/StaticTextStep";
+import { StaticTextStep } from "../../utilities/character-builder/steps/StaticTextStep";
 
 const meta = {
 	title: "Builder Steps - Static Text",
@@ -20,7 +20,7 @@ export default meta;
 export type Story = StoryObj<typeof meta>;
 
 export const PlainText: Story = {
-	storyName: "Plain Text",
+	name: "Plain Text",
 	args: {
 		...createStepTesterArgs(
 			{ StringSource: "Test plain text value" },
@@ -39,7 +39,7 @@ export const PlainText: Story = {
 };
 
 export const Markdown: Story = {
-	storyName: "Plain Text",
+	name: "Plain Text",
 	args: {
 		...createStepTesterArgs(
 			{ StringSource: "This *value* contains **Markdown**" },

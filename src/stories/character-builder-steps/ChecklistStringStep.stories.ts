@@ -1,8 +1,8 @@
 import { StoryObj } from "@storybook/react/*";
 import { createStepTesterArgs, renderStepTest } from "./StepTester";
 import { fn } from "@storybook/test";
-import { ChecklistStringStep } from "../utilities/character-builder/steps/ChecklistStringStep";
-import "../App.scss";
+import { ChecklistStringStep } from "../../utilities/character-builder/steps/ChecklistStringStep";
+import "../../App.scss";
 
 const meta = {
 	title: "Builder Steps - String Checklist",
@@ -25,7 +25,7 @@ export default meta;
 export type Story = StoryObj<typeof meta>;
 
 export const BasicUsage: Story = {
-	storyName: "Basic Usage",
+	name: "Basic Usage",
 	args: {
 		...createStepTesterArgs(
 			{ Options: ["One", "Two", "Three", "Four"] },
@@ -46,7 +46,7 @@ export const BasicUsage: Story = {
 };
 
 export const WithMarkdown: Story = {
-	storyName: "With Markdown",
+	name: "With Markdown",
 	args: {
 		...createStepTesterArgs(
 			{

@@ -1,9 +1,8 @@
 import { Fragment } from "react";
-import { ICharacterData } from "../utilities/character-builder/BuilderFactory";
 import {
 	StepModel,
 	StepRunner,
-} from "../utilities/character-builder/StepModel";
+} from "../../utilities/character-builder/StepModel";
 import { useArgs } from "storybook/internal/preview-api";
 
 export function createStepTesterArgs(

@@ -1,7 +1,7 @@
 import { StoryObj } from "@storybook/react/*";
 import { createStepTesterArgs, renderStepTest } from "./StepTester";
 import { fn } from "@storybook/test";
-import { AssignStatsStep } from "../utilities/character-builder/steps/AssignStatsStep";
+import { AssignStatsStep } from "../../utilities/character-builder/steps/AssignStatsStep";
 
 const meta = {
 	title: "Builder Steps - Assign Stats",

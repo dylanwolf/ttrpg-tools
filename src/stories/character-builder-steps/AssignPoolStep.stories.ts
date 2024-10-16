@@ -1,7 +1,7 @@
 import { StoryObj } from "@storybook/react/*";
 import { createStepTesterArgs, renderStepTest } from "./StepTester";
 import { fn } from "@storybook/test";
-import { AssignPoolStep } from "../utilities/character-builder/steps/AssignPoolStep";
+import { AssignPoolStep } from "../../utilities/character-builder/steps/AssignPoolStep";
 
 const meta = {
 	title: "Builder Steps - Assign Pool",
@@ -24,7 +24,7 @@ export default meta;
 export type Story = StoryObj<typeof meta>;
 
 export const BasicUsage: Story = {
-	storyName: "Basic Usage",
+	name: "Basic Usage",
 	args: {
 		...createStepTesterArgs(
 			{},
@@ -58,7 +58,7 @@ export const BasicUsage: Story = {
 };
 
 export const InvalidInitialValue: Story = {
-	storyName: "Invalid Initial Value",
+	name: "Invalid Initial Value",
 	args: {
 		...createStepTesterArgs(
 			{},
