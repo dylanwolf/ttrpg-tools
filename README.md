@@ -76,9 +76,9 @@ Allows the user to choose from a list of options. When configuring, you define:
 - **getValue(item)**: Returns the text value of an item in the select list. This will be written to step state and character data.
 - **getText(item)**: Returns the text that should be displayed for an item in the select list.
 - **getDefaultValue(source, data, choicesList)**: Returns the default value, which is used when the step state is initialized.
-
 - **getMinimumSelectCount(func)**: Defines a function that returns the minimum number of items that must be selected before this step is considered complete. If not defined, the step is always considered complete.
 - **getMaximumSelectCount(func)**: Defines a function that returns the maximum number of items that can be selected. If not defined, any number of options can be selected.
+- **useMarkdown(flag)**: Specifies whether the checklist items should be rendered as Markdown or plain text.
 
 #### Container Step
 

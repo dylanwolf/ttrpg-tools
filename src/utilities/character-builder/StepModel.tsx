@@ -133,7 +133,10 @@ export abstract class StepModel<
 		newState.IsVisible = this.GetIsVisible
 			? this.GetIsVisible(source, data)
 			: true;
+
 		this.updateStateInternal(source, data, newState);
+
+		if (!newState.IsVisible) newState.IsCompleted = true;
 	}
 
 	/**

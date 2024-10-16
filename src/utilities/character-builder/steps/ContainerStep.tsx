@@ -63,6 +63,9 @@ export class ContainerStep<
 			newState.Steps = updatedState.NewStepState.Steps;
 		} else {
 			this.clearState(newState);
+			this.Steps.ByIndex.forEach((step, idx) => {
+				step.UpdateCharacter(source, newState, data);
+			});
 		}
 
 		newState.IsCompleted = newState.IsVisible

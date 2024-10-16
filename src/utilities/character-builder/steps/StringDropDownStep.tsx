@@ -141,7 +141,7 @@ export class StringDropDownStep<
 				<label>
 					{this.Label ? `${this.Label}: ` : ""}
 					<select value={stepState.Value} onChange={onChange}>
-						{stepState.SelectList.map((i) => (
+						{(stepState.SelectList || []).map((i) => (
 							<option
 								value={i.Value}
 								key={`StringDropDown-${this.Name}-${i.Value}`}

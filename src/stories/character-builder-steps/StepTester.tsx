@@ -54,9 +54,13 @@ export function renderStepTest(a: any) {
 
 	return (
 		<>
-			{args.Runner.ByIndex.map((s, idx) => (
+			{args.Runner.ByIndex.filter(
+				(s, idx) =>
+					s.Index <= args.StepRunnerState.CurrentStep &&
+					args.StepRunnerState.Steps[s.Index].IsVisible
+			).map((s, idx) => (
 				<Fragment key={`Step-${idx}`}>
-					{s.render(args.StepRunnerState.Steps[idx], onUpdate)}
+					{s.render(args.StepRunnerState.Steps[s.Index], onUpdate)}
 				</Fragment>
 			))}
 		</>
