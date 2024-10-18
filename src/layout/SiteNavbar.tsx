@@ -10,6 +10,10 @@ import { DOMAIN_NAME } from "./BrowserUtils";
 import { createTabSessionForUtility, UtilityKey } from "../utilities";
 import { useAppSelector } from "../state/AppStateStorage";
 import { tabSessionSelector } from "../state/tab-sessions/TabSessions";
+import { DebugFlagCheckbox } from "./DebugFlagCheckbox";
+import { KofiTip } from "./KofiTip";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
 
 /**
  * Renders the site navbar. Handles creating new tool sessions and loading files from JSON.
@@ -102,6 +106,26 @@ export function SiteNavbar() {
 								About
 							</Nav.Link>
 						</Nav.Item>
+					</Nav>
+					<Nav className="justify-content-end flex-grow-1 d-flex align-items-center">
+						<DebugFlagCheckbox />
+						{import.meta.env.DEV ? (
+							<>
+								<KofiTip />
+								<a
+									href="https://github.com/dylanwolf/ttrpg-tools"
+									target="_blank"
+								>
+									<FontAwesomeIcon
+										icon={faGithub}
+										fontSize="200%"
+										color="#fff"
+									/>
+								</a>
+							</>
+						) : (
+							<></>
+						)}
 					</Nav>
 				</Navbar.Collapse>
 			</Navbar>
