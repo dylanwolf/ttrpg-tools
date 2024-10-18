@@ -18,6 +18,15 @@ interface ForEachStepState extends StepState {
 	Iterations: ForEachIterationState[];
 }
 
+interface IterationDataArg<
+	TData extends ICharacterData,
+	TIterationData extends ICharacterData
+> extends ICharacterData {
+	IterationData: TIterationData;
+	Index: number;
+	ParentData: TData;
+}
+
 export class ForEachStep<
 	TSource,
 	TData extends ICharacterData,
@@ -32,7 +41,7 @@ export class ForEachStep<
 		data: TData,
 		index: number
 	) => TIterationData;
-	Steps: StepRunner<TSource, TIterationData>;
+	Steps: StepRunner<TSource, IterationDataArg<TData, TIterationData>>;
 
 	constructor(
 		name: string,
@@ -45,7 +54,7 @@ export class ForEachStep<
 			data: TData,
 			index: number
 		) => TIterationData,
-		children: StepModel<TSource, TIterationData, any>[]
+		children: StepModel<TSource, IterationDataArg<TData, TIterationData>, any>[]
 	) {
 		super(
 			name,
@@ -56,7 +65,10 @@ export class ForEachStep<
 		this.GetIterationData = getIterationData;
 		this.SetIterationData = setIterationData;
 		this.InitIterationData = initIterationData;
-		this.Steps = new StepRunner<TSource, TIterationData>(this.Name, children);
+		this.Steps = new StepRunner<
+			TSource,
+			IterationDataArg<TData, TIterationData>
+		>(this.Name, children);
 	}
 
 	controlTypeId(): string {
@@ -94,7 +106,7 @@ export class ForEachStep<
 
 			// Adjust number of iterations up
 			if (count > newState.Iterations.length) {
-				for (var idx = newState.Iterations.length; idx <= count; idx++) {
+				for (var idx = newState.Iterations.length; idx < count; idx++) {
 					newState.Iterations.push({
 						CurrentStep: -1,
 						Label: "",
@@ -114,7 +126,12 @@ export class ForEachStep<
 			for (var idx = 0; idx < count; idx++) {
 				var updatedState = this.Steps.onParentStepUpdated(
 					source,
-					iterationData[idx],
+					{
+						Title: "",
+						IterationData: iterationData[idx],
+						Index: idx,
+						ParentData: data,
+					},
 					newState.Iterations[idx],
 					-1
 				);
@@ -126,6 +143,9 @@ export class ForEachStep<
 				newState.Iterations[idx].IsCompleted = newState.Iterations[
 					idx
 				].Steps.all((s) => s.IsCompleted);
+
+				iterationData[idx] = updatedState.NewCharacterData.IterationData;
+				this.SetIterationData(data, iterationData);
 			}
 		} else {
 			this.clearState(newState);
@@ -199,7 +219,7 @@ export class ForEachStep<
 					this.Name
 				}-iteration  step-${stepState.IsCompleted ? "complete" : "incomplete"}`}
 			>
-				{" "}
+				<div className="title">{stepState.Label}</div>
 				<div className="container-box">
 					{this.Steps.ByIndex.filter(
 						(c) => stepState.Steps[c.Index].IsVisible
