@@ -175,6 +175,11 @@ export const tabSessionSlice = createSlice({
 			delete state.Sessions[action.payload];
 			if (action.payload === state.CurrentSessionKey) {
 				state.CurrentSessionKey = Object.keys(state.Sessions)[0] || undefined;
+				setBrowserTitle(
+					state.CurrentSessionKey && state.Sessions[state.CurrentSessionKey]
+						? state.Sessions[state.CurrentSessionKey].Title
+						: ""
+				);
 			}
 		},
 	},
