@@ -75,8 +75,8 @@ export function updateEncounterState(state: EncounterBuilder5eData) {
 			state.Monsters.sum((m) => m.Count || 0) || 0
 		);
 		state.TotalMonsterXP =
-			(state.Monsters.sum((m) => getMonsterXP(m)) || 0) *
-			state.EncounterMultiplier;
+			state.Monsters.sum((m) => (getMonsterXP(m) || 0) * (m.Count || 0)) ||
+			0 * state.EncounterMultiplier;
 	}
 
 	// Calculate difficulty thresholds
@@ -204,7 +204,7 @@ export function getMonsterXP(monster: Encounter5eMonster): number | undefined {
 	var xpFromCr = calculateXPFromCR(monster.CR);
 	if (xpFromCr === undefined) return undefined;
 
-	return xpFromCr * (monster.Count || 0);
+	return xpFromCr;
 }
 
 /**
