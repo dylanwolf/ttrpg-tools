@@ -74,9 +74,10 @@ export function updateEncounterState(state: EncounterBuilder5eData) {
 		state.EncounterMultiplier = getEncounterMultiplier(
 			state.Monsters.sum((m) => m.Count || 0) || 0
 		);
+
 		state.TotalMonsterXP =
-			state.Monsters.sum((m) => (getMonsterXP(m) || 0) * (m.Count || 0)) ||
-			0 * state.EncounterMultiplier;
+			(state.Monsters.sum((m) => m.TotalXP || 0) || 0) *
+			state.EncounterMultiplier;
 	}
 
 	// Calculate difficulty thresholds
