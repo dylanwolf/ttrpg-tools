@@ -3,6 +3,7 @@ import { createStepTesterArgs, renderStepTest } from "./StepTester";
 import { fn } from "@storybook/test";
 import { ChecklistStringStep } from "../../utilities/character-builder/steps/ChecklistStringStep";
 import "../../App.scss";
+import { NumericStep } from "../../utilities/character-builder/steps/NumericStep";
 
 const meta = {
 	title: "Builder Steps - String Checklist",
@@ -67,6 +68,35 @@ export const WithMarkdown: Story = {
 					(src, data, lst) => data.Values || [],
 					(src, state, newData) => (newData.Values = state.Values || [])
 				).useMarkdown(true),
+			]
+		),
+	},
+};
+
+export const DropdownForSingleChoice: Story = {
+	name: "DropDown for Single Choice",
+	args: {
+		...createStepTesterArgs(
+			{ Options: ["One", "Two", "Three", "Four"] },
+			{ Values: ["One"], ChoiceCount: 2 },
+			[
+				new NumericStep<any, any>(
+					"NumberOfChoices",
+					"Number of Choices",
+					(src, data) => data.ChoiceCount || 0,
+					(src, state, newData) => (newData.ChoiceCount = state.Value || 0)
+				),
+				new ChecklistStringStep<any, any, any>(
+					"ChecklistStringTest",
+					"StringChecklist Test",
+					(src, data) => src.Options,
+					(itm) => itm,
+					(itm) => itm,
+					(src, data, lst) => data.Values || [],
+					(src, state, newData) => (newData.Values = state.Values || [])
+				)
+					.requiresMaximumSelections((src, data) => data.ChoiceCount)
+					.useDropDownForSingleChoice(true),
 			]
 		),
 	},

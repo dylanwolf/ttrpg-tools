@@ -3,6 +3,7 @@ import { ICharacterData } from "../BuilderFactory";
 import { StepModel, StepState } from "../StepModel";
 import { MarkdownWrapper } from "../../../helpers/markdownHelpers";
 import "./ChecklistStringStep.css";
+import { getTextFieldValueFrom } from "../../../helpers/fieldHelpers";
 
 interface ChecklistStringStepState extends StepState {
 	SelectList: SelectItem[];
@@ -32,6 +33,7 @@ export class ChecklistStringStep<
 		lst: string[]
 	) => string[] | undefined;
 	UseMarkdown?: boolean | undefined;
+	UseDropdownForSingleChoice?: boolean | undefined;
 
 	constructor(
 		name: string,
@@ -56,6 +58,11 @@ export class ChecklistStringStep<
 		this.GetValue = getValue;
 		this.GetText = getText;
 		this.GetDefaultValue = getDefaultValue;
+	}
+
+	useDropDownForSingleChoice(flag: boolean) {
+		this.UseDropdownForSingleChoice = flag;
+		return this;
 	}
 
 	requiresMinimumSelections(
@@ -136,6 +143,13 @@ export class ChecklistStringStep<
 				? this.GetMaximumSelectCount(source, data)
 				: undefined;
 
+			if (
+				newState.Values &&
+				newState.MaximumSelectCount !== undefined &&
+				newState.Values.length > newState.MaximumSelectCount
+			)
+				newState.Values = newState.Values.slice(0, newState.MaximumSelectCount);
+
 			newState.IsCompleted = this.IsRequired
 				? !newState.MinimumSelectCount ||
 				  (newState.Values || []).length >= newState.MinimumSelectCount
@@ -146,11 +160,14 @@ export class ChecklistStringStep<
 		stepState: ChecklistStringStepState,
 		triggerUpdate: (index: number, stepUpdates: any) => void
 	): JSX.Element {
+		if (this.UseDropdownForSingleChoice && stepState.MaximumSelectCount === 1)
+			return this.renderDropDown(stepState, this.Index, triggerUpdate);
+
 		var index = this.Index;
 
 		function onChange(value: string) {
 			if (
-				stepState.MaximumSelectCount &&
+				stepState.MaximumSelectCount !== undefined &&
 				(stepState.Values || []).length >= stepState.MaximumSelectCount
 			)
 				return;
@@ -181,7 +198,8 @@ export class ChecklistStringStep<
 									disabled={
 										!(stepState.Values || []).includes(i.Value) &&
 										stepState.MaximumSelectCount !== undefined &&
-										stepState.SelectList.length >= stepState.MaximumSelectCount
+										(stepState.Values || []).length >=
+											stepState.MaximumSelectCount
 									}
 									checked={(stepState.Values || []).includes(i.Value)}
 								/>
@@ -194,6 +212,39 @@ export class ChecklistStringStep<
 						</div>
 					))}
 				</div>
+			</>
+		);
+	}
+
+	renderDropDown(
+		stepState: ChecklistStringStepState,
+		index: number,
+		triggerUpdate: (index: number, stepUpdates: any) => void
+	) {
+		function onChange(newValue: string) {
+			triggerUpdate(index, { Values: [newValue] });
+		}
+
+		const value = (stepState && stepState.Values && stepState.Values[0]) || "";
+
+		return (
+			<>
+				<label>
+					{this.Label ? `${this.Label}: ` : ""}
+					<select
+						value={value}
+						onChange={(e) => onChange(getTextFieldValueFrom(e) || "")}
+					>
+						{(stepState.SelectList || []).map((i) => (
+							<option
+								value={i.Value}
+								key={`StringDropDown-${this.Name}-${i.Value}`}
+							>
+								{i.Text}
+							</option>
+						))}
+					</select>
+				</label>
 			</>
 		);
 	}
