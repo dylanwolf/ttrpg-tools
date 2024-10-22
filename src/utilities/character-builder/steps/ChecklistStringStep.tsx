@@ -30,7 +30,8 @@ export class ChecklistStringStep<
 	GetDefaultValue: (
 		source: TSource,
 		data: TData,
-		lst: string[]
+		lst: string[],
+		useDropdownForSingleChoice: boolean
 	) => string[] | undefined;
 	UseMarkdown?: boolean | undefined;
 	UseDropdownForSingleChoice?: boolean | undefined;
@@ -44,7 +45,8 @@ export class ChecklistStringStep<
 		getDefaultValue: (
 			source: TSource,
 			data: TData,
-			lst: string[]
+			lst: string[],
+			useDropdownForSingleChoice: boolean
 		) => string[] | undefined,
 		updateCharacter: (
 			source: TSource,
@@ -128,7 +130,8 @@ export class ChecklistStringStep<
 				newState.Values = this.GetDefaultValue(
 					source,
 					data,
-					selectList.map((x) => x.Value)
+					selectList.map((x) => x.Value),
+					this.UseDropdownForSingleChoice || false
 				);
 
 			if (newState.Values)

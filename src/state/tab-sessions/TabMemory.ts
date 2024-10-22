@@ -89,9 +89,10 @@ export function loadTabMemory() {
 	implementation.getTabKeysFromStorage().forEach((sessionKey) => {
 		var tabData = implementation.popTab(sessionKey);
 		if (tabData && tabData.Utility && tabData.Data) {
-			createTabSessionForUtility(tabData.Utility, tabData.Data).catch((ex) =>
-				openMessageWindow(ex)
-			);
+			createTabSessionForUtility(tabData.Utility, tabData.Data).catch((ex) => {
+				console.error(ex);
+				openMessageWindow(ex);
+			});
 		}
 	});
 }

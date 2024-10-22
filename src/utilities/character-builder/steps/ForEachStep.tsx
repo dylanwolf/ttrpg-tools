@@ -18,7 +18,7 @@ interface ForEachStepState extends StepState {
 	Iterations: ForEachIterationState[];
 }
 
-interface IterationDataArg<
+export interface IterationDataArg<
 	TData extends ICharacterData,
 	TIterationData extends ICharacterData
 > extends ICharacterData {
@@ -32,7 +32,7 @@ export class ForEachStep<
 	TData extends ICharacterData,
 	TIterationData extends ICharacterData
 > extends StepModel<TSource, TData, ForEachStepState> {
-	GetLabel: (data: TIterationData, index: number) => string;
+	GetLabel: (src: TSource, data: TIterationData, index: number) => string;
 	GetCount: (src: TSource, data: TData) => number;
 	GetIterationData: (data: TData) => TIterationData[];
 	SetIterationData: (data: TData, newIterations: TIterationData[]) => void;
@@ -45,7 +45,7 @@ export class ForEachStep<
 
 	constructor(
 		name: string,
-		getLabel: (data: TIterationData, index: number) => string,
+		getLabel: (src: TSource, data: TIterationData, index: number) => string,
 		getCount: (src: TSource, data: TData) => number,
 		getIterationData: (data: TData) => TIterationData[],
 		setIterationData: (data: TData, newIterations: TIterationData[]) => void,
@@ -80,7 +80,7 @@ export class ForEachStep<
 			Count: 0,
 			Iterations: [],
 			IsCompleted: false,
-			IsVisible: this.GetIsVisible ? false : true,
+			IsVisible: false,
 		};
 	}
 
@@ -139,7 +139,11 @@ export class ForEachStep<
 				newState.Iterations[idx].CurrentStep =
 					updatedState.NewStepState.CurrentStep;
 				newState.Iterations[idx].Steps = updatedState.NewStepState.Steps;
-				newState.Iterations[idx].Label = this.GetLabel(iterationData[idx], idx);
+				newState.Iterations[idx].Label = this.GetLabel(
+					source,
+					iterationData[idx],
+					idx
+				);
 				newState.Iterations[idx].IsCompleted = newState.Iterations[
 					idx
 				].Steps.all((s) => s.IsCompleted);
@@ -147,7 +151,13 @@ export class ForEachStep<
 				iterationData[idx] = updatedState.NewCharacterData.IterationData;
 				this.SetIterationData(data, iterationData);
 			}
-		} else {
+
+			newState.IsVisible = newState.Iterations.any((i) =>
+				i.Steps.any((s) => s.IsVisible)
+			);
+		}
+
+		if (!newState.IsVisible) {
 			this.clearState(newState);
 			this.SetIterationData(data, []);
 		}

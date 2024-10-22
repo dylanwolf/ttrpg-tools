@@ -249,6 +249,7 @@ export async function createCharacterBuilderSession(
 			)
 		);
 	} catch (ex) {
+		console.error(ex);
 		throw {
 			Title: "Error loading character builder data",
 			Message: `${ex}`,

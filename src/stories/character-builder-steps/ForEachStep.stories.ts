@@ -74,7 +74,7 @@ export const BasicUsage: Story = {
 				).withMinValue(() => 0),
 				new ForEachStep<any, any, any>(
 					"ForEachTest",
-					(data, idx) => `Iteration #${idx + 1}`,
+					(src, data, idx) => `Iteration #${idx + 1}`,
 					(src, data) => data.ForEachCount,
 					(data) => data.ForEachData,
 					(data, newValue) => (data.ForEachData = newValue),
