@@ -20,6 +20,7 @@ import {
 	getLevel5Skills,
 	getLevel6Type,
 	getStartingAbilityScores,
+	toPdfFormFillArgs,
 } from "./CharacterData";
 import {
 	AdditionalSource,
@@ -622,6 +623,7 @@ registerBuilderModel(
 				"Select Incantation spells granted by the Magic Type. You gain 2 spells per level per type, with Mid Level spells unlocking at level 4 and High Level spells unlocking at level 7."
 			),
 		],
-		() => getInitialCharacterData()
+		() => getInitialCharacterData(),
+		toPdfFormFillArgs
 	)
 );

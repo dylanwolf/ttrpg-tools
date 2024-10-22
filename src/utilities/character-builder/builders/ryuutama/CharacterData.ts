@@ -121,3 +121,16 @@ export function getLevel1Type(source: SourceData, data: CharacterState) {
 export function getLevel6Type(source: SourceData, data: CharacterState) {
 	return source.Types.filter((x) => x.Name === data.Level6Type)[0] || undefined;
 }
+
+export function toPdfFormFillArgs(source: SourceData, data: CharacterState) {
+	// TODO: Finish PDF form fill properties
+
+	return {
+		"topmostSubform[0].Page1[0].Character_Name[0]": data.Title,
+		"topmostSubform[0].Page1[0].Level[0]": data.Level?.toString(),
+		"topmostSubform[0].Page1[0].Class_1[0]": data.Level1Class,
+		"topmostSubform[0].Page1[0].Class_2[0]": data.Level5Class,
+		"topmostSubform[0].Page1[0].Type_1[0]": data.Level1Type,
+		"topmostSubform[0].Page1[0].Type_2[0]": data.Level6Type,
+	};
+}

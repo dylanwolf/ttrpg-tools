@@ -333,15 +333,20 @@ export class RootStepCollection<
 > extends StepRunner<TSource, TData> {
 	BuilderKey: string;
 	GetInitialCharacterData: () => TData;
+	SupportsPDFFormFill: boolean;
+	ToPdfFormFillParams: ((src: TSource, data: TData) => any) | undefined;
 
 	constructor(
 		builderKey: string,
 		steps: StepModel<TSource, TData, any>[],
-		getInitialCharacterData: () => TData
+		getInitialCharacterData: () => TData,
+		toPdfFormFillParams?: ((src: TSource, data: TData) => any) | undefined
 	) {
 		super("Root", steps);
 		this.BuilderKey = builderKey;
 		this.GetInitialCharacterData = getInitialCharacterData;
+		this.SupportsPDFFormFill = toPdfFormFillParams ? true : false;
+		this.ToPdfFormFillParams = toPdfFormFillParams;
 	}
 
 	initializeRootState(sessionKey: string): RootStepCollectionState {

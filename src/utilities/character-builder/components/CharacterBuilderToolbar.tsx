@@ -6,10 +6,12 @@ import Button from "react-bootstrap/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons/faDownload";
 import { faDiceD20 } from "@fortawesome/free-solid-svg-icons/faDiceD20";
+import { faFilePdf } from "@fortawesome/free-regular-svg-icons/faFilePdf";
 import {
 	characterBuilderSessionSelector,
 	downloadCharacterBuilderJson,
 } from "../BuilderTabSessions";
+import { downloadAsPdf, localApiCall } from "../../../helpers/apiHelpers";
 
 /**
  * Props to be passed into the character builder toolbar
@@ -34,6 +36,23 @@ export function CharacterBuilderToolbar(props: CharacterBuilderToolbarProps) {
 		props.setShowCharacterSheetMobile(!props.showCharacterSheetMobile);
 	}
 
+	function downloadPdfCharacterSheet() {
+		if (!state || !state.SourceData || !state.Model.ToPdfFormFillParams) return;
+
+		localApiCall("/pdf-form-fill", {
+			builderKey: state.Model.BuilderKey,
+			formFields: state.Model.ToPdfFormFillParams(
+				state.SourceData as any,
+				state.Character
+			),
+		}).then((result) => {
+			downloadAsPdf(
+				`${state.Character.Title}-${state.Model.BuilderKey}.pdf`,
+				result.pdfData
+			);
+		});
+	}
+
 	return (
 		<Navbar expand="md" bg="secondary" variant="pills" className="sticky-top">
 			<Navbar.Toggle aria-controls="character-toolbar"></Navbar.Toggle>
@@ -55,6 +74,14 @@ export function CharacterBuilderToolbar(props: CharacterBuilderToolbarProps) {
 						Show{" "}
 						{props.showCharacterSheetMobile ? "Builder" : "Character Sheet"}
 					</Button>
+					{state?.Model.SupportsPDFFormFill ? (
+						<Button onClick={downloadPdfCharacterSheet}>
+							<FontAwesomeIcon icon={faFilePdf} />
+							Download PDF
+						</Button>
+					) : (
+						<></>
+					)}
 				</Nav>
 			</Navbar.Collapse>
 		</Navbar>
