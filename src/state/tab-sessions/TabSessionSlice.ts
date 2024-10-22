@@ -12,6 +12,7 @@ State
 export interface TabSessionStateCollection {
 	Sessions: { [key: string]: TabSessionState<unknown> };
 	CurrentSessionKey?: string | undefined;
+	DebugState?: boolean | undefined;
 }
 
 /**
@@ -182,6 +183,9 @@ export const tabSessionSlice = createSlice({
 				);
 			}
 		},
+		toggleDebugState(state: TabSessionStateCollection) {
+			state.DebugState = state.DebugState ? false : true;
+		},
 	},
 });
 
@@ -190,5 +194,6 @@ export const {
 	setCurrentTabSession,
 	updateTabSession,
 	closeTabSession,
+	toggleDebugState,
 } = tabSessionSlice.actions;
 export default tabSessionSlice.reducer;
