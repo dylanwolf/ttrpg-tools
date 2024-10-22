@@ -78,6 +78,10 @@ export function useImplementation(impl: ITabMemory) {
 	implementation = impl;
 }
 
+export function hasTabMemory() {
+	return implementation.getTabKeysFromStorage().length > 0;
+}
+
 /**
  * Loads tabs from storage, creating new sessions for each one.
  */

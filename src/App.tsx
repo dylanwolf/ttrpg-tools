@@ -8,9 +8,6 @@ import { Outlet } from "react-router";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { LoadingPage } from "./pages/LoadingPage";
 import { registerArrayHelpers } from "./helpers/arrayHelpers";
-import { loadTabMemory } from "./state/tab-sessions/TabMemory";
-
-//(window as any).__DEBUG__ = true;
 
 registerArrayHelpers();
 
@@ -50,9 +47,9 @@ const router = createBrowserRouter([
 	},
 ]);
 
-document.addEventListener("readystatechange", function () {
-	if (document.readyState === "complete") loadTabMemory();
-});
+// document.addEventListener("readystatechange", function () {
+// 	if (document.readyState === "complete") loadTabMemory();
+// });
 
 function App() {
 	return (

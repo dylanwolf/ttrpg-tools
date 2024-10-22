@@ -9,6 +9,11 @@ import Nav from "react-bootstrap/Nav";
 import { faXmark } from "@fortawesome/free-solid-svg-icons/faXmark";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "./TabNavbar.css";
+import { useEffect } from "react";
+import {
+	hasTabMemory,
+	loadTabMemory,
+} from "../../state/tab-sessions/TabMemory";
 
 /**
  * Pulls a list of sessions from Redux state and displays a scrolling tab bar.
@@ -16,6 +21,12 @@ import "./TabNavbar.css";
  */
 export function TabNavbar() {
 	const sessions = useAppSelector(tabSessionSelector());
+
+	useEffect(() => {
+		if (Object.keys(sessions.Sessions).length === 0 && hasTabMemory()) {
+			loadTabMemory();
+		}
+	});
 
 	function onSelected(sessionKey: string) {
 		if (

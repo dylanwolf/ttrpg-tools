@@ -166,16 +166,17 @@ export class ChecklistStringStep<
 		var index = this.Index;
 
 		function onChange(value: string) {
-			if (
-				stepState.MaximumSelectCount !== undefined &&
-				(stepState.Values || []).length >= stepState.MaximumSelectCount
-			)
-				return;
-
 			var newValues = stepState.Values || [];
+
 			if (newValues.includes(value)) {
 				newValues = newValues.filter((x) => x !== value);
 			} else {
+				if (
+					stepState.MaximumSelectCount !== undefined &&
+					(stepState.Values || []).length >= stepState.MaximumSelectCount
+				)
+					return;
+
 				newValues = newValues.concat(value);
 			}
 
