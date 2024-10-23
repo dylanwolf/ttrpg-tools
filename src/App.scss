@@ -58,3 +58,7 @@ input::-webkit-inner-spin-button { margin-left: 20px; }
 .markdown-inline, .markdown-inline p {
     display: inline;
 }
+
+.markdown-block, .markdown-block p:last-child {
+    margin-bottom: 0
+}
