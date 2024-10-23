@@ -43,7 +43,7 @@ export function SiteFooter() {
 					</li>
 				</div>
 			</footer>
-			{import.meta.env.DEV ? <AnalyticsTracker /> : <></>}
+			{import.meta.env.PROD ? <AnalyticsTracker /> : <></>}
 		</>
 	);
 }
