@@ -10,7 +10,7 @@ getLastCommit((err, commit) => {
         const dateStr = dateObj.toLocaleString()
 
         if (commitDate && dateObj && dateStr)   {
-            const code = `export const VERSION = "${dateStr}";`
+            const code = `export const VERSION = "${dateStr} UTC";`
             const baseFilename = fileURLToPath(import.meta.url)
             const fullFilename = path.join(path.dirname(baseFilename), 'src/version.ts')
 
