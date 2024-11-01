@@ -46,10 +46,12 @@ export function CharacterBuilderToolbar(props: CharacterBuilderToolbarProps) {
 				state.Character
 			),
 		}).then((result) => {
-			downloadAsPdf(
-				`${state.Character.Title}-${state.Model.BuilderKey}.pdf`,
-				result.pdfData
-			);
+			if (result && result.pdfData) {
+				downloadAsPdf(
+					`${state.Character.Title}-${state.Model.BuilderKey}.pdf`,
+					result.pdfData
+				);
+			}
 		});
 	}
 

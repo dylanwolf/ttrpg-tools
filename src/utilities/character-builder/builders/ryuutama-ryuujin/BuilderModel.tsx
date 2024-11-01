@@ -8,6 +8,7 @@ import {
 	CharacterState,
 	getBenedictionsThroughLevel,
 	getRyuujinType,
+	toPdfFormFillArgs,
 } from "./CharacterData";
 import { RyuujinReveilSelectorStep } from "./ReveilSelector";
 import { SessionAndLevelStep } from "./SessionAndLevelStep";
@@ -189,6 +190,7 @@ registerBuilderModel(
 				Title: "New Ryuujin",
 				Reveils: [],
 			};
-		}
+		},
+		toPdfFormFillArgs
 	)
 );

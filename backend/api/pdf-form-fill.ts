@@ -6,6 +6,7 @@ import { isValidBuilderKey } from "../utils/appHelpers";
 import { readFileAsync } from "../utils/fsHelpers";
 import { PDFDocument, PDFTextField } from "pdf-lib";
 import { encode as base64encode } from "base64-arraybuffer";
+import { IApiResult } from "../baseClasses";
 
 export const pdfFormFillRouter: Router = express.Router();
 
@@ -17,9 +18,9 @@ function doesTemplateExist(builderKey: string) {
 	return fs.existsSync(buildTemplateFilename(builderKey));
 }
 
-interface FormFillResult {
-	missingFields: string[];
-	pdfBytes: Uint8Array;
+interface FormFillResult extends IApiResult {
+	missingFields?: string[] | undefined;
+	pdfBytes?: Uint8Array | undefined;
 }
 
 async function formFillTemplate(
@@ -35,29 +36,38 @@ async function formFillTemplate(
 
 	var missingFields: string[] = [];
 
-	Object.keys(paramsArg).forEach((key) => {
-		const value = paramsArg[key];
-		if (!value) return;
+	try {
+		Object.keys(paramsArg).forEach((key) => {
+			const value = paramsArg[key];
+			if (!value) return;
 
-		const field = allFields.filter((f) => f.getName() === key)[0];
+			const field = allFields.filter((f) => f.getName() === key)[0];
 
-		if (!field) {
-			missingFields.push(key);
-			return;
-		}
+			if (!field) {
+				missingFields.push(key);
+				return;
+			}
 
-		if (!(field as PDFTextField).setText) {
-			missingFields.push(key);
-			return;
-		}
+			if (!(field as PDFTextField).setText) {
+				missingFields.push(key);
+				return;
+			}
 
-		(field as PDFTextField).setText(value);
-	});
+			//(field as PDFTextField).setText(value);
+			(field as PDFTextField).setText(value?.toString() || "");
+		});
 
-	return {
-		missingFields: missingFields,
-		pdfBytes: await pdfDoc.save(),
-	};
+		return {
+			success: true,
+			missingFields: missingFields,
+			pdfBytes: await pdfDoc.save(),
+		};
+	} catch (ex) {
+		return {
+			success: false,
+			message: ex?.toString(),
+		};
+	}
 }
 
 pdfFormFillRouter.post("/", async (req: Request, res: Response) => {
@@ -82,9 +92,11 @@ pdfFormFillRouter.post("/", async (req: Request, res: Response) => {
 	}
 
 	var result = await formFillTemplate(builderKey, formFields);
-	console.log(result);
 	sendOKResult(res, "Success", {
+		success: result.success,
+		message: result.message,
 		missingFields: result.missingFields,
-		pdfData: base64encode(result.pdfBytes),
+		pdfData:
+			result.pdfBytes !== undefined ? base64encode(result.pdfBytes) : undefined,
 	});
 });

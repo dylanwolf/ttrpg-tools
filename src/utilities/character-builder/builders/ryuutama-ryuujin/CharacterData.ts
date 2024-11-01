@@ -93,3 +93,24 @@ export function getReveils(source: SourceData, data: CharacterState): Reveil[] {
 		.map((name) => source.Reveils.filter((x) => x.Name === name)[0])
 		.filter((x) => x);
 }
+
+export function toPdfFormFillArgs(source: SourceData, data: CharacterState) {
+	return {
+		CharacterName: data.Title,
+		Race: data.RyuujinType,
+		Level: data.Level,
+		Artifact: [data.Level1Artefact, data.Level4ArtefactGift]
+			.filter((x) => x)
+			.join(", "),
+		MaxLP: getLPForLevel(data.Level),
+		CurrentLP: getLPForLevel(data.Level),
+		Benediction1: data.Level2Benediction,
+		Benediction2: data.Level3Benediction,
+		Benediction3: data.Level4Benediction,
+		Benediction4: data.Level5Benediction,
+		Reveil1: data.Reveils && data.Reveils[0],
+		Reveil2: data.Reveils && data.Reveils[1],
+		Reveil3: data.Reveils && data.Reveils[2],
+		Reveil4: data.Reveils && data.Reveils[3],
+	};
+}

@@ -32,5 +32,12 @@ export function closeModalWindow(args: UICloseArgs) {
  * @param args
  */
 export function openMessageWindow(args: MessageWindowArgs) {
-	store.dispatch(openMessageWindowInternal(args));
+	store.dispatch(
+		openMessageWindowInternal({
+			ID: args.ID,
+			Title: args.Title,
+			Message: args.Message?.toString() || "",
+			CloseButton: args.CloseButton,
+		})
+	);
 }

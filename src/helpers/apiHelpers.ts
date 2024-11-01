@@ -11,11 +11,14 @@ export function localApiCall(url: string, params: any) {
 		body: JSON.stringify(params || {}),
 	})
 		.then((res) => res.json())
+		.then((obj) => {
+			if (!obj.success) throw obj.message;
+			return obj;
+		})
 		.catch((ex) => {
-			console.log(ex);
 			openMessageWindow({
 				Title: "API Call Failed",
-				Message: ex,
+				Message: `Returned error: ${ex}`,
 			});
 		});
 }
