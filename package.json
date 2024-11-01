@@ -32,8 +32,8 @@
 		"web-vitals": "^2.1.4"
 	},
 	"scripts": {
-		"start": "vite",
-		"build": "vite build",
+		"start": "node ./git-commit.js && vite",
+		"build": "node ./git-commit.js && vite build",
 		"preview": "vite preview",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build"
@@ -70,7 +70,8 @@
 		"@storybook/test": "^8.3.5",
 		"@types/uuid": "^10.0.0",
 		"eslint-plugin-storybook": "^0.9.0",
-		"sass-embedded": "^1.79.4",
+		"git-last-commit": "^1.0.1",
+		"sass-embedded": "1.78.0",
 		"storybook": "^8.3.5"
 	}
 }

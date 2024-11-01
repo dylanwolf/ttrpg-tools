@@ -1,6 +1,7 @@
 {
 	"__NAME__": "Ryuutama",
-	"Version": "2024-10-08",
+	"__CREDITS__": "*(Credits go here)*",
+	"Version": "2024-10-22",
 	"AdditionalSources": [
 		{
 			"Key": "Holiday 2015 Package",

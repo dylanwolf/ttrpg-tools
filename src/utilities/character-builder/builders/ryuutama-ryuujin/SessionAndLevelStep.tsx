@@ -26,7 +26,8 @@ export class SessionAndLevelStep extends StepModel<
 > {
 	constructor(name: string) {
 		super(name, (src, state, newData) => {
-			newData.Sessions = state.SessionValue;
+			newData.Sessions =
+				state.SessionValue !== null ? state.SessionValue : undefined;
 			newData.Level = state.LevelValue || 1;
 		});
 	}
@@ -119,7 +120,10 @@ export class SessionAndLevelStep extends StepModel<
 						type="number"
 						inputMode="numeric"
 						value={
-							stepState.SessionValue !== undefined ? stepState.SessionValue : ""
+							stepState.SessionValue !== null &&
+							stepState.SessionValue !== undefined
+								? stepState.SessionValue
+								: ""
 						}
 						min={0}
 						step={1}

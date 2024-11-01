@@ -8,6 +8,7 @@ export interface IFromSource {
 
 export interface SourceData extends ICharacterBuilderSourceData {
 	Version: string;
+	__CREDITS__: string;
 	AdditionalSources: string[];
 	RyuujinTypes: RyuujinType[];
 	Artefacts: Artefact[];

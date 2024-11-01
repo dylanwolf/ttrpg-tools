@@ -16,7 +16,7 @@ function LinkRenderer(props: any) {
 export function MarkdownWrapper(props: MarkdownTextProps) {
 	return (
 		<Markdown
-			className={props.inline ? "markdown-inline" : ""}
+			className={props.inline ? "markdown-inline" : "markdown-block"}
 			components={{ a: LinkRenderer }}
 		>
 			{props.children}

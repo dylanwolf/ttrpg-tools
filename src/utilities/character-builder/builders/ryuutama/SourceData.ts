@@ -29,6 +29,7 @@ export function collectBonuses(
 
 export interface SourceData extends ICharacterBuilderSourceData {
 	Version: string;
+	__CREDITS__: string;
 	AdditionalSources: AdditionalSource[];
 	CharacterTemplates: CharacterTemplate[];
 	StartingAbilityScores: StartingAbilityScore[];

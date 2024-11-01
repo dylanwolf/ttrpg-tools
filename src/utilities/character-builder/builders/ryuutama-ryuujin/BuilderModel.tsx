@@ -33,6 +33,13 @@ registerBuilderModel(
 		BUILDER_KEY,
 		[
 			new StaticTextStep<SourceData, CharacterState>(
+				"Credits",
+				"Credits / Legal",
+				true,
+				(src, data) => src.__CREDITS__,
+				(src, data, newData) => {}
+			),
+			new StaticTextStep<SourceData, CharacterState>(
 				"Version",
 				"Character Builder Data Version",
 				false,
