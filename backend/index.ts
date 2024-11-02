@@ -4,7 +4,7 @@ import helmet from "helmet";
 import { AddressInfo } from "net";
 import { rateLimit } from "express-rate-limit";
 import { configToNumber } from "./utils/envHelpers";
-import { helloWorldRouter } from "./api/hello-world";
+import { apiTestRouter } from "./api/api-test";
 import { pdfFormFillRouter } from "./api/pdf-form-fill";
 
 // Configuration
@@ -32,7 +32,7 @@ app.use(
 );
 
 // Build API
-app.use("/hello-world", helloWorldRouter);
+app.use("/api-test", apiTestRouter);
 app.use("/pdf-form-fill", pdfFormFillRouter);
 
 // Start server
