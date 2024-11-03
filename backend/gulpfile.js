@@ -12,7 +12,7 @@ gulp.task('copy-project', function() {
 })
 
 gulp.task('copy-pdf-form-fills', function(done) {
-    return gulp.src(['./pdf-form-fills/**/*.*']).pipe(gulp.dest('./dist/pdf-form-fills'))
+    return gulp.src(['./pdf-form-fills/**/*.*'], { encoding: false }).pipe(gulp.dest('./dist/pdf-form-fills'))
 })
 
 gulp.task('default', gulp.series(
