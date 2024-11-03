@@ -84,7 +84,7 @@ function getAdjustedAbilityScore(data: CharacterState, name: string) {
 	return baseValue + increases * 2;
 }
 
-function collectCharacterSheetData(
+export function collectCharacterSheetData(
 	source: SourceData,
 	data: CharacterState
 ): CharacterSheetData {

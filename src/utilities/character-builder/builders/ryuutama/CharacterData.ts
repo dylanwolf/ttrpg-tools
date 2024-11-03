@@ -1,4 +1,5 @@
 import { ICharacterData } from "../../BuilderFactory";
+import { collectCharacterSheetData } from "./CharacterSheet";
 import { SourceData } from "./SourceData";
 
 export interface CharacterState extends ICharacterData {
@@ -123,14 +124,124 @@ export function getLevel6Type(source: SourceData, data: CharacterState) {
 }
 
 export function toPdfFormFillArgs(source: SourceData, data: CharacterState) {
-	// TODO: Finish PDF form fill properties
+	var cs = collectCharacterSheetData(source, data);
 
-	return {
-		"topmostSubform[0].Page1[0].Character_Name[0]": data.Title,
-		"topmostSubform[0].Page1[0].Level[0]": data.Level?.toString(),
-		"topmostSubform[0].Page1[0].Class_1[0]": data.Level1Class,
-		"topmostSubform[0].Page1[0].Class_2[0]": data.Level5Class,
-		"topmostSubform[0].Page1[0].Type_1[0]": data.Level1Type,
-		"topmostSubform[0].Page1[0].Type_2[0]": data.Level6Type,
+	var obj: any = {
+		CharacterName: data.Title,
+		Level: data.Level?.toString(),
+		Class1: data.Level1Class,
+		Class2: data.Level5Class,
+		Type1:
+			data.Level1Type &&
+			(data.Level1SeasonalMagic
+				? `${data.Level1Type} (${data.Level1SeasonalMagic})`
+				: data.Level1Type),
+		Type2:
+			data.Level6Type &&
+			(data.Level6SeasonalMagic
+				? `${data.Level6Type} (${data.Level6SeasonalMagic})`
+				: data.Level6Type),
+		MasteredWeapon: cs.WeaponMasteries.map((w) => w.Name).join(", "),
+		SpecializedTerrain: cs.TerrainWeatherSpecialties.join(", "),
+		STR: cs.AbilityScores.STR?.toString(),
+		DEX: cs.AbilityScores.DEX?.toString(),
+		INT: cs.AbilityScores.INT?.toString(),
+		SPI: cs.AbilityScores.SPI?.toString(),
+		HP: cs.Derived.HP?.toString(),
+		MaxHP: cs.Derived.HP?.toString(),
+		MP: cs.Derived.MP?.toString(),
+		MaxMP: cs.Derived.MP?.toString(),
 	};
+
+	cs.Skills.forEach((skill, idx) => {
+		obj[`ClassSkill${idx + 1}`] = skill.Name;
+		obj[`ClassSkill${idx + 1}Die`] = skill.RelevantRoll;
+		obj[`ClassSkill${idx + 1}Effect`] = skill.Description;
+	});
+
+	cs.WeaponMasteries.forEach((wpn, idx) => {
+		obj[`Weapon${idx + 1}Name`] = wpn.Name;
+		obj[`Weapon${idx + 1}Accuracy`] = wpn.Accuracy;
+		obj[`Weapon${idx + 1}Damage`] = wpn.Damage;
+		obj[`Weapon${idx + 1}Description`] = wpn.Description;
+	});
+
+	const expectedSpecialties = [
+		"Rain",
+		"Strong Wind",
+		"Fog",
+		"Hot",
+		"Cold",
+		"Hard Rain",
+		"Snow",
+		"Deep Fog",
+		"Dark",
+		"Hurricane",
+		"Blizzard",
+		"Grassland",
+		"Wasteland",
+		"Woods",
+		"Highlands",
+		"Rocky",
+		"Deep Forest",
+		"Swamp",
+		"Mountain",
+		"Desert",
+		"Jungle",
+		"Alpine",
+	];
+
+	var otherBonuses: { key: string; value: string }[] = [];
+
+	Object.keys(cs.OtherBonuses).forEach((key) => {
+		otherBonuses.push({ key: key, value: cs.OtherBonuses[key] });
+	});
+
+	cs.TerrainWeatherSpecialties.forEach((specialty) => {
+		if (expectedSpecialties.includes(specialty)) {
+			var specialtyKey = specialty.replace(" ", "");
+			obj[`Terrain${specialtyKey}`] = "+2";
+			obj[`Weather${specialtyKey}`] = "+2";
+		} else {
+			otherBonuses.push({ key: specialty, value: "+2" });
+		}
+	});
+
+	otherBonuses.forEach((bns, idx) => {
+		obj[`OtherBonus${idx + 1}Description`] = bns.key;
+		obj[`OtherBonus${idx + 1}Bonus`] = bns.value;
+	});
+
+	var notes = [];
+
+	if (cs.CharacterTemplateDisplayName)
+		notes.push(cs.CharacterTemplateDisplayName);
+	if (cs.WeaponMasteries.length > 2) {
+		var additionalWeapons = cs.WeaponMasteries.slice(2, -1)
+			.map(
+				(wpn) =>
+					`${wpn.Name} Accuracy: ${wpn.Accuracy} Damage: ${wpn.Damage} ${wpn.Description}`
+			)
+			.join("; ");
+		notes.push(`Additional Weapon Masteries: ${additionalWeapons}`);
+	}
+
+	if (cs.CraftingSpecializations?.length > 0)
+		notes.push(
+			`Crafting Specializations: ${cs.CraftingSpecializations.join(", ")}`
+		);
+	if (cs.IncantationSpells?.length > 0)
+		notes.push(
+			`Incantation Spells: ${cs.IncantationSpells.map((s) => s.Name).join(
+				", "
+			)}`
+		);
+	if (cs.StatusEffectImmunity)
+		notes.push(`Status Effect Immunity: ${cs.StatusEffectImmunity}`);
+	if (data.Level9SeasonalDragon)
+		notes.push(`Favor of the Seasonal Dragons: ${data.Level9SeasonalDragon}`);
+
+	obj.AppendedInfo = notes.join("\n\n");
+
+	return obj;
 }
