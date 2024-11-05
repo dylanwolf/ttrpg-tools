@@ -7,6 +7,7 @@ import { readFileAsync } from "../utils/fsHelpers";
 import { PDFDocument, PDFTextField } from "pdf-lib";
 import { encode as base64encode } from "base64-arraybuffer";
 import { IApiResult } from "../baseClasses";
+import { LoggerType } from "../utils/logger";
 
 export const pdfFormFillRouter: Router = express.Router();
 
@@ -25,7 +26,8 @@ interface FormFillResult extends IApiResult {
 
 async function formFillTemplate(
 	builderKey: string,
-	paramsArg: any
+	paramsArg: any,
+	logger: LoggerType
 ): Promise<FormFillResult> {
 	const filename = buildTemplateFilename(builderKey);
 
@@ -57,12 +59,20 @@ async function formFillTemplate(
 			(field as PDFTextField).setText(value?.toString() || "");
 		});
 
+		if (missingFields.length > 0)
+			logger.warn({
+				msg: "PDF is missing some of the fields that were provided",
+				missingFields: missingFields,
+			});
+
 		return {
 			success: true,
 			missingFields: missingFields,
 			pdfBytes: await pdfDoc.save(),
 		};
 	} catch (ex) {
+		logger.error(ex);
+
 		return {
 			success: false,
 			message: ex?.toString(),
@@ -78,6 +88,7 @@ pdfFormFillRouter.post("/", async (req: Request, res: Response) => {
 		return;
 	}
 	if (!isValidBuilderKey(builderKey) || !doesTemplateExist(builderKey)) {
+		req.log.error(`Got invalid builderKey ${builderKey}`);
 		sendArgumentError(
 			res,
 			`The builderKey parameter '${builderKey}' is not valid.`
@@ -91,7 +102,7 @@ pdfFormFillRouter.post("/", async (req: Request, res: Response) => {
 		return;
 	}
 
-	var result = await formFillTemplate(builderKey, formFields);
+	var result = await formFillTemplate(builderKey, formFields, req.log);
 	sendOKResult(res, "Success", {
 		success: result.success,
 		message: result.message,

@@ -16,11 +16,17 @@
 	"dependencies": {
 		"base64-arraybuffer": "^1.0.2",
 		"body-parser": "^1.20.3",
+		"dotenv": "^16.4.5",
 		"express": "^4.21.1",
 		"express-rate-limit": "^7.4.1",
 		"helmet": "^8.0.0",
 		"http-status-codes": "^2.3.0",
+		"i": "^0.3.7",
 		"net": "^1.0.2",
-		"pdf-lib": "^1.17.1"
+		"pdf-lib": "^1.17.1",
+		"pino": "^9.5.0",
+		"pino-http": "^10.3.0",
+		"pino-pretty": "^11.3.0",
+		"rotating-file-stream": "^3.2.5"
 	}
 }

@@ -4,6 +4,7 @@ const project = require("../package.json");
 export const apiTestRouter: Router = express.Router();
 
 apiTestRouter.get("/", (req: Request, res: Response) => {
+	req.log.info("Test logging");
 	res.status(200).send({
 		success: true,
 		message: "Successfully got a response from the API.",
