@@ -1,10 +1,4 @@
-import {
-	ensureIntegerEntry,
-	ensureIntegerPaste,
-	getNumericFieldValueFrom,
-	getTextFieldValueFrom,
-	toNumericFieldValue,
-} from "../../helpers/fieldHelpers";
+import { getTextFieldValueFrom } from "../../helpers/fieldHelpers";
 import { useAppSelector } from "../../state/AppStateStorage";
 import {
 	encounterBuilder5eSessionSelector,
@@ -24,6 +18,7 @@ import { faCircleInfo } from "@fortawesome/free-solid-svg-icons/faCircleInfo";
 import { faDownload } from "@fortawesome/free-solid-svg-icons/faDownload";
 import { downloadEncounterBuilder5eJson } from "./Data";
 import "./TabControl.css";
+import { NumericInput } from "../../components/fields/NumericInput";
 
 /**
  * Renders the currently selected encounter builder 5e session.
@@ -45,16 +40,13 @@ export default function EncounterBuilder5eView() {
 		);
 	}
 
-	function onNumericValueChange(
-		name: string,
-		evt: React.ChangeEvent<HTMLInputElement>
-	) {
+	function onNumericValueChange(name: string, fieldValue: number | undefined) {
 		if (!session?.Data) return;
 		updateEncounterBuilder5eSession(
 			session.SessionKey,
 			session.Data,
 			(data) => {
-				(data as any)[name] = getNumericFieldValueFrom(evt);
+				(data as any)[name] = fieldValue;
 			}
 		);
 	}
@@ -216,19 +208,12 @@ export default function EncounterBuilder5eView() {
 											/>
 										</td>
 										<td className="text-center align-middle">
-											<input
-												type="number"
-												value={toNumericFieldValue(m.Count)}
-												min={0}
-												step={1}
-												onKeyDown={ensureIntegerEntry}
-												onPaste={ensureIntegerPaste}
-												onChange={(e) =>
-													onMonstersValueChange(
-														idx,
-														"Count",
-														getNumericFieldValueFrom(e)
-													)
+											<NumericInput
+												InitialValue={m.Count}
+												MinValue={0}
+												NumericStep={1}
+												OnChange={(value) =>
+													onMonstersValueChange(idx, "Count", value)
 												}
 											/>
 										</td>
@@ -251,19 +236,11 @@ export default function EncounterBuilder5eView() {
 											</select>
 										</td>
 										<td className="text-center align-middle">
-											<input
-												type="number"
-												value={toNumericFieldValue(m.XP)}
-												min={0}
-												step={1}
-												onKeyDown={ensureIntegerEntry}
-												onPaste={ensureIntegerPaste}
-												onChange={(e) =>
-													onMonstersValueChange(
-														idx,
-														"XP",
-														getNumericFieldValueFrom(e)
-													)
+											<NumericInput
+												InitialValue={m.XP}
+												MinValue={0}
+												OnChange={(value) =>
+													onMonstersValueChange(idx, "XP", value)
 												}
 											/>
 										</td>
@@ -423,27 +400,24 @@ export default function EncounterBuilder5eView() {
 								onChange={(e) => onTextValueChange("CharacterMode", e)}
 							/>{" "}
 							A party of{" "}
-							<input
-								type="number"
-								value={toNumericFieldValue(session.Data.CharacterCount)}
-								disabled={session.Data.CharacterMode !== "party"}
-								onKeyDown={ensureIntegerEntry}
-								onPaste={ensureIntegerPaste}
-								min={1}
-								step={1}
-								onChange={(e) => onNumericValueChange("CharacterCount", e)}
+							<NumericInput
+								InitialValue={session.Data.CharacterCount}
+								Disabled={session.Data.CharacterMode !== "party"}
+								MinValue={1}
+								OnChange={(value) =>
+									onNumericValueChange("CharacterCount", value)
+								}
 							/>{" "}
 							characters of level{" "}
-							<input
-								type="number"
-								value={toNumericFieldValue(session.Data.CharacterLevel)}
-								disabled={session.Data.CharacterMode !== "party"}
-								onKeyDown={ensureIntegerEntry}
-								onPaste={ensureIntegerPaste}
-								min={1}
-								max={20}
-								step={1}
-								onChange={(e) => onNumericValueChange("CharacterLevel", e)}
+							<NumericInput
+								InitialValue={session.Data.CharacterLevel}
+								Disabled={session.Data.CharacterMode !== "party"}
+								MinValue={1}
+								MaxValue={20}
+								ClampInput={true}
+								OnChange={(value) =>
+									onNumericValueChange("CharacterLevel", value)
+								}
 							/>
 						</label>
 					</div>
@@ -506,36 +480,29 @@ export default function EncounterBuilder5eView() {
 													/>
 												</td>
 												<td className="text-center align-middle">
-													<input
-														type="number"
-														value={toNumericFieldValue(c.Count)}
-														onKeyDown={ensureIntegerEntry}
-														onPaste={ensureIntegerPaste}
-														min={0}
-														step={1}
-														onChange={(e) =>
+													<NumericInput
+														InitialValue={c.Count}
+														MinValue={0}
+														OnChange={(value) =>
 															onIndividualCharactersValueChange(
 																idx,
 																"Count",
-																getNumericFieldValueFrom(e)
+																value
 															)
 														}
 													/>
 												</td>
 												<td className="text-center align-middle">
-													<input
-														type="number"
-														value={toNumericFieldValue(c.Level)}
-														onKeyDown={ensureIntegerEntry}
-														onPaste={ensureIntegerPaste}
-														min={1}
-														max={20}
-														step={1}
-														onChange={(e) =>
+													<NumericInput
+														InitialValue={c.Level}
+														MinValue={0}
+														MaxValue={20}
+														ClampInput={true}
+														OnChange={(value) =>
 															onIndividualCharactersValueChange(
 																idx,
 																"Level",
-																getNumericFieldValueFrom(e)
+																value
 															)
 														}
 													/>

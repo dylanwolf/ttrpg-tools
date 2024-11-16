@@ -37,48 +37,56 @@ export const BasicUsage: Story = {
 			},
 			{ ShowContainer: false, Item1: "", Item2: "", Item3: "" },
 			[
-				new StringDropDownStep<any, any, any>(
-					"ShowContainerStep",
-					"Show Container?",
-					(src, data) => ["Yes", "No"],
-					(itm) => itm,
-					(itm) => itm,
-					(src, data) => (data.ShowContainer ? "Yes" : "No"),
-					(src, state, newData) =>
-						(newData.ShowContainer = state.Value === "Yes")
-				),
+				new StringDropDownStep<any, any, any>("ShowContainerStep")
+					.withLabel("Show Container?")
+					.withSelectList((src, data) => ["Yes", "No"])
+					.withItemText((itm) => itm)
+					.withItemValue((itm) => itm)
+					.withDefaultValue((src, data) => (data.ShowContainer ? "Yes" : "No"))
+					.onCharacterUpdate(
+						(src, state, newData) =>
+							(newData.ShowContainer = state.Value === "Yes")
+					),
 				new ContainerStep<any, any>("ContainerTest", "Test Container", [
-					new StringDropDownStep<any, any, any>(
-						"DropDownStep1",
-						"Item 1",
-						(src, data) => src.Options,
-						(itm) => itm,
-						(itm) => itm,
-						(src, data, lst) => valueIfInList(data.Item1, lst),
-						(src, state, newData) => (newData.Item1 = state.Value || "")
-					),
-					new StringDropDownStep<any, any, any>(
-						"DropDownStep2",
-						"Item 2",
-						(src, data) =>
-							src.Options.filter((x: any) => ![data.Item1].includes(x)),
-						(itm) => itm,
-						(itm) => itm,
-						(src, data, lst) => valueIfInList(data.Item2, lst),
-						(src, state, newData) => (newData.Item2 = state.Value || "")
-					),
-					new StringDropDownStep<any, any, any>(
-						"DropDownStep3",
-						"Item 3",
-						(src, data) =>
+					new StringDropDownStep<any, any, any>("DropDownStep1")
+						.withLabel("Item 1")
+						.withSelectList((src, data) => src.Options)
+						.withItemText((itm) => itm)
+						.withItemValue((itm) => itm)
+						.withDefaultValue((src, data, lst) =>
+							valueIfInList(data.Item1, lst)
+						)
+						.onCharacterUpdate(
+							(src, state, newData) => (newData.Item1 = state.Value || "")
+						),
+					new StringDropDownStep<any, any, any>("DropDownStep2")
+						.withLabel("Item 2")
+						.withSelectList((src, data) =>
+							src.Options.filter((x: any) => ![data.Item1].includes(x))
+						)
+						.withItemText((itm) => itm)
+						.withItemValue((itm) => itm)
+						.withDefaultValue((src, data, lst) =>
+							valueIfInList(data.Item2, lst)
+						)
+						.onCharacterUpdate(
+							(src, state, newData) => (newData.Item2 = state.Value || "")
+						),
+					new StringDropDownStep<any, any, any>("DropDownStep3")
+						.withLabel("Item 3")
+						.withSelectList((src, data) =>
 							src.Options.filter(
 								(x: any) => ![data.Item1, data.Item2].includes(x)
-							),
-						(itm) => itm,
-						(itm) => itm,
-						(src, data, lst) => valueIfInList(data.Item3, lst),
-						(src, state, newData) => (newData.Item3 = state.Value || "")
-					),
+							)
+						)
+						.withItemText((itm) => itm)
+						.withItemValue((itm) => itm)
+						.withDefaultValue((src, data, lst) =>
+							valueIfInList(data.Item3, lst)
+						)
+						.onCharacterUpdate(
+							(src, state, newData) => (newData.Item3 = state.Value || "")
+						),
 				]).onlyShowWhen((src, data) => data.ShowContainer),
 			]
 		),

@@ -27,12 +27,12 @@ export const BasicUsage: Story = {
 	name: "Basic Usage",
 	args: {
 		...createStepTesterArgs({}, { SimpleTextValue: "Initial value" }, [
-			new StringEntryStep<any, any>(
-				"StringEntryTest",
-				"String Entry Test",
-				(src, data) => data.SimpleTextValue || "",
-				(src, state, newData) => (newData.SimpleTextValue = state.Value || "")
-			),
+			new StringEntryStep<any, any>("StringEntryTest")
+				.withLabel("String Entry Test")
+				.withDefaultValue((src, data) => data.SimpleTextValue || "")
+				.onCharacterUpdate(
+					(src, state, newData) => (newData.SimpleTextValue = state.Value || "")
+				),
 		]),
 	},
 };

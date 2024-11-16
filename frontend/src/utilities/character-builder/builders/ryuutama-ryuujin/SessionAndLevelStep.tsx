@@ -1,9 +1,3 @@
-import {
-	ensureIntegerEntry,
-	ensureIntegerPaste,
-	getNumericFieldValueFrom,
-	toNumericFieldValue,
-} from "../../../../helpers/fieldHelpers";
 import { between } from "../../../../helpers/mathHelpers";
 import { StepModel, StepState } from "../../StepModel";
 import {
@@ -13,6 +7,7 @@ import {
 } from "./CharacterData";
 import { SourceData } from "./SourceData";
 import "./SessionAndLevelStep.css";
+import { NumericInput } from "../../../../components/fields/NumericInput";
 
 export interface SessionAndLevelStepState extends StepState {
 	SessionValue: number | undefined;
@@ -25,7 +20,8 @@ export class SessionAndLevelStep extends StepModel<
 	SessionAndLevelStepState
 > {
 	constructor(name: string) {
-		super(name, (src, state, newData) => {
+		super(name);
+		this.onCharacterUpdate((src, state, newData) => {
 			newData.Sessions =
 				state.SessionValue !== null ? state.SessionValue : undefined;
 			newData.Level = state.LevelValue || 1;
@@ -77,8 +73,7 @@ export class SessionAndLevelStep extends StepModel<
 	): JSX.Element {
 		var index = this.Index;
 
-		function onSessionChange(evt: React.ChangeEvent<HTMLInputElement>) {
-			var fieldValue = getNumericFieldValueFrom(evt);
+		function onSessionChange(fieldValue: number | undefined) {
 			if (fieldValue === undefined) {
 				triggerUpdate(index, { SessionValue: null });
 			} else if (fieldValue !== undefined) {
@@ -89,8 +84,7 @@ export class SessionAndLevelStep extends StepModel<
 			}
 		}
 
-		function onLevelChange(evt: React.ChangeEvent<HTMLInputElement>) {
-			var fieldValue = getNumericFieldValueFrom(evt);
+		function onLevelChange(fieldValue: number | undefined) {
 			if (fieldValue === undefined) {
 				triggerUpdate(index, { LevelValue: null });
 			} else if (fieldValue !== undefined) {
@@ -116,34 +110,21 @@ export class SessionAndLevelStep extends StepModel<
 			<>
 				<label>
 					Number of Sessions Played:{" "}
-					<input
-						type="number"
-						inputMode="numeric"
-						value={
-							stepState.SessionValue !== null &&
-							stepState.SessionValue !== undefined
-								? stepState.SessionValue
-								: ""
-						}
-						min={0}
-						step={1}
-						onChange={onSessionChange}
-						onKeyDown={ensureIntegerEntry}
-						onPaste={ensureIntegerPaste}
+					<NumericInput
+						InitialValue={stepState.SessionValue}
+						MinValue={0}
+						NumericStep={1}
+						OnChange={onSessionChange}
 					/>
 				</label>
 				<label>
 					Ryuujin Level:{" "}
-					<input
-						type="number"
-						inputMode="numeric"
-						value={toNumericFieldValue(stepState.LevelValue)}
-						min={1}
-						max={5}
-						step={1}
-						onChange={onLevelChange}
-						onKeyDown={ensureIntegerEntry}
-						onPaste={ensureIntegerPaste}
+					<NumericInput
+						InitialValue={stepState.LevelValue}
+						MinValue={0}
+						MaxValue={5}
+						NumericStep={1}
+						OnChange={onLevelChange}
 					/>
 				</label>
 			</>

@@ -1,18 +1,19 @@
-import {
-	ensureIntegerEntry,
-	ensureIntegerPaste,
-	getNumericFieldValueFrom,
-	toNumericFieldValue,
-} from "../../../helpers/fieldHelpers";
+import { NumericInput } from "../../../components/fields/NumericInput";
 import { ICharacterData } from "../BuilderFactory";
 import { StepModel, StepState } from "../StepModel";
 import "./AssignPoolStep.css";
 
+/**
+ * Defines a pool that points can be assigned to within an AssignPoolStep.
+ */
 export interface PoolDefinition {
 	Name: string;
 	MaxValue?: number | undefined;
 }
 
+/**
+ * Defines the state data for an AssignPoolStep.
+ */
 interface AssignPoolStepState extends StepState {
 	TotalAvailable: number;
 	Remaining: number;
@@ -20,42 +21,70 @@ interface AssignPoolStepState extends StepState {
 	Values: { [name: string]: number | null } | undefined;
 }
 
-export function removeNullValues(values: { [name: string]: number | null }) {
-	var result: { [name: string]: number } = {};
-
-	Object.keys(values).forEach((key) => {
-		result[key] = values[key] || 0;
-	});
-
-	return result;
-}
-
+/**
+ * Creates a step in the character builder that can be used to assign points to a set of pools.
+ */
 export class AssignPoolStep<
 	TSource,
 	TData extends ICharacterData
 > extends StepModel<TSource, TData, AssignPoolStepState> {
-	Label: string;
-	GetAvailable: (src: TSource, data: TData) => number;
-	GetPools: (src: TSource, data: TData) => PoolDefinition[];
-	GetDefaultValue: (src: TSource, data: TData) => { [name: string]: number };
+	Label: string | undefined;
+	GetAvailable: ((src: TSource, data: TData) => number) | undefined;
+	GetPools: ((src: TSource, data: TData) => PoolDefinition[]) | undefined;
+	GetDefaultValue:
+		| ((src: TSource, data: TData) => { [name: string]: number })
+		| undefined;
 
-	constructor(
-		name: string,
-		label: string,
-		getAvailable: (src: TSource, data: TData) => number,
-		getPools: (src: TSource, data: TData) => PoolDefinition[],
-		getDefaultValue: (src: TSource, data: TData) => { [name: string]: number },
-		updateCharacter: (
-			source: TSource,
-			state: AssignPoolStepState,
-			newData: TData
-		) => void
-	) {
-		super(name, updateCharacter);
+	constructor(name: string) {
+		super(name);
+	}
+
+	/**
+	 * Sets a label that will be displayed when the step is rendered
+	 * @param label
+	 * @returns
+	 */
+	withLabel(label: string | undefined) {
 		this.Label = label;
-		this.GetAvailable = getAvailable;
-		this.GetPools = getPools;
-		this.GetDefaultValue = getDefaultValue;
+		return this;
+	}
+
+	/**
+	 * Defines a function used to determine the number of points available to be assigned
+	 * @param availableFunc
+	 * @returns
+	 */
+	withAvailablePoints(
+		availableFunc: ((src: TSource, data: TData) => number) | undefined
+	) {
+		this.GetAvailable = availableFunc;
+		return this;
+	}
+
+	/**
+	 * Defines a function used to determine which pools points can be assigned to
+	 * @param poolsFunc
+	 * @returns
+	 */
+	withStatPools(
+		poolsFunc: ((src: TSource, data: TData) => PoolDefinition[]) | undefined
+	) {
+		this.GetPools = poolsFunc;
+		return this;
+	}
+
+	/**
+	 * Defines a function used to set the value when the step loads. This function should load data from existing character data if availble, or supply a value for new characters.
+	 * @param defaultFunc
+	 * @returns
+	 */
+	withDefaultValue(
+		defaultFunc:
+			| ((src: TSource, data: TData) => { [name: string]: number })
+			| undefined
+	) {
+		this.GetDefaultValue = defaultFunc;
+		return this;
 	}
 
 	controlTypeId(): string {
@@ -88,11 +117,14 @@ export class AssignPoolStep<
 			this.clearState(newState);
 			newState.IsCompleted = true;
 		} else {
-			var available = this.GetAvailable(source, data);
-			var pools = this.GetPools(source, data);
+			var available =
+				(this.GetAvailable && this.GetAvailable(source, data)) || 0;
+			var pools = (this.GetPools && this.GetPools(source, data)) || [];
 
 			var oldValues =
-				newState.Values || this.GetDefaultValue(source, data) || {};
+				newState.Values ||
+				(this.GetDefaultValue && this.GetDefaultValue(source, data)) ||
+				{};
 
 			var newValue: { [name: string]: number | null } = {};
 
@@ -127,12 +159,13 @@ export class AssignPoolStep<
 	): JSX.Element {
 		var index = this.Index;
 
+		function onChangedValue(fieldValue: number | undefined) {}
+
 		function onChange(
 			name: string,
 			maxValue: number | undefined,
-			evt: React.ChangeEvent<HTMLInputElement>
+			fieldValue: number | undefined
 		) {
-			var fieldValue = getNumericFieldValueFrom(evt);
 			var newValues = structuredClone(stepState.Values || {});
 
 			if (fieldValue === undefined) {
@@ -155,23 +188,26 @@ export class AssignPoolStep<
 
 		return (
 			<>
+				{this.Label ? <div className="title">{this.Label}</div> : <></>}
 				<div className="available">Remaining: {stepState.Remaining}</div>
 				<div className="pools">
 					{stepState.Pools.map((p) => (
 						<div className="pool" key={`AssignPool-${this.Name}-${p.Name}`}>
 							{p.Name}:{" "}
-							<input
-								type="number"
-								value={toNumericFieldValue(
-									stepState.Values && stepState.Values[p.Name]
-								)}
-								onChange={function (e) {
-									onChange(p.Name, p.MaxValue, e);
+							<NumericInput
+								InitialValue={stepState.Values && stepState.Values[p.Name]}
+								MinValue={0}
+								MaxValue={[
+									p.MaxValue,
+									stepState.Remaining +
+										((stepState.Values && stepState.Values[p.Name]) || 0),
+								]
+									.filter((x) => x !== undefined)
+									.max()}
+								ClampInput={true}
+								OnChange={function (value) {
+									onChange(p.Name, p.MaxValue, value);
 								}}
-								onKeyDown={ensureIntegerEntry}
-								onPaste={ensureIntegerPaste}
-								min={0}
-								max={p.MaxValue}
 							/>
 						</div>
 					))}

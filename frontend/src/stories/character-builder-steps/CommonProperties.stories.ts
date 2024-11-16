@@ -39,24 +39,26 @@ export const IsVisibleFalse: Story = {
 			},
 			{ ShowOption: false, Item1: "" },
 			[
-				new StringDropDownStep<any, any, any>(
-					"ShowOptionStep",
-					"Show Option?",
-					(src, data) => ["Yes", "No"],
-					(itm) => itm,
-					(itm) => itm,
-					(src, data) => (data.ShowOption ? "Yes" : "No"),
-					(src, state, newData) => (newData.ShowOption = state.Value === "Yes")
-				),
-				new StringDropDownStep<any, any, any>(
-					"DropDownStep1",
-					"Item 1",
-					(src, data) => src.Options,
-					(itm) => itm,
-					(itm) => itm,
-					(src, data, lst) => valueIfInList(data.Item1, lst),
-					(src, state, newData) => (newData.Item1 = state.Value || "")
-				).onlyShowWhen((src, data) => data.ShowOption),
+				new StringDropDownStep<any, any, any>("ShowOptionStep")
+					.withLabel("Show Option?")
+					.withSelectList((src, data) => ["Yes", "No"])
+					.withItemText((itm) => itm)
+					.withItemValue((itm) => itm)
+					.withDefaultValue((src, data) => (data.ShowOption ? "Yes" : "No"))
+					.onCharacterUpdate(
+						(src, state, newData) =>
+							(newData.ShowOption = state.Value === "Yes")
+					),
+				new StringDropDownStep<any, any, any>("DropDownStep1")
+					.withLabel("Item 1")
+					.withSelectList((src, data) => src.Options)
+					.withItemText((itm) => itm)
+					.withItemValue((itm) => itm)
+					.withDefaultValue((src, data, lst) => valueIfInList(data.Item1, lst))
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.Item1 = state.Value || "")
+					)
+					.onlyShowWhen((src, data) => data.ShowOption),
 			]
 		),
 	},
@@ -75,49 +77,53 @@ export const IsRequired: Story = {
 				SelectedValue: undefined,
 			},
 			[
-				new StringDropDownStep<any, any, any>(
-					"Show3rdOptionStep",
-					"Show 3rd Option?",
-					(src, data) => ["Yes", "No"],
-					(itm) => itm,
-					(itm) => itm,
-					(src, data) => (data.Show3rdOption ? "Yes" : "No"),
-					(src, state, newData) =>
-						(newData.Show3rdOption = state.Value === "Yes")
-				),
-				new StringEntryStep<any, any>(
-					"OptionStep1",
-					"Option 1",
-					(src, data) => data.Item1 || "",
-					(src, state, newData) => (newData.Item1 = state.Value)
-				).isRequired(),
-				new StringEntryStep<any, any>(
-					"OptionStep2",
-					"Option 2",
-					(src, data) => data.Item2 || "",
-					(src, state, newData) => (newData.Item2 = state.Value)
-				).isRequired(),
-				new StringEntryStep<any, any>(
-					"OptionStep3",
-					"Option 3",
-					(src, data) => data.Item3 || "",
-					(src, state, newData) => (newData.Item3 = state.Value)
-				)
+				new StringDropDownStep<any, any, any>("Show3rdOptionStep")
+					.withLabel("Show 3rd Option?")
+					.withSelectList((src, data) => ["Yes", "No"])
+					.withItemText((itm) => itm)
+					.withItemValue((itm) => itm)
+					.withDefaultValue((src, data) => (data.Show3rdOption ? "Yes" : "No"))
+					.onCharacterUpdate(
+						(src, state, newData) =>
+							(newData.Show3rdOption = state.Value === "Yes")
+					),
+				new StringEntryStep<any, any>("OptionStep1")
+					.withLabel("Option 1")
+					.withDefaultValue((src, data) => data.Item1 || "")
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.Item1 = state.Value)
+					)
+					.isRequired(),
+				new StringEntryStep<any, any>("OptionStep2")
+					.withLabel("Option 2")
+					.withDefaultValue((src, data) => data.Item2 || "")
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.Item2 = state.Value)
+					)
+					.isRequired(),
+				new StringEntryStep<any, any>("OptionStep3")
+					.withLabel("Option 3")
+					.withDefaultValue((src, data) => data.Item3 || "")
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.Item3 = state.Value)
+					)
 					.isRequired()
 					.onlyShowWhen((src, data) => data.Show3rdOption),
-				new StringDropDownStep<any, any, any>(
-					"SelectOptionStep",
-					"Select Option",
-					(src, data) => {
+				new StringDropDownStep<any, any, any>("SelectOptionStep")
+					.withLabel("Select Option")
+					.withSelectList((src, data) => {
 						console.log([data.Item1, data.Item2, data.Item3]);
 						console.log([data.Item1, data.Item2, data.Item3].filter((x) => x));
 						return [data.Item1, data.Item2, data.Item3].filter((x) => x) || [];
-					},
-					(itm) => itm,
-					(itm) => itm,
-					(src, data, lst) => valueIfInList(data.SelectedValue, lst),
-					(src, state, newData) => (newData.SelectedValue = state.Value)
-				),
+					})
+					.withItemText((itm) => itm)
+					.withItemValue((itm) => itm)
+					.withDefaultValue((src, data, lst) =>
+						valueIfInList(data.SelectedValue, lst)
+					)
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.SelectedValue = state.Value)
+					),
 			]
 		),
 	},
@@ -132,15 +138,16 @@ export const WithHelp: Story = {
 			},
 			{ ShowOption: false, Item1: "" },
 			[
-				new StringDropDownStep<any, any, any>(
-					"DropDownStep1",
-					"Item 1",
-					(src, data) => src.Options,
-					(itm) => itm,
-					(itm) => itm,
-					(src, data, lst) => valueIfInList(data.Item1, lst),
-					(src, state, newData) => (newData.Item1 = state.Value || "")
-				).withHelp("Here is a help message"),
+				new StringDropDownStep<any, any, any>("DropDownStep1")
+					.withLabel("Item 1")
+					.withSelectList((src, data) => src.Options)
+					.withItemText((itm) => itm)
+					.withItemValue((itm) => itm)
+					.withDefaultValue((src, data, lst) => valueIfInList(data.Item1, lst))
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.Item1 = state.Value || "")
+					)
+					.withHelp("Here is a help message"),
 			]
 		),
 	},

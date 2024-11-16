@@ -32,15 +32,15 @@ export const BasicUsage: Story = {
 			{ Options: ["One", "Two", "Three", "Four"] },
 			{ Values: ["One", "Three", "Five"] },
 			[
-				new ChecklistStringStep<any, any, any>(
-					"ChecklistStringTest",
-					"StringChecklist Test",
-					(src, data) => src.Options,
-					(itm) => itm,
-					(itm) => itm,
-					(src, data, lst) => data.Values || [],
-					(src, state, newData) => (newData.Values = state.Values || [])
-				),
+				new ChecklistStringStep<any, any, any>("ChecklistStringTest")
+					.withLabel("StringChecklist Test")
+					.withSelectList((src, data) => src.Options)
+					.withItemValue((itm) => itm)
+					.withItemText((itm) => itm)
+					.withDefaultValue((src, data, lst) => data.Values || [])
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.Values = state.Values || [])
+					),
 			]
 		),
 	},
@@ -59,15 +59,16 @@ export const WithMarkdown: Story = {
 			},
 			{ Values: ["Italic", "Plain Text"] },
 			[
-				new ChecklistStringStep<any, any, any>(
-					"ChecklistStringTest",
-					"StringChecklist Test",
-					(src, data) => src.Options,
-					(itm) => itm.Key,
-					(itm) => itm.DisplayValue,
-					(src, data, lst) => data.Values || [],
-					(src, state, newData) => (newData.Values = state.Values || [])
-				).useMarkdown(true),
+				new ChecklistStringStep<any, any, any>("ChecklistStringTest")
+					.useMarkdown(true)
+					.withLabel("StringChecklist Test")
+					.withSelectList((src, data) => src.Options)
+					.withItemText((itm) => itm.DisplayValue)
+					.withItemValue((itm) => itm.Key)
+					.withDefaultValue((src, data, lst) => data.Values || [])
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.Values = state.Values || [])
+					),
 			]
 		),
 	},
@@ -80,21 +81,21 @@ export const DropdownForSingleChoice: Story = {
 			{ Options: ["One", "Two", "Three", "Four"] },
 			{ Values: ["One"], ChoiceCount: 2 },
 			[
-				new NumericStep<any, any>(
-					"NumberOfChoices",
-					"Number of Choices",
-					(src, data) => data.ChoiceCount || 0,
-					(src, state, newData) => (newData.ChoiceCount = state.Value || 0)
-				),
-				new ChecklistStringStep<any, any, any>(
-					"ChecklistStringTest",
-					"StringChecklist Test",
-					(src, data) => src.Options,
-					(itm) => itm,
-					(itm) => itm,
-					(src, data, lst) => data.Values || [],
-					(src, state, newData) => (newData.Values = state.Values || [])
-				)
+				new NumericStep<any, any>("NumberOfChoices")
+					.withLabel("Number of Choices")
+					.withDefaultValue((src, data) => data.ChoiceCount || 0)
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.ChoiceCount = state.Value || 0)
+					),
+				new ChecklistStringStep<any, any, any>("ChecklistStringTest")
+					.withLabel("StringChecklist Test")
+					.withSelectList((src, data) => src.Options)
+					.withItemText((itm) => itm)
+					.withItemValue((itm) => itm)
+					.withDefaultValue((src, data, lst) => data.Values || [])
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.Values = state.Values || [])
+					)
 					.requiresMaximumSelections((src, data) => data.ChoiceCount)
 					.useDropDownForSingleChoice(true),
 			]

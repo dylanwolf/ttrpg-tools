@@ -37,21 +37,21 @@ export const BasicUsage: Story = {
 				},
 			},
 			[
-				new AssignPoolStep<any, any>(
-					"AssignPoolTest",
-					"Assignment Pool",
-					(src, data) => 10,
-					(src, data) => [
+				new AssignPoolStep<any, any>("AssignPoolTest")
+					.withLabel("Assignment Pool")
+					.withAvailablePoints((src, data) => 10)
+					.withStatPools((src, data) => [
 						{ Name: "Pool 1 (0-5)", MaxValue: 5 },
 						{ Name: "Pool 2" },
 						{ Name: "Pool 3" },
 						{ Name: "Pool 4 (0-2)", MaxValue: 2 },
-					],
-					(src, data) => {
+					])
+					.withDefaultValue((src, data) => {
 						return data.PoolValues || {};
-					},
-					(src, state, newData) => (newData.PoolValues = state.Values)
-				),
+					})
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.PoolValues = state.Values)
+					),
 			]
 		),
 	},
@@ -71,21 +71,21 @@ export const InvalidInitialValue: Story = {
 				},
 			},
 			[
-				new AssignPoolStep<any, any>(
-					"AssignPoolTest",
-					"Assignment Pool",
-					(src, data) => 10,
-					(src, data) => [
+				new AssignPoolStep<any, any>("AssignPoolTest")
+					.withLabel("Assignment Pool")
+					.withAvailablePoints((src, data) => 10)
+					.withStatPools((src, data) => [
 						{ Name: "Pool 1 (0-5)", MaxValue: 5 },
 						{ Name: "Pool 2" },
 						{ Name: "Pool 3" },
 						{ Name: "Pool 4 (0-2)", MaxValue: 2 },
-					],
-					(src, data) => {
+					])
+					.withDefaultValue((src, data) => {
 						return data.PoolValues || {};
-					},
-					(src, state, newData) => (newData.PoolValues = state.Values)
-				),
+					})
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.PoolValues = state.Values)
+					),
 			]
 		),
 	},

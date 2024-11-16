@@ -4,57 +4,99 @@ import { ICharacterData } from "../BuilderFactory";
 import { StepModel, StepState } from "../StepModel";
 import { BuilderDetailText } from "../components/BuilderDetailText";
 
+/**
+ * Tracks state for the StringDropDownStep
+ */
 interface StringDropDownStepState extends StepState {
 	SelectList: SelectItem[];
 	Value: string | undefined;
 	DetailText?: string | undefined;
 }
 
+/**
+ * Defines detail text to be shown below the drop-down.
+ */
 interface DetailTextOptions {
 	OnlyShowOnMobile?: boolean | undefined;
 	UseMarkdown?: boolean | undefined;
 }
 
+/**
+ * Defines a step that lets the user select a single text value from a drop-down.
+ */
 export class StringDropDownStep<
 	TSource,
 	TData extends ICharacterData,
 	TItem
 > extends StepModel<TSource, TData, StringDropDownStepState> {
-	Label: string;
-	GetSelectList: (src: TSource, data: TData) => TItem[];
-	GetValue: (item: TItem) => string;
-	GetText: (item: TItem) => string;
-	GetDefaultValue: (
-		source: TSource,
-		data: TData,
-		lst: string[]
-	) => string | undefined;
+	Label: string | undefined;
+	GetSelectList: ((src: TSource, data: TData) => TItem[]) | undefined;
+	GetValue: ((item: TItem) => string) | undefined;
+	GetText: ((item: TItem) => string) | undefined;
+	GetDefaultValue:
+		| ((source: TSource, data: TData, lst: string[]) => string | undefined)
+		| undefined;
 	GetDetailText: ((item: TItem) => string | undefined) | undefined;
 	DetailTextOptions?: DetailTextOptions | undefined;
 
-	constructor(
-		name: string,
-		label: string,
-		getSelectList: (src: TSource, data: TData) => TItem[],
-		getValue: (item: TItem) => string,
-		getText: (item: TItem) => string,
-		getDefaultValue: (
-			source: TSource,
-			data: TData,
-			lst: string[]
-		) => string | undefined,
-		updateCharacter: (
-			source: TSource,
-			state: StringDropDownStepState,
-			newData: TData
-		) => void
-	) {
-		super(name, updateCharacter);
+	constructor(name: string) {
+		super(name);
+	}
+
+	/**
+	 * Defines the label to show along with this field.
+	 * @param label
+	 * @returns
+	 */
+	withLabel(label: string | undefined) {
 		this.Label = label;
-		this.GetSelectList = getSelectList;
-		this.GetValue = getValue;
-		this.GetText = getText;
-		this.GetDefaultValue = getDefaultValue;
+		return this;
+	}
+
+	/**
+	 * Defines the list of available items in the select list.
+	 * @param getFunc
+	 * @returns
+	 */
+	withSelectList(
+		getFunc: ((src: TSource, data: TData) => TItem[]) | undefined
+	) {
+		this.GetSelectList = getFunc;
+		return this;
+	}
+
+	/**
+	 * Defines the function used to get the value of an item.
+	 * @param valueFunc
+	 * @returns
+	 */
+	withItemValue(valueFunc: ((item: TItem) => string) | undefined) {
+		this.GetValue = valueFunc;
+		return this;
+	}
+
+	/**
+	 * Defines the function used to get the displayed text of the item.
+	 * @param textFunc
+	 * @returns
+	 */
+	withItemText(textFunc: ((item: TItem) => string) | undefined) {
+		this.GetText = textFunc;
+		return this;
+	}
+
+	/**
+	 * Defines a function used to set the value when the step loads. This function should load data from existing character data if availble, or supply a value for new characters.
+	 * @param defaultValueFunc
+	 * @returns
+	 */
+	withDefaultValue(
+		defaultValueFunc:
+			| ((source: TSource, data: TData, lst: string[]) => string | undefined)
+			| undefined
+	) {
+		this.GetDefaultValue = defaultValueFunc;
+		return this;
 	}
 
 	controlTypeId(): string {
@@ -93,11 +135,12 @@ export class StringDropDownStep<
 			this.clearState(newState);
 			newState.IsCompleted = true;
 		} else {
-			var selectListSource = this.GetSelectList(source, data);
-			var selectList = selectListSource.map((itm) => {
+			var selectListSource =
+				(this.GetSelectList && this.GetSelectList(source, data)) || [];
+			var selectList = selectListSource.map((itm, idx) => {
 				return {
-					Text: this.GetText(itm),
-					Value: this.GetValue(itm),
+					Text: (this.GetText && this.GetText(itm)) || "(item)",
+					Value: this.GetValue ? this.GetValue(itm) : idx.toString(),
 				};
 			});
 
@@ -107,17 +150,20 @@ export class StringDropDownStep<
 				newState.Value === undefined ||
 				!selectList.any((x) => x.Value === newState.Value)
 			) {
-				newState.Value = this.GetDefaultValue(
-					source,
-					data,
-					selectList.map((x) => x.Value)
-				);
+				newState.Value =
+					(this.GetDefaultValue &&
+						this.GetDefaultValue(
+							source,
+							data,
+							selectList.map((x) => x.Value)
+						)) ||
+					undefined;
 			}
 
 			newState.DetailText = this.GetDetailText
 				? this.GetDetailText(
 						selectListSource.filter(
-							(x) => this.GetValue(x) === newState.Value
+							(x) => this.GetValue && this.GetValue(x) === newState.Value
 						)[0]
 				  )
 				: undefined;

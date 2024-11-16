@@ -8,25 +8,48 @@ import {
 } from "../StepModel";
 import { mergeStateWithUpdates } from "../../../helpers/builderHelpers";
 
+/**
+ * Tracks the state of a single iteration within a ForEachStep.
+ */
 interface ForEachIterationState extends StepRunnerState {
 	IsCompleted: boolean;
 	Label: string;
 }
 
+/**
+ * Tracks the state ofa a ForEachStep.
+ */
 interface ForEachStepState extends StepState {
 	Count: number;
 	Iterations: ForEachIterationState[];
 }
 
+/**
+ * The character data assigned to a ForEachStep, which will be provided to its child steps.
+ */
 export interface IterationDataArg<
 	TData extends ICharacterData,
 	TIterationData extends ICharacterData
 > extends ICharacterData {
+	/**
+	 * The character data object for this specific iteration.
+	 */
 	IterationData: TIterationData;
+	/**
+	 * The index of the iteration.
+	 */
 	Index: number;
+	/**
+	 * The parent character data object which contains the array of iteration data.
+	 */
 	ParentData: TData;
 }
 
+/**
+ * Defines a step that will run a series of other steps, once for each iteration.
+ *
+ * This can be used to define a set of choices that are exactly the same (e.g., pick 4 skills, some of which come with their own choices) that all work the same way.
+ */
 export class ForEachStep<
 	TSource,
 	TData extends ICharacterData,
@@ -56,10 +79,7 @@ export class ForEachStep<
 		) => TIterationData,
 		children: StepModel<TSource, IterationDataArg<TData, TIterationData>, any>[]
 	) {
-		super(
-			name,
-			(source: TSource, state: ForEachStepState, newData: TData) => {}
-		);
+		super(name);
 		this.GetCount = getCount;
 		this.GetLabel = getLabel;
 		this.GetIterationData = getIterationData;
@@ -229,7 +249,11 @@ export class ForEachStep<
 					this.Name
 				}-iteration  step-${stepState.IsCompleted ? "complete" : "incomplete"}`}
 			>
-				<div className="title">{stepState.Label}</div>
+				{stepState.Label ? (
+					<div className="title">{stepState.Label}</div>
+				) : (
+					<></>
+				)}
 				<div className="container-box">
 					{this.Steps.ByIndex.filter(
 						(c) => stepState.Steps[c.Index].IsVisible

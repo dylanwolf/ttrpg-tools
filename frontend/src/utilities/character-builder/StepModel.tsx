@@ -45,7 +45,9 @@ export abstract class StepModel<
 > {
 	Name: string;
 	Index: number = 0;
-	UpdateCharacter: (source: TSource, state: TState, newData: TData) => void;
+	UpdateCharacter:
+		| ((source: TSource, state: TState, newData: TData) => void)
+		| undefined;
 	GetIsVisible?: ((source: TSource, data: TData) => boolean) | undefined;
 	IsRequired: boolean;
 	HelpComponent: JSX.Element | string | undefined;
@@ -55,13 +57,18 @@ export abstract class StepModel<
 	 * @param name A unique ID for the step.
 	 * @param updateCharacter The function used to apply step state to character data.
 	 */
-	constructor(
-		name: string,
-		updateCharacter: (source: TSource, state: TState, newData: TData) => void
-	) {
+	constructor(name: string) {
 		this.Name = name;
-		this.UpdateCharacter = updateCharacter;
 		this.IsRequired = false;
+	}
+
+	onCharacterUpdate(
+		updateFunc:
+			| ((source: TSource, state: TState, newData: TData) => void)
+			| undefined
+	) {
+		this.UpdateCharacter = updateFunc;
+		return this;
 	}
 
 	/**
@@ -274,7 +281,9 @@ export class StepRunner<TSource, TData extends ICharacterData> {
 				// console.debug(stepState);
 				// console.debug(newData);
 			}
-			step.UpdateCharacter(source, stepState, newData);
+
+			if (step.UpdateCharacter)
+				step.UpdateCharacter(source, stepState, newData);
 
 			newState.Steps.push(stepState);
 

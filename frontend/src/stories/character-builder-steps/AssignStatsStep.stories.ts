@@ -48,20 +48,20 @@ export const BasicUsage: Story = {
 				},
 			},
 			[
-				new AssignStatsStep<any, any, any>(
-					"AssignStatsTest",
-					"Assign Stats",
-					(src, data) => src.Dice,
-					(us, them) => us.Value === them.Value,
-					(source, data) => [
+				new AssignStatsStep<any, any, any>("AssignStatsTest")
+					.withLabel("Assign Stats")
+					.withChoicesList((src, data) => src.Dice)
+					.withChoiceEqualsFunction((us, them) => us.Value === them.Value)
+					.withChoiceText((itm) => `d${itm.Value}`)
+					.withStatTargets((source, data) => [
 						{ Name: "Attribute 1" },
 						{ Name: "Attribute 2" },
 						{ Name: "Attribute 3" },
 						{ Name: "Attribute 4" },
 						{ Name: "Attribute 5" },
 						{ Name: "Attribute 6" },
-					],
-					(src, data, lst) => {
+					])
+					.withDefaultValue((src, data, lst) => {
 						if (data.Attributes) {
 							var stateValue: { [name: string]: any } = {};
 							Object.keys(data.Attributes).forEach((key) => {
@@ -70,9 +70,8 @@ export const BasicUsage: Story = {
 							return stateValue;
 						}
 						return {};
-					},
-					(itm) => `d${itm.Value}`,
-					(src, state, newData) => {
+					})
+					.onCharacterUpdate((src, state, newData) => {
 						var newValue: { [name: string]: number } = {};
 
 						if (state.Value) {
@@ -84,8 +83,7 @@ export const BasicUsage: Story = {
 						}
 
 						newData.Attributes = newValue;
-					}
-				),
+					}),
 			]
 		),
 	},
@@ -109,12 +107,12 @@ export const LockedStats: Story = {
 				Attributes: {},
 			},
 			[
-				new AssignStatsStep<any, any, any>(
-					"AssignStatsTest",
-					"Assign Stats",
-					(src, data) => src.Dice,
-					(us, them) => us.Value === them.Value,
-					(source, data) =>
+				new AssignStatsStep<any, any, any>("AssignStatsTest")
+					.withLabel("Assign Stats")
+					.withChoicesList((src, data) => src.Dice)
+					.withChoiceEqualsFunction((us, them) => us.Value === them.Value)
+					.withChoiceText((itm) => `d${itm.Value}`)
+					.withStatTargets((source, data) =>
 						[
 							"Attribute 1",
 							"Attribute 2",
@@ -130,8 +128,9 @@ export const LockedStats: Story = {
 								Locked: match ? true : false,
 								FixedValue: match,
 							};
-						}),
-					(src, data, lst) => {
+						})
+					)
+					.withDefaultValue((src, data, lst) => {
 						if (data.Attributes) {
 							var stateValue: { [name: string]: any } = {};
 							Object.keys(data.Attributes).forEach((key) => {
@@ -140,9 +139,8 @@ export const LockedStats: Story = {
 							return stateValue;
 						}
 						return {};
-					},
-					(itm) => `d${itm.Value}`,
-					(src, state, newData) => {
+					})
+					.onCharacterUpdate((src, state, newData) => {
 						var newValue: { [name: string]: number } = {};
 
 						if (state.Value) {
@@ -154,8 +152,7 @@ export const LockedStats: Story = {
 						}
 
 						newData.Attributes = newValue;
-					}
-				),
+					}),
 			]
 		),
 	},

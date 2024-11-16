@@ -41,15 +41,17 @@ export const BasicUsage: Story = {
 			},
 			{ SelectedValue: "3" },
 			[
-				new StringDropDownStep<any, any, any>(
-					"StringDropDownStep",
-					"String Drop Down Test",
-					(src, data) => src.Options,
-					(itm) => itm.Value,
-					(itm) => itm.Text,
-					(src, data, lst) => valueIfInList(data.SelectedValue, lst),
-					(src, state, newData) => (newData.SelectedValue = state.Value)
-				),
+				new StringDropDownStep<any, any, any>("StringDropDownStep")
+					.withLabel("String Drop Down Test")
+					.withSelectList((src, data) => src.Options)
+					.withItemText((itm) => itm.Text)
+					.withItemValue((itm) => itm.Value)
+					.withDefaultValue((src, data, lst) =>
+						valueIfInList(data.SelectedValue, lst)
+					)
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.SelectedValue = state.Value)
+					),
 			]
 		),
 	},

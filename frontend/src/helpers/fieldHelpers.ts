@@ -10,6 +10,11 @@ export function getTextFieldValueFrom(
 	return value.trim()! ? value : undefined;
 }
 
+export function getNumericValue(strValue: string | undefined | null) {
+	if (strValue === undefined || strValue === "") return undefined;
+	return Number(strValue);
+}
+
 /**
  * Returns the value of the field that triggered the change event as a number. If the value is blank or not a number, returns undefined.
  * @param evt
@@ -18,9 +23,7 @@ export function getTextFieldValueFrom(
 export function getNumericFieldValueFrom(
 	evt: React.ChangeEvent<any>
 ): number | undefined {
-	var strValue = getTextFieldValueFrom(evt);
-	if (strValue === undefined || strValue === "") return undefined;
-	return Number(strValue);
+	return getNumericValue(getTextFieldValueFrom(evt));
 }
 
 /**

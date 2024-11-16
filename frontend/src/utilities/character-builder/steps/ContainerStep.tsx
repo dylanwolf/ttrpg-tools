@@ -7,8 +7,17 @@ import {
 import { mergeStateWithUpdates } from "../../../helpers/builderHelpers";
 import { ICharacterData } from "../BuilderFactory";
 
+/**
+ * Tracks the state on a ContainerStep.
+ */
 export interface ContainerStepState extends StepState, StepRunnerState {}
 
+/**
+ * Defines a step that can run multiple other steps in its own process.
+ *
+ * Each ContainerStep will have a current step index. If all its contained steps are complete, it will be marked complete. If it is made invisible, all of its contained steps will be cleared as if they had been marked invisible.
+ *
+ */
 export class ContainerStep<
 	TSource,
 	TData extends ICharacterData
@@ -21,10 +30,7 @@ export class ContainerStep<
 		label: string,
 		children: StepModel<TSource, TData, any>[]
 	) {
-		super(
-			name,
-			(source: TSource, state: ContainerStepState, newData: TData) => {}
-		);
+		super(name);
 		this.Steps = new StepRunner<TSource, TData>(name, children);
 		this.Label = label;
 	}
@@ -64,7 +70,7 @@ export class ContainerStep<
 		} else {
 			this.clearState(newState);
 			this.Steps.ByIndex.forEach((step, idx) => {
-				step.UpdateCharacter(source, newState, data);
+				if (step.UpdateCharacter) step.UpdateCharacter(source, newState, data);
 			});
 		}
 
@@ -89,7 +95,7 @@ export class ContainerStep<
 
 		return (
 			<>
-				<div className="title">{this.Label}</div>
+				{this.Label ? <div className="title">{this.Label}</div> : <></>}
 				<div className="container-box">
 					{this.Steps.ByIndex.filter(
 						(c) => stepState.Steps[c.Index].IsVisible

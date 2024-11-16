@@ -28,11 +28,12 @@ export const PlainText: Story = {
 			[
 				new StaticTextStep<any, any>(
 					"StringEntryTest",
-					"String Entry Test",
-					false,
-					(src, data) => src.StringSource || "",
-					(src, state, newData) => (newData.StringOutput = state.Value || "")
-				),
+					(src, data) => src.StringSource || ""
+				)
+					.withLabel("String Entry Test")
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.StringOutput = state.Value || "")
+					),
 			]
 		),
 	},
@@ -47,11 +48,12 @@ export const Markdown: Story = {
 			[
 				new StaticTextStep<any, any>(
 					"StringEntryTest",
-					"String Entry Test",
-					false,
-					(src, data) => src.StringSource || "",
-					(src, state, newData) => (newData.StringOutput = state.Value || "")
-				),
+					(src, data) => src.StringSource || ""
+				)
+					.withLabel("String Entry Test")
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.StringOutput = state.Value || "")
+					),
 			]
 		),
 	},

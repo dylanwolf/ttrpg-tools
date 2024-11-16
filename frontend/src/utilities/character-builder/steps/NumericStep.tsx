@@ -1,42 +1,71 @@
-import {
-	ensureIntegerEntry,
-	ensureIntegerPaste,
-	getNumericFieldValueFrom,
-	toNumericFieldValue,
-} from "../../../helpers/fieldHelpers";
+import { NumericInput } from "../../../components/fields/NumericInput";
 import { ICharacterData } from "../BuilderFactory";
 import { StepModel, StepState } from "../StepModel";
 
+// TODO: [Numeric Input] Allow for min values > 0 (e.g., if min value is 5, let the user type "10")
+
+/**
+ * Tracks the state of a NumericStep
+ */
 interface NumericStepState extends StepState {
+	/**
+	 * The minimum allowed value. The step will not generally allow lower numbers to be entered if this is provided; if one is, the step will be marked incomplete.
+	 */
 	MinValue?: number | undefined;
+	/**
+	 * The maximum allowed value. The step will not generally allow higher numbers to be entered if this is provided; if one is, the step will be marked incomplete.
+	 */
 	MaxValue?: number | undefined;
+	/**
+	 * The step value for the HTML numeric input control.
+	 */
 	NumericStep?: number | undefined;
+	/**
+	 * The current value of the step.
+	 */
 	Value?: number | null | undefined;
 }
 
+/**
+ * Defines a step used to enter a single whole number.
+ */
 export class NumericStep<
 	TSource,
 	TData extends ICharacterData
 > extends StepModel<TSource, TData, NumericStepState> {
-	Label: string;
+	Label: string | undefined;
 	GetMinValue: ((src: TSource, data: TData) => number | undefined) | undefined;
 	GetMaxValue: ((src: TSource, data: TData) => number | undefined) | undefined;
 	GetStepValue: ((src: TSource, data: TData) => number | undefined) | undefined;
-	GetDefaultValue: (src: TSource, data: TData) => number | undefined;
+	GetDefaultValue:
+		| ((src: TSource, data: TData) => number | undefined)
+		| undefined;
+	ClampInputField: boolean | undefined;
 
-	constructor(
-		name: string,
-		label: string,
-		getDefaultValue: (src: TSource, data: TData) => number | undefined,
-		updateCharacter: (
-			source: TSource,
-			state: NumericStepState,
-			newData: TData
-		) => void
-	) {
-		super(name, updateCharacter);
+	constructor(name: string) {
+		super(name);
+	}
+
+	/**
+	 * Sets the label that will be shown on this step.
+	 * @param label
+	 * @returns
+	 */
+	withLabel(label: string | undefined) {
 		this.Label = label;
-		this.GetDefaultValue = getDefaultValue;
+		return this;
+	}
+
+	/**
+	 * Defines a function used to set the value when the step loads. This function should load data from existing character data if availble, or supply a value for new characters.
+	 * @param defaultValueFunc
+	 * @returns
+	 */
+	withDefaultValue(
+		defaultValueFunc: (src: TSource, data: TData) => number | undefined
+	) {
+		this.GetDefaultValue = defaultValueFunc;
+		return this;
 	}
 
 	controlTypeId(): string {
@@ -54,6 +83,11 @@ export class NumericStep<
 		getMaxValue: ((src: TSource, data: TData) => number | undefined) | undefined
 	) {
 		this.GetMaxValue = getMaxValue;
+		return this;
+	}
+
+	clampInputField(flag: boolean) {
+		this.ClampInputField = flag;
 		return this;
 	}
 
@@ -97,7 +131,9 @@ export class NumericStep<
 				: 1;
 
 			if (newState.Value === undefined)
-				newState.Value = this.GetDefaultValue(source, data);
+				newState.Value =
+					(this.GetDefaultValue && this.GetDefaultValue(source, data)) ||
+					undefined;
 			if (newState.Value !== undefined && newState.Value !== null) {
 				if (
 					newState.MinValue !== undefined &&
@@ -120,8 +156,16 @@ export class NumericStep<
 	): JSX.Element {
 		var index = this.Index;
 
-		function onChange(evt: React.ChangeEvent<HTMLInputElement>) {
-			var fieldValue = getNumericFieldValueFrom(evt);
+		// function onChange(evt: React.ChangeEvent<HTMLInputElement>) {
+		// 	var fieldValue = getNumericFieldValueFrom(evt);
+		// 	if (fieldValue === undefined) {
+		// 		triggerUpdate(index, { Value: null });
+		// 	} else if (fieldValue !== undefined) {
+		// 		triggerUpdate(index, { Value: fieldValue });
+		// 	}
+		// }
+
+		function onChange(fieldValue: number | undefined) {
 			if (fieldValue === undefined) {
 				triggerUpdate(index, { Value: null });
 			} else if (fieldValue !== undefined) {
@@ -133,16 +177,13 @@ export class NumericStep<
 			<>
 				<label>
 					{this.Label ? `${this.Label}: ` : ""}
-					<input
-						type="number"
-						inputMode="numeric"
-						value={toNumericFieldValue(stepState.Value)}
-						min={stepState.MinValue}
-						max={stepState.MaxValue}
-						step={stepState.NumericStep}
-						onChange={onChange}
-						onKeyDown={ensureIntegerEntry}
-						onPaste={ensureIntegerPaste}
+					<NumericInput
+						InitialValue={stepState.Value}
+						MinValue={stepState.MinValue}
+						MaxValue={stepState.MaxValue}
+						NumericStep={stepState.NumericStep}
+						ClampInput={this.ClampInputField}
+						OnChange={onChange}
 					/>
 				</label>
 			</>

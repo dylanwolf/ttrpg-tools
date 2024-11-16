@@ -2,33 +2,47 @@ import { StepModel, StepState } from "../StepModel";
 import { ICharacterData } from "../BuilderFactory";
 import { MarkdownWrapper } from "../../../helpers/markdownHelpers";
 
+/**
+ * Tracks the state of a StaticTextStep
+ */
 interface StaticTextStepState extends StepState {
 	Value: string;
 }
 
+/**
+ * Defines a step that will display a bit of static text as either plan text or markdown. This can also be used to transfer the static text value to character data (e.g., for version numbers).
+ */
 export class StaticTextStep<
 	TSource,
 	TData extends ICharacterData
 > extends StepModel<TSource, TData, StaticTextStepState> {
-	Label: string;
-	AcceptMarkdown: boolean;
+	Label: string | undefined;
+	AcceptMarkdown: boolean = false;
 	GetValue: (src: TSource, data: TData) => string;
 
-	constructor(
-		name: string,
-		label: string,
-		acceptMarkdown: boolean,
-		getValue: (src: TSource, data: TData) => string,
-		updateCharacter: (
-			source: TSource,
-			state: StaticTextStepState,
-			newData: TData
-		) => void
-	) {
-		super(name, updateCharacter);
-		this.Label = label;
-		this.AcceptMarkdown = acceptMarkdown;
+	constructor(name: string, getValue: (src: TSource, data: TData) => string) {
+		super(name);
 		this.GetValue = getValue;
+	}
+
+	/**
+	 * Defines the label that will be shown with the text.
+	 * @param label
+	 * @returns
+	 */
+	withLabel(label: string | undefined) {
+		this.Label = label;
+		return this;
+	}
+
+	/**
+	 * Determines whether the text will be rendered as plain text (on a single line) or markdown (multi-line)
+	 * @param flag
+	 * @returns
+	 */
+	useMarkdown(flag: boolean) {
+		this.AcceptMarkdown = flag;
+		return this;
 	}
 
 	controlTypeId(): string {
@@ -65,14 +79,15 @@ export class StaticTextStep<
 			<>
 				{this.AcceptMarkdown ? (
 					<>
-						<div className="title">{this.Label}</div>
+						{this.Label ? <div className="title">{this.Label}</div> : <></>}
 						<div className="step-markdown">
 							<MarkdownWrapper>{stepState.Value}</MarkdownWrapper>
 						</div>
 					</>
 				) : (
 					<>
-						{this.Label}: {stepState.Value}
+						{this.Label ? `${this.Label}: ` : ""}
+						{stepState.Value}
 					</>
 				)}
 			</>

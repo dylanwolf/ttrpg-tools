@@ -2,30 +2,51 @@ import { getTextFieldValueFrom } from "../../../helpers/fieldHelpers";
 import { ICharacterData } from "../BuilderFactory";
 import { StepModel, StepState } from "../StepModel";
 
+/**
+ * Tracks the state of a StringEntryStep.
+ */
 interface StringEntryStepState extends StepState {
 	Value: string | undefined;
 }
 
+/**
+ * Defines a step that accepts a single-line free text entry.
+ */
 export class StringEntryStep<
 	TSource,
 	TData extends ICharacterData
 > extends StepModel<TSource, TData, StringEntryStepState> {
-	Label: string;
-	GetDefaultValue: (source: TSource, data: TData) => string | undefined;
+	Label: string | undefined;
+	GetDefaultValue:
+		| ((source: TSource, data: TData) => string | undefined)
+		| undefined;
 
-	constructor(
-		name: string,
-		label: string,
-		getDefaultValue: (source: TSource, data: TData) => string | undefined,
-		updateCharacter: (
-			source: TSource,
-			state: StringEntryStepState,
-			newData: TData
-		) => void
-	) {
-		super(name, updateCharacter);
+	constructor(name: string) {
+		super(name);
+	}
+
+	/**
+	 * Defines the label to show along with this field.
+	 * @param label
+	 * @returns
+	 */
+	withLabel(label: string | undefined) {
 		this.Label = label;
-		this.GetDefaultValue = getDefaultValue;
+		return this;
+	}
+
+	/**
+	 * Defines a function used to set the value when the step loads. This function should load data from existing character data if availble, or supply a value for new characters.
+	 * @param defaultValueFunc
+	 * @returns
+	 */
+	withDefaultValue(
+		defaultValueFunc:
+			| ((source: TSource, data: TData) => string | undefined)
+			| undefined
+	) {
+		this.GetDefaultValue = defaultValueFunc;
+		return this;
 	}
 
 	controlTypeId(): string {
@@ -54,7 +75,8 @@ export class StringEntryStep<
 			newState.IsCompleted = true;
 		} else {
 			if (newState.Value === undefined) {
-				newState.Value = this.GetDefaultValue(source, data);
+				newState.Value =
+					this.GetDefaultValue && this.GetDefaultValue(source, data);
 			}
 
 			newState.IsCompleted = this.IsRequired

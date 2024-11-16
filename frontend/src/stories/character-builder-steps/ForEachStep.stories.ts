@@ -65,13 +65,15 @@ export const BasicUsage: Story = {
 			},
 			{ ForEachCount: 3, ForEachData: [] },
 			[
-				new NumericStep<any, any>(
-					"CountStep",
-					"# of Iterations",
-					(src, data) =>
-						data.ForEachCount !== undefined ? data.ForEachCount : 1,
-					(src, state, newData) => (newData.ForEachCount = state.Value || 0)
-				).withMinValue(() => 0),
+				new NumericStep<any, any>("CountStep")
+					.withLabel("# of Iterations")
+					.withDefaultValue((src, data) =>
+						data.ForEachCount !== undefined ? data.ForEachCount : 1
+					)
+					.onCharacterUpdate(
+						(src, state, newData) => (newData.ForEachCount = state.Value || 0)
+					)
+					.withMinValue(() => 0),
 				new ForEachStep<any, any, any>(
 					"ForEachTest",
 					(src, data, idx) => `Iteration #${idx + 1}`,
@@ -82,55 +84,63 @@ export const BasicUsage: Story = {
 						return { Item1: "", Item2: "", Item3: "" };
 					},
 					[
-						new StringDropDownStep<any, any, any>(
-							"DropDownStep1",
-							"Item 1",
-							(src, data) => {
+						new StringDropDownStep<any, any, any>("DropDownStep1")
+							.withLabel("Item 1")
+							.withSelectList((src, data) => {
 								return filterOptions(
 									src.Options,
 									data.ParentData.ForEachData,
 									data.Index,
 									[]
 								);
-							},
-							(itm) => itm,
-							(itm) => itm,
-							(src, data, lst) => valueIfInList(data.IterationData.Item1, lst),
-							(src, state, newData) =>
-								(newData.IterationData.Item1 = state.Value || "")
-						),
-						new StringDropDownStep<any, any, any>(
-							"DropDownStep2",
-							"Item 2",
-							(src, data) =>
+							})
+							.withItemText((itm) => itm)
+							.withItemValue((itm) => itm)
+							.withDefaultValue((src, data, lst) =>
+								valueIfInList(data.IterationData.Item1, lst)
+							)
+							.onCharacterUpdate(
+								(src, state, newData) =>
+									(newData.IterationData.Item1 = state.Value || "")
+							),
+						new StringDropDownStep<any, any, any>("DropDownStep2")
+							.withLabel("Item 2")
+							.withSelectList((src, data) =>
 								filterOptions(
 									src.Options,
 									data.ParentData.ForEachData,
 									data.Index,
 									[data.IterationData.Item1]
-								),
-							(itm) => itm,
-							(itm) => itm,
-							(src, data, lst) => valueIfInList(data.IterationData.Item2, lst),
-							(src, state, newData) =>
-								(newData.IterationData.Item2 = state.Value || "")
-						),
-						new StringDropDownStep<any, any, any>(
-							"DropDownStep3",
-							"Item 3",
-							(src, data) =>
+								)
+							)
+							.withItemText((itm) => itm)
+							.withItemValue((itm) => itm)
+							.withDefaultValue((src, data, lst) =>
+								valueIfInList(data.IterationData.Item2, lst)
+							)
+							.onCharacterUpdate(
+								(src, state, newData) =>
+									(newData.IterationData.Item2 = state.Value || "")
+							),
+						new StringDropDownStep<any, any, any>("DropDownStep3")
+							.withLabel("Item 3")
+							.withSelectList((src, data) =>
 								filterOptions(
 									src.Options,
 									data.ParentData.ForEachData,
 									data.Index,
 									[data.IterationData.Item1, data.IterationData.Item2]
-								),
-							(itm) => itm,
-							(itm) => itm,
-							(src, data, lst) => valueIfInList(data.IterationData.Item3, lst),
-							(src, state, newData) =>
-								(newData.IterationData.Item3 = state.Value || "")
-						),
+								)
+							)
+							.withItemText((itm) => itm)
+							.withItemValue((itm) => itm)
+							.withDefaultValue((src, data, lst) =>
+								valueIfInList(data.IterationData.Item3, lst)
+							)
+							.onCharacterUpdate(
+								(src, state, newData) =>
+									(newData.IterationData.Item3 = state.Value || "")
+							),
 					]
 				),
 			]
