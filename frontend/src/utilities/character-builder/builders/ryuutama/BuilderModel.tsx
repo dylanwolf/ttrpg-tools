@@ -167,6 +167,17 @@ registerBuilderModel(
 					(src, data) => getStartingAbilityScores(src, data).Dice
 				)
 				.withChoiceEqualsFunction((us, them) => us.Value === them.Value)
+				.onCharacterUpdate((src, state, data) => {
+					var value: { [name: string]: number } = {};
+					var stateValue = state.Value || {};
+
+					Object.keys(stateValue).forEach((key) => {
+						var die = stateValue[key];
+						if (die) value[key] = die.Value;
+					});
+
+					data.AbilityScoreAssignments = value;
+				})
 				.withStatTargets((src, data, lst) =>
 					["STR", "DEX", "INT", "SPI"].map((attr) => {
 						var fixedMatch = lst.filter((x) => x.Attribute === attr)[0];
