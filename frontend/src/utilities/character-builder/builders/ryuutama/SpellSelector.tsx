@@ -18,7 +18,10 @@ export class RyuutamaSpellSelectorStep extends StepModel<
 	SpellSelectorState
 > {
 	constructor(name: string) {
-		super(name, (src, state, data) => (data.SelectedSpells = state.Selected));
+		super(name);
+		this.onCharacterUpdate(
+			(src, state, data) => (data.SelectedSpells = state.Selected)
+		);
 	}
 
 	controlTypeId(): string {
