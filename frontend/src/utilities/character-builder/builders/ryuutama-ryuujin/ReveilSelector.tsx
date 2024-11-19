@@ -17,8 +17,8 @@ export class RyuujinReveilSelectorStep extends StepModel<
 	ReveilSelectorState
 > {
 	constructor(name: string) {
-		super(
-			name,
+		super(name);
+		this.onCharacterUpdate(
 			(src, state, newData) => (newData.Reveils = state.Selected || [])
 		);
 	}

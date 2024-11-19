@@ -37,7 +37,7 @@ export default function AboutPage() {
 
 			<p>
 				Dylan Wolf is a software developer and a hobbyist TTRPG/Unity game
-				developer from east Tennessee. You can find his other work at
+				developer from east Tennessee. You can find his other work at{" "}
 				<a href="https://links.dylanwolf.com">https://links.dylanwolf.com</a>.
 			</p>
 
