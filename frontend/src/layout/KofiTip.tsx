@@ -1,5 +1,4 @@
 import KofiButton from "kofi-button";
-// import { KoFiButton } from "react-kofi";
 
 export function KofiTip() {
 	return (

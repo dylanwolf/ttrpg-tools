@@ -108,24 +108,11 @@ export function SiteNavbar() {
 						</Nav.Item>
 					</Nav>
 					<Nav className="justify-content-end flex-grow-1 d-flex align-items-center">
-						<DebugFlagCheckbox />
-						{import.meta.env.DEV ? (
-							<>
-								<KofiTip />
-								<a
-									href="https://github.com/dylanwolf/ttrpg-tools"
-									target="_blank"
-								>
-									<FontAwesomeIcon
-										icon={faGithub}
-										fontSize="200%"
-										color="#fff"
-									/>
-								</a>
-							</>
-						) : (
-							<></>
-						)}
+						{import.meta.env.DEV ? <DebugFlagCheckbox /> : <></>}
+						<KofiTip />
+						<a href="https://github.com/dylanwolf/ttrpg-tools" target="_blank">
+							<FontAwesomeIcon icon={faGithub} fontSize="200%" color="#fff" />
+						</a>
 					</Nav>
 				</Navbar.Collapse>
 			</Navbar>
