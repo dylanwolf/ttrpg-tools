@@ -15,6 +15,11 @@ export default function AboutPage() {
 				<a href="https://github.com/dylanwolf/ttrpg-tools">
 					https://github.com/dylanwolf/ttrpg-tools
 				</a>
+				. Licensed as{" "}
+				<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
+					CC BY-NC-SA 4.0
+				</a>
+				.
 			</p>
 
 			<p>Developed with:</p>

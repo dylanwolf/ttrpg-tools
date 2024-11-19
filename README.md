@@ -15,6 +15,8 @@ Current set of utilities:
 
 ## Credits
 
+Licensed as [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
 ### Ryuutama
 
 > This webtool has been approved for distribution and sale by Kotodama Heavy Industries, the publishers of the Ryuutama Natural Fantasy RPG in English. If you are interested in publishing your own Ryuutama works, please contact them directly through the official website to discuss options.
@@ -49,7 +51,7 @@ Step state and character data have the following differences:
 
 ### Character Builder Steps
 
-There are X types of generic character builder steps that can be configured in a character builder process. (You can also define custom steps for a process, such as the spell selector in the Ryuutama PC builder.)
+There are several types of generic character builder steps that can be configured in a character builder process. (You can also define custom steps for a process, such as the spell selector in the Ryuutama PC builder.)
 
 Builders typically have a set of required configuration in the constructor, as well as fluent functions off the object for adding optional configuration.
 
