@@ -13,6 +13,14 @@ Current set of utilities:
 - Extensible character builder
 - 5e encounter builder
 
+## Credits
+
+### Ryuutama
+
+> This webtool has been approved for distribution and sale by Kotodama Heavy Industries, the publishers of the Ryuutama Natural Fantasy RPG in English. If you are interested in publishing your own Ryuutama works, please contact them directly through the official website to discuss options.
+>
+> You can find more about Ryuutama at [www.kotohi.com](htttps://www.kotohi.com).
+
 ## Character Builder
 
 The TTRPG Tools character builder allows you to create a character creation process using a step-by-step process. A character builder has 5 components:

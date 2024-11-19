@@ -29,5 +29,6 @@ yarn-error.log*
 *storybook.log
 
 backend/docker-build.ps1
+backend/docker-publish-prod.ps1
 log/**
 **/.env
