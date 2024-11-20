@@ -2,3 +2,12 @@
     background: #ccc;
     color: #000;
 }
+
+.step-ryuutama-additional-bonuses input[type="number"] {
+    max-width: 75px;
+}
+
+.step-ryuutama-additional-bonuses .name-field {
+    width: 100%;
+    min-width: 50px;
+}

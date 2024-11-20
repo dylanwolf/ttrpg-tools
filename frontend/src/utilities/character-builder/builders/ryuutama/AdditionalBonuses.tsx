@@ -108,6 +108,7 @@ export class AdditionalBonusesStep extends StepModel<
 							<tr key={`AdditionalBonuses-${idx}`}>
 								<td>
 									<input
+										className="name-field"
 										type="text"
 										value={i.Name || ""}
 										onChange={(e) =>
