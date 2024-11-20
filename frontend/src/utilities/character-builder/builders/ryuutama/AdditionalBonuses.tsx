@@ -136,9 +136,9 @@ export class AdditionalBonusesStep extends StepModel<
 									/>
 								</td>
 								<td className="text-end">
-									<a onClick={(e) => removeItem(idx)}>
+									<div onClick={(e) => removeItem(idx)} className="command">
 										<FontAwesomeIcon icon={faXmark} />
-									</a>
+									</div>
 								</td>
 							</tr>
 						))}
