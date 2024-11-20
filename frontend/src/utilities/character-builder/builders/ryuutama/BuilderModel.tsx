@@ -39,6 +39,7 @@ import {
 import { RyuutamaSpellSelectorStep } from "./SpellSelector";
 import "./ryuutama.css";
 import { removeNullValues } from "../../../../helpers/dictHelpers";
+import { AdditionalBonusesStep } from "./AdditionalBonuses";
 
 export function isInSelectedSource<TItem extends IFromSource>(
 	data: CharacterState,
@@ -740,6 +741,7 @@ registerBuilderModel(
 			new RyuutamaSpellSelectorStep("SelectedSpells").withHelp(
 				"Select Incantation spells granted by the Magic Type. You gain 2 spells per level per type, with Mid Level spells unlocking at level 4 and High Level spells unlocking at level 7."
 			),
+			new AdditionalBonusesStep("AdditionalBonuses"),
 		],
 		() => getInitialCharacterData(),
 		toPdfFormFillArgs

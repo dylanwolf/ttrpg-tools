@@ -88,6 +88,7 @@ export function collectCharacterSheetData(
 	source: SourceData,
 	data: CharacterState
 ): CharacterSheetData {
+	// Get selected objects from source data
 	var tpl = getCharacterTemplate(source, data);
 	var templateSkills = getTemplateSkills(source, data);
 	var level1Skills = getLevel1Skills(source, data);
@@ -99,6 +100,7 @@ export function collectCharacterSheetData(
 		  )
 		: [];
 
+	// Get attributes
 	var originalStr = data.AbilityScoreAssignments["STR"];
 	var originalDex = data.AbilityScoreAssignments["DEX"];
 	var originalInt = data.AbilityScoreAssignments["INT"];
@@ -109,6 +111,7 @@ export function collectCharacterSheetData(
 	var adjustedInt = getAdjustedAbilityScore(data, "INT");
 	var adjustedSpi = getAdjustedAbilityScore(data, "SPI");
 
+	// Group types together, counting duplicates
 	var groupedTypes = [data.Level1Type, data.Level6Type]
 		.groupBy((x) => x || "")
 		.map((grp) => {
@@ -119,6 +122,7 @@ export function collectCharacterSheetData(
 		})
 		.filter((x) => x.Type);
 
+	// Group class skills together, counting duplicates
 	var groupedSkills = [templateSkills, level1Skills, level5Skills]
 		.filter((x) => x)
 		.flat()
@@ -134,6 +138,7 @@ export function collectCharacterSheetData(
 
 	var bonuses: { [stat: string]: number | string } = {};
 
+	// Combine bonuses from types
 	groupedTypes.forEach((x) => {
 		if (!x.Type.Bonuses) return;
 
@@ -143,6 +148,7 @@ export function collectCharacterSheetData(
 		});
 	});
 
+	// Combine bonuses from class skills
 	groupedSkills.forEach((x) => {
 		if (!x.Skill.Bonuses) return;
 
@@ -156,6 +162,7 @@ export function collectCharacterSheetData(
 		});
 	});
 
+	// Calculate derived values
 	var carryCapacity =
 		(adjustedStr || 0) + 3 + getNumericBonus(bonuses["Carrying Capacity"]);
 	var hp =
@@ -168,7 +175,42 @@ export function collectCharacterSheetData(
 		((data.HPMPAssignments && data.HPMPAssignments["MP"]) || 0);
 	var damage = getNumericBonus(bonuses["Damage"]) || 0;
 
+	// Add bonuses for weather/terrain specialties
+	if (data.Level3WeatherTerrainSpecialty)
+		bonuses[data.Level3WeatherTerrainSpecialty] = collectBonuses(
+			2,
+			1,
+			bonuses[data.Level3WeatherTerrainSpecialty]
+		);
+	if (data.Level7WeatherTerrainSpecialty)
+		bonuses[data.Level7WeatherTerrainSpecialty] = collectBonuses(
+			2,
+			1,
+			bonuses[data.Level7WeatherTerrainSpecialty]
+		);
+	if (data.AdditionalBonuses)
+		data.AdditionalBonuses.forEach((b) => {
+			if (!b.Bonus || b.Value === undefined) return;
+
+			if (b.Bonus === "Armor Penalty") {
+				bonuses["Travel"] = collectBonuses(b.Value, 1, bonuses["Travel"]);
+				bonuses["Initiative"] = collectBonuses(
+					b.Value,
+					1,
+					bonuses["Initiative"]
+				);
+
+				if (bonuses["Travel"] === 0) delete bonuses["Travel"];
+				if (bonuses["Initiative"] === 0) delete bonuses["Initiative"];
+			} else {
+				bonuses[b.Bonus] = collectBonuses(b.Value, 1, bonuses[b.Bonus]);
+				if (bonuses[b.Bonus] === 0) delete bonuses[b.Bonus];
+			}
+		});
+
+	// Create a list of other bonuses that do not end up anywhere else
 	var otherBonuses: { [stat: string]: string } = {};
+
 	Object.keys(bonuses).forEach((key) => {
 		if (["HP", "MP", "Damage", "Carrying Capacity"].includes(key)) return;
 		otherBonuses[key] = isNumeric(bonuses[key])

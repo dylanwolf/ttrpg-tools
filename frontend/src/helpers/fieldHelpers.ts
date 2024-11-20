@@ -32,10 +32,11 @@ export function getNumericFieldValueFrom(
  * @returns
  */
 export function ensureIntegerPaste(
-	evt: React.ClipboardEvent<HTMLInputElement>
+	evt: React.ClipboardEvent<HTMLInputElement>,
+	allowNegatives?: boolean | undefined
 ) {
 	var value = evt.clipboardData.getData("text");
-	if (value && value.match(/[^0-9]/)) {
+	if (value && value.match(allowNegatives ? /[^-0-9]/ : /[^0-9]/)) {
 		evt.preventDefault();
 		evt.stopPropagation();
 		return false;
@@ -47,12 +48,15 @@ export function ensureIntegerPaste(
  * @param evt
  * @returns
  */
-export function ensureIntegerEntry(evt: React.KeyboardEvent<HTMLInputElement>) {
+export function ensureIntegerEntry(
+	evt: React.KeyboardEvent<HTMLInputElement>,
+	allowNegatives?: boolean | undefined
+) {
 	if (
 		evt.key.length === 1 &&
 		!evt.altKey &&
 		!evt.ctrlKey &&
-		evt.key.match(/[^0-9]/)
+		evt.key.match(allowNegatives ? /[^-0-9]/ : /[^0-9]/)
 	) {
 		evt.preventDefault();
 		evt.stopPropagation();

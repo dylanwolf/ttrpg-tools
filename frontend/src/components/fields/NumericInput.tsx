@@ -73,8 +73,18 @@ export function NumericInput(props: NumericInputProps) {
 			disabled={isDisabled}
 			step={props.NumericStep || 1}
 			onChange={onChange}
-			onKeyDown={ensureIntegerEntry}
-			onPaste={ensureIntegerPaste}
+			onKeyDown={(e) =>
+				ensureIntegerEntry(
+					e,
+					props.MaxValue === undefined || props.MaxValue < 0
+				)
+			}
+			onPaste={(e) =>
+				ensureIntegerPaste(
+					e,
+					props.MaxValue === undefined || props.MaxValue < 0
+				)
+			}
 		/>
 	);
 }

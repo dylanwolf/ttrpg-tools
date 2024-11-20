@@ -31,6 +31,13 @@ export interface CharacterState extends ICharacterData {
 	Level6SeasonalMagic?: string | undefined;
 	Level9SeasonalDragon?: string | undefined;
 	SelectedSpells?: string[];
+	AdditionalBonuses: AdditionalBonus[];
+}
+
+export interface AdditionalBonus {
+	Name?: string | undefined;
+	Bonus?: string;
+	Value?: number;
 }
 
 const initialCharacterData: CharacterState = {
@@ -39,6 +46,7 @@ const initialCharacterData: CharacterState = {
 	Version: "",
 	Level: 1,
 	AbilityScoreAssignments: {},
+	AdditionalBonuses: [],
 };
 
 export function getInitialCharacterData() {

@@ -15,7 +15,7 @@ export function DebugFlagCheckbox() {
 			<label>
 				<input
 					type="checkbox"
-					checked={flagState}
+					checked={flagState || false}
 					onChange={() => dispatch(toggleDebugState())}
 				/>{" "}
 				Debug

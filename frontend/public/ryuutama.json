@@ -395,5 +395,20 @@
 		"Muddled",
 		"Shock"
 	],
-	"SeasonalDragons": ["Spring", "Summer", "Fall", "Winter"]
+	"SeasonalDragons": ["Spring", "Summer", "Fall", "Winter"],
+	"ItemBonusTypes": [
+		"Camping",
+		"Direction",
+		"Travel",
+		"Condition Checks",
+		"Initiative",
+		"Armor",
+		"Defense",
+		"Armor Penalty",
+		"Any Journey check on a road",
+		"Hide (in chosen terrain)",
+		"Fire damage",
+		"Travel (Level 3 or lower terrain)",
+		"Travel (Level 2 or lower terrain)"
+	]
 }

@@ -42,6 +42,7 @@ export interface SourceData extends ICharacterBuilderSourceData {
 	TerrainWeatherSpecialty: string[];
 	StatusEffects: string[];
 	SeasonalDragons: string[];
+	ItemBonusTypes: string[];
 }
 
 export interface AdditionalSource {
